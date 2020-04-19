@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#DBE5FF"
+    android:orientation="vertical"
+    android:weightSum="1">
+
+    <ListView
+        android:id="@android:id/list"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="0.9">
+    </ListView>
+
+    <LinearLayout
+        android:id="@+id/linearLayMenuExtra"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="0.1"
+        android:orientation="horizontal"
+        android:weightSum="2">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:layout_weight="1.9"
+            android:gravity="center"
+            android:text="Para procurar, clique no botão e digite a data"
+            android:textColor="#091534"
+            android:textSize="14sp" />
+
+       <!-- <EditText
+            android:id="@+id/textViewDataExib"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:layout_weight="1.6"
+            android:gravity="center"
+            android:hint="00/00/0000"
+            android:textSize="13sp" />-->
+
+        <ImageButton
+            android:id="@+id/buttonProcurar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.1"
+            android:layout_gravity="center"
+            android:background="@drawable/procurar"
+            android:scaleType="fitXY" />
+    </LinearLayout>
+</LinearLayout>

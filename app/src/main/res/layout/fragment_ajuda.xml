@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="#DBE5FF">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="AJUDA"
+            android:layout_margin="18dp"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:textColor="#091534"
+            android:textAlignment="center"
+            android:layout_gravity="center"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="8dp"
+            android:layout_marginTop="8dp"
+            android:textSize="15sp"
+            android:textStyle="bold"
+            android:textColor="#0247FE"
+            android:text="  Primeiramente, desejo que a paz do todo poderoso Senhor Jesus seja convosco. Pois ele é quem me capacitou para disponibilizar tal aplicativo para vós."/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="8dp"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:textColor="#012998"
+            android:text="
+            Como usar o aplicativo?"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="8dp"
+            android:layout_marginTop="8dp"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            android:textColor="#0247FE"
+            android:text="  Como usar o aplicativo? Usá-lo é simples. Você precisa saber que o aplicativo foi separado por itens no menu para facilitar o seu manuseio. São estes:\n
+    O item Perfil: Possui a função de mostrar apenas os seus dados principais, e sua assiduidade nas reuniões da CADIER. Mostrando qual foi sua última data presente na reunião.\n
+    O item Calendário: Possui a função de exibir os dias das reuniões e seus respectivos locais.\n
+    O item Pedidos: Este possui a função de mostrar para o filiado, os seus pedidos de Pessoa FÍSICA, apenas. Seja os agendados, ou pedidos feitos anteriormente.\n
+    O item Mensalidades: Possui a função de exibir para o filiado, a sua situação com a CADIER na área das mensalidades. OBS: Somente Pessoa FÍSICA!\n
+    O item Configuração: Este possuirá mais funcionalidades posteriormente, mas agora possui a função de alterar os dados do filiado. Como endereço, telefone, etc.\n
+    O item Logout: Este possui a função de deslogar do aplicativo, podendo logar novamente quando o mesmo for aberto.\n
+    O item Contatos: Este possui a função de exibir para o filiado, os meios de comunicação com a CADIER. Podendo acessar o site com apenas um clique no link exibido.\n
+    Agradeço imensamente aos filiados por fazerem parte de nossa família! Produzo este aplicativo com carinho e dedicação à obra de Deus! Que a paz do Senhor Jesus seja convosco. Amém!"/>
+    </LinearLayout>
+</ScrollView>

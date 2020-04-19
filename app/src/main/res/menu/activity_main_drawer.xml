@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:showIn="navigation_view">
+
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/opcao_perfil"
+            android:icon="@drawable/inicioperfil"
+            android:title="Perfil" />
+        <item
+            android:id="@+id/opcao_calendario"
+            android:icon="@drawable/calendario"
+            android:title="Calendário de Reuniões" />
+        <item
+            android:id="@+id/opcao_pedidos"
+            android:icon="@drawable/pedidos"
+            android:title="Pedidos" />
+        <item
+            android:id="@+id/opcao_mensalidades"
+            android:icon="@drawable/datapresente"
+            android:title="Mensalidades" />
+        <item
+            android:id="@+id/opcao_configuracao"
+            android:icon="@drawable/configuracoes"
+            android:title="Configurações" />
+        <item
+            android:id="@+id/opcao_logout"
+            android:icon="@drawable/deslogar"
+            android:title="Sair" />
+    </group>
+
+    <item android:title="Outros">
+        <menu>
+            <item
+                android:id="@+id/opcao_contatos"
+                android:icon="@drawable/contatos1"
+                android:title="Contatos" />
+            <item
+                android:id="@+id/opcao_ajuda"
+                android:icon="@drawable/ajuda"
+                android:title="Ajuda" />
+        </menu>
+    </item>
+
+</menu>

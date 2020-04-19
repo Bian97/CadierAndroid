@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="horizontal"
+    android:background="#678FFE">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp"
+        android:layout_marginTop="11dp"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="left"
+            android:layout_marginLeft="8dp"
+            android:text="Rua"
+            android:textStyle="bold" />
+
+        <EditText
+            android:id="@+id/editTextEditarRua"
+            android:layout_width="320dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="start"
+            android:layout_marginLeft="8dp"
+            android:hint="Sua Rua e seu número"
+            android:textSize="14sp" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:weightSum="2"
+            android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_gravity="left"
+            android:layout_marginLeft="8dp"
+            android:text="Bairro"
+            android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_gravity="left"
+                android:layout_marginLeft="8dp"
+                android:text="CEP"
+                android:textStyle="bold" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:weightSum="2"
+            android:orientation="horizontal">
+
+        <EditText
+            android:id="@+id/editTextEditarBairro"
+            android:layout_width="140dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginLeft="8dp"
+            android:hint="Seu Bairro"
+            android:textSize="14sp" />
+
+        <EditText
+            android:id="@+id/editTextEditarCep"
+            android:layout_width="130dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginLeft="8dp"
+            android:hint="Seu CEP"
+            android:textSize="14sp" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:weightSum="2"
+            android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="left"
+            android:layout_weight="1.25"
+            android:layout_marginLeft="8dp"
+            android:layout_marginTop="5dp"
+            android:text="Cidade"
+            android:textStyle="bold" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="left"
+            android:layout_weight="0.7"
+            android:layout_marginLeft="8dp"
+            android:layout_marginTop="5dp"
+            android:text="Estado"
+            android:textStyle="bold" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:weightSum="2"
+            android:orientation="horizontal">
+
+        <EditText
+            android:id="@+id/editTextEditarCidade"
+            android:layout_width="170dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1.4"
+            android:layout_marginLeft="8dp"
+            android:hint="Sua Cidade"
+            android:textSize="14sp" />
+
+        <EditText
+            android:id="@+id/editTextEditarEstado"
+            android:layout_width="130dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.6"
+            android:layout_marginLeft="8dp"
+            android:hint="Seu Estado"
+            android:textSize="14sp" />
+
+        </LinearLayout>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="left"
+            android:layout_marginLeft="8dp"
+            android:layout_marginTop="5dp"
+            android:text="País"
+            android:textStyle="bold" />
+
+        <EditText
+            android:id="@+id/editTextEditarPais"
+            android:layout_width="120dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="8dp"
+            android:hint="Seu País"
+            android:textSize="14sp" />
+
+        <Button
+            android:id="@+id/buttonGuardarEndereco"
+            android:layout_width="200dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="50dp"
+            android:background="@drawable/background_button_login"
+            android:text="Guardar Alterações"
+            android:textSize="13sp" />
+    </LinearLayout>
+</LinearLayout>

@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="#DBE5FF">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="20dp"
+        android:layout_marginTop="10dp"
+        android:layout_gravity="center"
+        android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Última(s) Mensalidade(s) Pago"
+                android:layout_gravity="center"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:textColor="#091534"/>
+
+            <TextView
+                android:id="@+id/textViewMens"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="8dp"
+                android:textSize="14sp"
+                android:textColor="#0247FE"
+                android:layout_gravity="center"
+                android:text="Não foram encontrados dados! Por favor, ligue para secretaria!"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:textColor="#091534"
+            android:layout_gravity="center"
+            android:text="Data do Pagamento " />
+
+        <TextView
+            android:id="@+id/textViewMesPago"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="14sp"
+            android:textColor="#0247FE"
+            android:layout_gravity="center"
+            android:layout_margin="8dp"
+            android:text="00/00/0000"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:textColor="#091534"
+                android:layout_gravity="center"
+                android:text="Valor Pago" />
+
+            <TextView
+                android:id="@+id/textViewValor"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="14sp"
+                android:textColor="#0247FE"
+                android:layout_gravity="center"
+                android:layout_margin="8dp"
+                android:text="R$ 00,00"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:textColor="#091534"
+            android:layout_gravity="center"
+            android:text="Observações Adicionais" />
+
+        <TextView
+            android:id="@+id/textViewObs"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="14sp"
+            android:textColor="#0247FE"
+            android:layout_gravity="center"
+            android:layout_margin="8dp"
+            android:textAlignment="center"
+            android:text="OBS"/>
+
+    </LinearLayout>
+    </LinearLayout>
+</LinearLayout>
