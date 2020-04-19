@@ -74,8 +74,8 @@ public class MenuActivity extends AppCompatActivity
         txtNomeMenu.setText(usuario.getNome());
         txtIgrejaMenu.setText(usuario.getIgreja());
 
-        if(usuario.getFoto() != null && !usuario.getFoto().equals("")) {
-            Bitmap aux = BitmapFactory.decodeFile(usuario.getFoto());
+        Bitmap aux = BitmapFactory.decodeFile(usuario.getFoto());
+        if(usuario.getFoto() != null && aux != null) {
             imageViewMenu.setImageBitmap(aux);
         } else {
             imageViewMenu.setImageResource(R.drawable.foto);
