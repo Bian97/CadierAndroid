@@ -1,16 +1,15 @@
 package com.example.cadier.view.activity;
 
+import android.Manifest;
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
-import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
-import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -18,9 +17,15 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.cadier.R;
-import com.example.cadier.modelo.Usuario;
+import com.example.cadier.modelo.User;
 import com.example.cadier.util.CnpjCpfDataMask;
-import com.example.cadier.util.ConectaWebService;
+import com.example.cadier.util.ConectWebService;
+import com.example.cadier.util.Enums.StatusEnum;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -29,16 +34,19 @@ import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.sql.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by DrGreend on 07/03/2018.
  */
 
 public class LoginActivity extends AppCompatActivity {
-    EditText login, senha;
-    Button entrar;
+    EditText login, password;
+    Button enter;
     ProgressDialog progressDialog;
-    Usuario usuario;
+    User user;
     ImageView imageViewLogin;
     TextView txtViewLink;
 
@@ -48,41 +56,37 @@ public class LoginActivity extends AppCompatActivity {
         setContentView(R.layout.activity_login);
 
         login = findViewById(R.id.editTextLogin);
-        senha = findViewById(R.id.editTextSenha);
-        entrar = findViewById(R.id.buttonEntrar);
+        password = findViewById(R.id.editTextPassword);
+        enter = findViewById(R.id.buttonLogin);
         imageViewLogin= findViewById(R.id.imageViewLogin);
         txtViewLink = findViewById(R.id.textViewLink);
 
-        txtViewLink.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent viewIntent =
-                        new Intent("android.intent.action.VIEW",
-                                Uri.parse("https://cadier.yolasite.com"));
-                startActivity(viewIntent);
-            }
+        txtViewLink.setOnClickListener(view -> {
+            Intent viewIntent =
+                    new Intent("android.intent.action.VIEW",
+                            Uri.parse("https://cadier.yolasite.com"));
+            startActivity(viewIntent);
         });
 
         imageViewLogin.setImageResource(R.drawable.logo);
         login.addTextChangedListener(CnpjCpfDataMask.insert(login, CnpjCpfDataMask.MaskType.CPF));
 
-        entrar.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                try {
-                    if((!login.getText().toString().equals("") && !senha.getText().toString().equals(""))){
-                        LoginTask loginTask = new LoginTask();
-                        JSONObject jsonObject = new JSONObject();
-                        jsonObject.put("cpf", login.getText().toString());
-                        jsonObject.put("rol", String.valueOf(senha.getText().toString()));
-                        String json = jsonObject.toString();
-                        loginTask.execute("http://cadier.com.br/WS/wsLogin.php", json);
-                    } else {
-                        Toast.makeText(getApplicationContext(), "PREENCHA O LOGIN E A SENHA!", Toast.LENGTH_SHORT).show();
-                    }
-                } catch (Exception e){
-                    e.printStackTrace();
+        if(ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(LoginActivity.this,
+                    new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                    PackageManager.PERMISSION_GRANTED);
+        }
+
+        enter.setOnClickListener(view -> {
+            try {
+                if((!login.getText().toString().equals("") && !password.getText().toString().equals(""))){
+                    LoginTask loginTask = new LoginTask();
+                    loginTask.execute("http://cadier.com.br/api/login", login.getText().toString(), password.getText().toString());
+                } else {
+                    Toast.makeText(getApplicationContext(), "PREENCHA O LOGIN E A SENHA!", Toast.LENGTH_SHORT).show();
                 }
+            } catch (Exception e){
+                e.printStackTrace();
             }
         });
     }
@@ -97,8 +101,12 @@ public class LoginActivity extends AppCompatActivity {
         @Override
         protected String doInBackground(String... strings) {
             String result;
-            ConectaWebService cW = new ConectaWebService();
-            result = cW.send(strings[0], "POST", strings[1]);
+            ConectWebService cW = new ConectWebService();
+
+            Map<String,String> arguments = new HashMap<>();
+            arguments.put("IdPFisica", strings[2]);
+            arguments.put("cpf", strings[1]);
+            result = cW.send(strings[0], "POST", arguments);
             return result;
         }
 
@@ -108,26 +116,69 @@ public class LoginActivity extends AppCompatActivity {
             progressDialog.dismiss();
             try {
                 if(result != null) {
-                    if (!login.getText().toString().equals("") || !senha.getText().toString().equals("")) {
+                    if (!login.getText().toString().equals("") || !password.getText().toString().equals("")) {
                         if (!result.equalsIgnoreCase("errocon") && !result.equalsIgnoreCase("erroli")) {
-                            JSONObject jsonObject = new JSONObject(result);
-                            usuario = new Usuario(jsonObject.getInt("rol"), jsonObject.getString("nome"), jsonObject.getString("rua"), jsonObject.getString("bairro"),
-                                    jsonObject.getString("cidade"), jsonObject.getString("estado"), jsonObject.getString("cep"), jsonObject.getString("pais"), jsonObject.getString("rg"),
-                                    jsonObject.getString("cpf"), jsonObject.getString("tel"), jsonObject.getString("cargo"), jsonObject.getString("nasc"), jsonObject.getString("dataentrou"),
-                                    jsonObject.getString("conjuge"), jsonObject.getString("igreja"), jsonObject.getString("endigr"), jsonObject.getString("filiacao"), jsonObject.getString("titulo"),
-                                    jsonObject.getString("profissao"), jsonObject.getString("nomepres"), jsonObject.getString("email"), jsonObject.getString("apres"), jsonObject.getString("atualizado"),
-                                    jsonObject.getString("status"), jsonObject.getString("ultimaviz"), jsonObject.getString("obs"), jsonObject.getString("telop"), jsonObject.getString("foto"));
+                            JSONArray jsonArray = new JSONArray(result);
+                            JSONObject jsonObject = jsonArray.getJSONObject(0);
 
-                            if (login.getText().toString().equals(usuario.getCpf()) && senha.getText().toString().equals(String.valueOf(usuario.getRol()))) {
-                                Toast.makeText(getApplicationContext(), "Seja Bem-Vindo " + usuario.getNome(), Toast.LENGTH_SHORT).show();
-                                PegaImagem pegaImagem = new PegaImagem();
-                                pegaImagem.execute(usuario.getFoto());
+                            user = new User(jsonObject.getInt("IdPFisica"), jsonObject.getString("Nome"), jsonObject.getString("Telefone1"),
+                                    jsonObject.getString("Cargo"), Date.valueOf(jsonObject.getString("DataNascimento")),
+                                    jsonObject.getString("Conjuge"), jsonObject.getString("Filiacao"), jsonObject.getString("Profissao"),
+                                    jsonObject.getString("p_fisica_presidente"), jsonObject.getString("Email"), jsonObject.getString("ApresentouConv"),
+                                    jsonObject.getString("Telefone2"), jsonObject.getString("Foto"));
+
+                            //MUDAR PARA STORED PROCEDURE
+
+                            /*user.UserAddress(jsonObject.getString("Rua"), jsonObject.getString("Bairro"),
+                                    jsonObject.getString("Cidade"), jsonObject.getString("Estado"), jsonObject.getString("Cep"), jsonObject.getString("Pais"));
+
+                            user.UserInfos(jsonObject.getString("Rg"), jsonObject.getString("Cpf"));
+
+                            user.UserSituations(Date.valueOf(jsonObject.getString("DataEntrou")), Date.valueOf(jsonObject.getString("DataAtualizado")),
+                                    StatusEnum.fromInteger(jsonObject.getInt("Condicao")), Date.valueOf(jsonObject.getString("DataUltimaVisita")), jsonObject.getString("Obs"));
+
+                            user.UserChurch(jsonObject.getString("NomeIgreja"),
+                                    jsonObject.getString("EnderecoIgreja"));*/
+
+
+                            if(!jsonObject.isNull("enderecos")){
+                                user.UserAddress(jsonObject.getJSONObject("enderecos").getString("Rua"), jsonObject.getJSONObject("enderecos").getString("Bairro"),
+                                        jsonObject.getJSONObject("enderecos").getString("Cidade"), jsonObject.getJSONObject("enderecos").getString("Estado"), jsonObject.getJSONObject("enderecos").getString("Cep"), jsonObject.getJSONObject("enderecos").getString("Pais"));
+                            }
+
+                            if(!jsonObject.isNull("infos")){
+                                user.UserInfos(jsonObject.getJSONObject("infos").getString("Rg"), jsonObject.getJSONObject("infos").getString("Cpf"));
+                            }
+
+                            if(!jsonObject.isNull("situacoes")){
+                                user.UserSituations(Date.valueOf(jsonObject.getJSONObject("situacoes").getString("DataEntrou")), Date.valueOf(jsonObject.getJSONObject("situacoes").getString("DataAtualizado")),
+                                        StatusEnum.fromInteger(jsonObject.getJSONObject("situacoes").getInt("Condicao")), Date.valueOf(jsonObject.getJSONObject("situacoes").getString("DataUltimaVisita")), jsonObject.getJSONObject("situacoes").getString("Obs"));
+                            }
+
+                            if(!jsonObject.isNull("infos_temporarias")){
+                                user.UserChurch(jsonObject.getJSONObject("infos_temporarias").getString("NomeIgreja"),
+                                        jsonObject.getJSONObject("infos_temporarias").getString("EnderecoIgreja"));
+                            }
+
+                            if(!jsonObject.isNull("infos_temporarias")){
+                                user.UserChurch(jsonObject.getJSONObject("infos_temporarias").getString("NomeIgreja"),
+                                        null);
+                            }
+
+                            if(!jsonObject.isNull("p_juridica")){
+                                user.UserChurch(jsonObject.getJSONObject("p_juridica").getString("Nome"), null);
+                            }
+
+                            if (login.getText().toString().equals(user.getCpf()) && password.getText().toString().equals(String.valueOf(user.getPhysicalId()))) {
+                                Toast.makeText(getApplicationContext(), "Seja Bem-Vindo " + user.getName(), Toast.LENGTH_SHORT).show();
+                                GetImage getImage = new GetImage();
+                                getImage.execute(user.getPhoto());
                             } else {
-                                if (!login.getText().toString().equals(usuario.getCpf()) && senha.getText().toString().equals(String.valueOf(usuario.getRol()))) {
+                                if (!login.getText().toString().equals(user.getCpf()) && password.getText().toString().equals(String.valueOf(user.getPhysicalId()))) {
                                     Toast.makeText(getApplicationContext(), "O CPF ESTÁ ERRADO!", Toast.LENGTH_SHORT).show();
-                                } else if (login.getText().toString().equals(usuario.getCpf()) && !senha.getText().toString().equals(String.valueOf(usuario.getRol()))) {
+                                } else if (login.getText().toString().equals(user.getCpf()) && !password.getText().toString().equals(String.valueOf(user.getPhysicalId()))) {
                                     Toast.makeText(getApplicationContext(), "O NÚMERO DO ROL ESTÁ ERRADO!", Toast.LENGTH_SHORT).show();
-                                } else if (!login.getText().toString().equals(usuario.getCpf()) && !senha.getText().toString().equals(String.valueOf(usuario.getRol()))) {
+                                } else if (!login.getText().toString().equals(user.getCpf()) && !password.getText().toString().equals(String.valueOf(user.getPhysicalId()))) {
                                     Toast.makeText(getApplicationContext(), "USUÁRIO NÃO EXISTE!", Toast.LENGTH_SHORT).show();
                                 }
                             }
@@ -152,7 +203,7 @@ public class LoginActivity extends AppCompatActivity {
     public void onBackPressed(){
         //super.onBackPressed();
     }
-    public class PegaImagem extends AsyncTask<String, String, String> {
+    public class GetImage extends AsyncTask<String, String, String> {
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
@@ -163,38 +214,38 @@ public class LoginActivity extends AppCompatActivity {
         protected String doInBackground(String... usu) {
             String status = null;
             try {
-                    Bitmap aux = null;
-                    String nomeArquivo = usu[0];
-                    nomeArquivo = nomeArquivo.substring(nomeArquivo.lastIndexOf("/") + 1);
+                    Bitmap bitmap = null;
+                    String fileName = usu[0];
+                    fileName = fileName.substring(fileName.lastIndexOf("/") + 1);
 
-                    URL url = new URL("http://cadier.com.br/WS/wsBaixaImagem.php?arquivo=" + nomeArquivo+"&rol="+usuario.getRol());
-                    aux = BitmapFactory.decodeStream((InputStream) url.openStream());
+                    URL url = new URL("http://cadier.com.br/WS/wsBaixaImagem.php?arquivo=" + fileName+"&rol="+ user.getPhysicalId());
+                    bitmap = BitmapFactory.decodeStream((InputStream) url.openStream());
 
-                    File direct = new File(Environment.getExternalStorageDirectory() + File.separator + "CADIER");
+                    File direct = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES) + File.separator + "CADIER");
                     if(!direct.exists()){
-                        File diretorioImagem = new File(Environment.getExternalStorageDirectory() + File.separator + "/CADIER/");
-                        diretorioImagem.mkdirs();
+                        File ImagePath = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES) + File.separator + "CADIER");
+                        ImagePath.mkdirs();
                     }
-                    File file = new File(new File(Environment.getExternalStorageDirectory() + File.separator +"/CADIER/"), nomeArquivo);
+                    File file = new File(new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES) + File.separator + "CADIER"), fileName);
                     if(file.exists()){
                         file.delete();
                     }
 
                     FileOutputStream out = new FileOutputStream(file);
-                    String extensaoArquivo = nomeArquivo.substring(nomeArquivo.lastIndexOf(".")+1);
-                    if(extensaoArquivo.equalsIgnoreCase("jpg") || extensaoArquivo.equalsIgnoreCase("jpeg")) {
-                        aux.compress(Bitmap.CompressFormat.JPEG, 100, out);
+                    String fileExtension = fileName.substring(fileName.lastIndexOf(".")+1);
+                    if(fileExtension.equalsIgnoreCase("jpg") || fileExtension.equalsIgnoreCase("jpeg")) {
+                        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, out);
                         out.flush();
                         out.close();
-                    } else if(extensaoArquivo.equalsIgnoreCase("png")){
-                        aux.compress(Bitmap.CompressFormat.PNG, 100, out);
+                    } else if(fileExtension.equalsIgnoreCase("png")){
+                        bitmap.compress(Bitmap.CompressFormat.PNG, 100, out);
                         out.flush();
                         out.close();
                     }
 
-                    usuario.setFoto(file.getAbsolutePath());
+                    user.setPhoto(file.getAbsolutePath());
 
-                    if(usuario.getFoto() != null){
+                    if(user.getPhoto() != null){
                         status = "cheio";
                     } else {
                         status = null;
@@ -213,9 +264,9 @@ public class LoginActivity extends AppCompatActivity {
             super.onPostExecute(status);
             progressDialog.dismiss();
             if(status == null){
-                Toast.makeText(getApplicationContext(), "As imagems não foram baixadas completamente!", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), "As imagens não foram baixadas completamente!", Toast.LENGTH_SHORT).show();
             }
-            startActivity(new Intent(getApplicationContext(), MenuActivity.class).putExtra("usuario", usuario));
+            startActivity(new Intent(getApplicationContext(), MenuActivity.class).putExtra("usuario", user));
         }
     }
 }

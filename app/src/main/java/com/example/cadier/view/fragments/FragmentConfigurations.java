@@ -2,28 +2,29 @@ package com.example.cadier.view.fragments;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 
+import androidx.fragment.app.Fragment;
+
 import com.example.cadier.R;
-import com.example.cadier.modelo.Usuario;
-import com.example.cadier.view.activity.EditarEnderecoActivity;
-import com.example.cadier.view.activity.EditarPerfilActivity;
+import com.example.cadier.modelo.User;
+import com.example.cadier.view.activity.AddressEditActivity;
+import com.example.cadier.view.activity.ProfileEditActivity;
 
 /**
  * Created by DrGreend on 18/03/2018.
  */
 
-public class FragmentConfiguracoes extends Fragment {
+public class FragmentConfigurations extends Fragment {
     LinearLayout linearLayoutEditarDados, linearLayoutEnderecoEditar;
-    Usuario usuario;
+    User user;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        usuario = (Usuario) getActivity().getIntent().getSerializableExtra("usuario");
+        user = (User) getActivity().getIntent().getSerializableExtra("usuario");
         View view = inflater.inflate(R.layout.fragment_configuracoes, container, false);
 
         linearLayoutEditarDados = view.findViewById(R.id.linearLayoutEditarDados);
@@ -32,14 +33,14 @@ public class FragmentConfiguracoes extends Fragment {
         linearLayoutEditarDados.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startActivity(new Intent(getContext(), EditarPerfilActivity.class).putExtra("usuario", usuario));
+                startActivity(new Intent(getContext(), ProfileEditActivity.class).putExtra("usuario", user));
             }
         });
 
         linearLayoutEnderecoEditar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startActivity(new Intent(getContext(), EditarEnderecoActivity.class).putExtra("usuario", usuario));
+                startActivity(new Intent(getContext(), AddressEditActivity.class).putExtra("usuario", user));
             }
         });
 

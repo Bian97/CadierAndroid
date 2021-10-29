@@ -3,11 +3,12 @@ package com.example.cadier.view.fragments;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+
+import androidx.fragment.app.Fragment;
 
 import com.example.cadier.R;
 
@@ -15,7 +16,7 @@ import com.example.cadier.R;
  * Created by DrGreend on 07/03/2018.
  */
 
-public class FragmentContatos extends Fragment {
+public class FragmentContacts extends Fragment {
     TextView textViewLink;
 
     @Override

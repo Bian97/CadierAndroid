@@ -2,8 +2,8 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/Cadier.iml" filepath="$PROJECT_DIR$/Cadier.iml" group="Cadier" />
-      <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" group="Cadier/app" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/CadierAndroid.iml" filepath="$PROJECT_DIR$/.idea/modules/CadierAndroid.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/CadierAndroid.app.iml" filepath="$PROJECT_DIR$/.idea/modules/app/CadierAndroid.app.iml" />
     </modules>
   </component>
 </project>

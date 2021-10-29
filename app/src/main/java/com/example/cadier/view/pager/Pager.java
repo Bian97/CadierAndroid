@@ -1,9 +1,9 @@
 package com.example.cadier.view.pager;
 
-import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentStatePagerAdapter;
+
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentStatePagerAdapter;
 
 /**
  * Created by DrGreend on 24/03/2018.
@@ -22,11 +22,11 @@ public class Pager extends FragmentStatePagerAdapter {
     public Fragment getItem(int position) {
         switch (position) {
             case 0:
-                TabAgendados tabAgendados = new TabAgendados();
-                return tabAgendados;
+                TabScheduled tabScheduled = new TabScheduled();
+                return tabScheduled;
             case 1:
-                TabAnteriores tabAnteriores = new TabAnteriores();
-                return tabAnteriores;
+                TabPrevious tabPrevious = new TabPrevious();
+                return tabPrevious;
             default:
                 return null;
         }

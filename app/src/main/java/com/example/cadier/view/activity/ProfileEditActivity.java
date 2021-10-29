@@ -13,15 +13,6 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
-import android.support.annotation.NonNull;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
-import android.support.v4.content.ContextCompat;
-import android.support.v4.view.GravityCompat;
-import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.webkit.MimeTypeMap;
@@ -31,14 +22,13 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.example.cadier.R;
-import com.example.cadier.modelo.Usuario;
-import com.example.cadier.util.ConectaWebService;
-import com.example.cadier.view.fragments.FragmentConfiguracoes;
-
-import org.json.JSONObject;
+import com.example.cadier.modelo.User;
+import com.example.cadier.util.ConectWebService;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import okhttp3.MediaType;
@@ -51,18 +41,24 @@ import okhttp3.Response;
 import static android.Manifest.permission.READ_EXTERNAL_STORAGE;
 import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+
 /**
  * Created by DrGreend on 26/03/2018.
  */
 
-public class EditarPerfilActivity extends AppCompatActivity{
-    ImageView imageViewEditarPerfil;
-    boolean achou;
-    Uri imagemSelecionada;
-    static int RESULT_LOAD_IMAGEM = 2;
-    Usuario usuario;
-    EditText textViewEditarTelefone, textViewEditarTelefone2, textViewEditarConjuge, textViewEditarProfissao, textViewEditarEmail;
-    Button buttonGuardarPerfil;
+public class ProfileEditActivity extends AppCompatActivity {
+    ImageView imageViewEditProfile;
+    boolean find;
+    Uri selectedImage;
+    static int RESULT_LOAD_IMAGE = 2;
+    User user;
+    EditText textViewEditPhone, textViewEditPhone2, textViewEditSpouse, textViewEditProfession, textViewEditEmail;
+    Button buttonSaveProfile;
     ProgressDialog progressDialog;
     private static final int PERMISSION_REQUEST_CODE = 200;
 
@@ -73,7 +69,7 @@ public class EditarPerfilActivity extends AppCompatActivity{
 
         Intent intent = getIntent();
         if(intent != null){
-            usuario = (Usuario) intent.getSerializableExtra("usuario");
+            user = (User) intent.getSerializableExtra("usuario");
         }
 
         if (!checkPermission()) {
@@ -86,41 +82,41 @@ public class EditarPerfilActivity extends AppCompatActivity{
             }
         }
 
-        imageViewEditarPerfil = findViewById(R.id.imageViewEditarPerfil);
-        textViewEditarTelefone = findViewById(R.id.textViewEditarTelefone);
-        textViewEditarTelefone2 = findViewById(R.id.textViewEditarTelefone2);
-        textViewEditarConjuge = findViewById(R.id.textViewEditarConjuge);
-        textViewEditarProfissao = findViewById(R.id.textViewEditarProfissao);
-        textViewEditarEmail = findViewById(R.id.textViewEditarEmail);
-        buttonGuardarPerfil = findViewById(R.id.buttonGuardarPerfil);
+        imageViewEditProfile = findViewById(R.id.imageViewEditarPerfil);
+        textViewEditPhone = findViewById(R.id.textViewEditarTelefone);
+        textViewEditPhone2 = findViewById(R.id.textViewEditarTelefone2);
+        textViewEditSpouse = findViewById(R.id.textViewEditarConjuge);
+        textViewEditProfession = findViewById(R.id.textViewEditarProfissao);
+        textViewEditEmail = findViewById(R.id.textViewEditarEmail);
+        buttonSaveProfile = findViewById(R.id.buttonGuardarPerfil);
 
-        imageViewEditarPerfil.setOnClickListener(new View.OnClickListener() {
+        imageViewEditProfile.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                achou = true;
-                startActivityForResult(new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI), RESULT_LOAD_IMAGEM);
+                find = true;
+                startActivityForResult(new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI), RESULT_LOAD_IMAGE);
             }
         });
-        textViewEditarTelefone.setText(usuario.getTelefone());
-        textViewEditarTelefone2.setText(usuario.getTelOp());
-        textViewEditarConjuge.setText(usuario.getConjuge());
-        textViewEditarProfissao.setText(usuario.getProfissao());
-        textViewEditarEmail.setText(usuario.getEmail());
-        Bitmap aux = BitmapFactory.decodeFile(usuario.getFoto());
-        imageViewEditarPerfil.setImageBitmap(aux);
-        buttonGuardarPerfil.setOnClickListener(new View.OnClickListener() {
+        textViewEditPhone.setText(!user.getPhone1().contains("null") ? user.getPhone1() : "");
+        textViewEditPhone2.setText(!user.getPhone2().contains("null") ? user.getPhone2() : "");
+        textViewEditSpouse.setText(!user.getSpouse().contains("null") ? user.getSpouse() : "");
+        textViewEditProfession.setText(!user.getJob().contains("null") ? user.getJob() : "");
+        textViewEditEmail.setText(!user.getEmail().contains("null") ? user.getEmail() : "");
+        Bitmap aux = BitmapFactory.decodeFile(user.getPhoto());
+        imageViewEditProfile.setImageBitmap(aux);
+        buttonSaveProfile.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 try {
-                    if(!textViewEditarTelefone.getText().toString().equals("")){
+                    if(!textViewEditPhone.getText().toString().equals("")){
 
-                        EditarPerfilTask editarTask = new EditarPerfilTask();
-                        usuario.setTelefone(textViewEditarTelefone.getText().toString());
-                        usuario.setTelOp(textViewEditarTelefone2.getText().toString());
-                        usuario.setConjuge(textViewEditarConjuge.getText().toString());
-                        usuario.setProfissao(textViewEditarProfissao.getText().toString());
-                        usuario.setEmail(textViewEditarEmail.getText().toString());
-                        editarTask.execute();
+                        EditProfileTask editTask = new EditProfileTask();
+                        user.setPhone1(textViewEditPhone.getText().toString());
+                        user.setPhone2(textViewEditPhone2.getText().toString());
+                        user.setSpouse(textViewEditSpouse.getText().toString());
+                        user.setJob(textViewEditProfession.getText().toString());
+                        user.setEmail(textViewEditEmail.getText().toString());
+                        editTask.execute();
                     } else {
                         Toast.makeText(getApplicationContext(), "Precisamos de um Telefone 1!", Toast.LENGTH_SHORT).show();
                     }
@@ -135,13 +131,13 @@ public class EditarPerfilActivity extends AppCompatActivity{
     @Override
     public void onActivityResult(int requestCode, int resultCode, final Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == RESULT_LOAD_IMAGEM && resultCode == RESULT_OK && data != null) {
+        if (requestCode == RESULT_LOAD_IMAGE && resultCode == RESULT_OK && data != null) {
 
-            imagemSelecionada = data.getData();
+            selectedImage = data.getData();
 
-            imageViewEditarPerfil.setImageURI(imagemSelecionada);
+            imageViewEditProfile.setImageURI(selectedImage);
 
-            usuario.setFoto(getRealPathFromURI(imagemSelecionada));
+            user.setPhoto(getRealPathFromURI(selectedImage));
         }
     }
 
@@ -158,13 +154,13 @@ public class EditarPerfilActivity extends AppCompatActivity{
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-        startActivity(new Intent(EditarPerfilActivity.this, MenuActivity.class).putExtra("usuario", usuario));
+        startActivity(new Intent(ProfileEditActivity.this, MenuActivity.class).putExtra("usuario", user));
     }
-    public class EditarPerfilTask extends AsyncTask<String,String,String> {
+    public class EditProfileTask extends AsyncTask<String,String,String> {
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            progressDialog = ProgressDialog.show(EditarPerfilActivity.this, "Alterando Dados", "Aguarde um instante...", false, false);
+            progressDialog = ProgressDialog.show(ProfileEditActivity.this, "Alterando Dados", "Aguarde um instante...", false, false);
         }
 
         private String getMimeType(String path) {
@@ -186,42 +182,41 @@ public class EditarPerfilActivity extends AppCompatActivity{
 
                 RequestBody body;
 
-                if(imagemSelecionada != null) {
-                    File file = new File(getRealPathFromURI(imagemSelecionada));
+                if(selectedImage != null) {
+                    File file = new File(getRealPathFromURI(selectedImage));
                     String content_type = getMimeType(file.getPath());
                     Log.e("POST", "com foto");
 
+                    ConectWebService cW = new ConectWebService();
+
                     body = new MultipartBody.Builder().setType(MultipartBody.FORM)
                             .addFormDataPart("url_da_foto", file.getName(), RequestBody.create(MediaType.parse(content_type), file))
-                            .addFormDataPart("telefone", usuario.getTelefone())
-                            .addFormDataPart("telefone2", usuario.getTelOp())
-                            .addFormDataPart("conjuge", usuario.getConjuge())
-                            .addFormDataPart("profissao", usuario.getProfissao())
-                            .addFormDataPart("email", usuario.getEmail())
-                            .addFormDataPart("rol", String.valueOf(usuario.getRol()))
-                            .addFormDataPart("achou", "sim")
+                            .addFormDataPart("telefone", user.getPhone1())
+                            .addFormDataPart("telefone2", user.getPhone2())
+                            .addFormDataPart("conjuge", user.getSpouse())
+                            .addFormDataPart("profissao", user.getJob())
+                            .addFormDataPart("email", user.getEmail())
+                            .addFormDataPart("IdPFisica", String.valueOf(user.getPhysicalId()))
+                            //.addFormDataPart("achou", "sim")
                             .build();
-                    Request request = new Request.Builder().url("http://cadier.com.br/WS/wsPutPerfil.php").post(body).build();
+                    Request request = new Request.Builder().url("http://cadier.com.br/api/basicUpdateProfileApp").post(body).build();
                     Response response = client.newCall(request).execute();
                     result = response.body().string();
                 } else {
                     Log.e("POST", "sem foto");
                     body = new MultipartBody.Builder().setType(MultipartBody.FORM)
-                            .addFormDataPart("telefone", usuario.getTelefone())
-                            .addFormDataPart("telefone2", usuario.getTelOp())
-                            .addFormDataPart("conjuge", usuario.getConjuge())
-                            .addFormDataPart("profissao", usuario.getProfissao())
-                            .addFormDataPart("email", usuario.getEmail())
-                            .addFormDataPart("rol", String.valueOf(usuario.getRol()))
-                            .addFormDataPart("achou", "nao")
+                            .addFormDataPart("telefone", user.getPhone1())
+                            .addFormDataPart("telefone2", user.getPhone2())
+                            .addFormDataPart("conjuge", user.getSpouse())
+                            .addFormDataPart("profissao", user.getJob())
+                            .addFormDataPart("email", user.getEmail())
+                            .addFormDataPart("IdPFisica", String.valueOf(user.getPhysicalId()))
+                            //.addFormDataPart("achou", "nao")
                             .build();
-                    Request request = new Request.Builder().url("http://cadier.com.br/WS/wsPutPerfil.php").post(body).build();
+                    Request request = new Request.Builder().url("http://cadier.com.br/api/basicUpdateProfileApp").post(body).build();
                     Response response = client.newCall(request).execute();
                     result = response.body().string();
                 }
-
-
-
             /*String result;
             ConectaWebService cW = new ConectaWebService();
             result = cW.send(strings[0], "PUT", strings[1]);*/
@@ -266,7 +261,7 @@ public class EditarPerfilActivity extends AppCompatActivity{
                 alertBuilder.setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                     @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
                     public void onClick(DialogInterface dialog, int which) {
-                        ActivityCompat.requestPermissions(EditarPerfilActivity.this, new String[]{WRITE_EXTERNAL_STORAGE
+                        ActivityCompat.requestPermissions(ProfileEditActivity.this, new String[]{WRITE_EXTERNAL_STORAGE
                                 , READ_EXTERNAL_STORAGE}, PERMISSION_REQUEST_CODE);
                     }
                 });
@@ -274,7 +269,7 @@ public class EditarPerfilActivity extends AppCompatActivity{
                 alert.show();
                 Log.e("", "permission denied, show dialog");
             } else {
-                ActivityCompat.requestPermissions(EditarPerfilActivity.this, new String[]{WRITE_EXTERNAL_STORAGE,
+                ActivityCompat.requestPermissions(ProfileEditActivity.this, new String[]{WRITE_EXTERNAL_STORAGE,
                         READ_EXTERNAL_STORAGE}, PERMISSION_REQUEST_CODE);
             }
         } else {

@@ -3,36 +3,41 @@ package com.example.cadier.view.activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
-import android.support.design.widget.NavigationView;
-import android.support.v4.view.GravityCompat;
-import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBarDrawerToggle;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
-import android.util.Log;
+
+import androidx.appcompat.app.ActionBarDrawerToggle;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.core.view.GravityCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
+
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.cadier.R;
-import com.example.cadier.modelo.Usuario;
-import com.example.cadier.view.fragments.FragmentAjuda;
-import com.example.cadier.view.fragments.FragmentCalendario;
-import com.example.cadier.view.fragments.FragmentConfiguracoes;
-import com.example.cadier.view.fragments.FragmentContatos;
-import com.example.cadier.view.fragments.FragmentMensalidades;
-import com.example.cadier.view.fragments.FragmentPedidos;
-import com.example.cadier.view.fragments.FragmentPerfil;
+import com.example.cadier.modelo.User;
+import com.example.cadier.view.fragments.FragmentHelp;
+import com.example.cadier.view.fragments.FragmentConfigurations;
+import com.example.cadier.view.fragments.FragmentContacts;
+import com.example.cadier.view.fragments.FragmentMonthly;
+import com.example.cadier.view.fragments.FragmentOrders;
+import com.example.cadier.view.fragments.FragmentProfile;
+import com.google.android.material.navigation.NavigationView;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
 
 public class MenuActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
-    Usuario usuario = new Usuario();
-    TextView txtNomeMenu, txtIgrejaMenu;
+    User user = new User();
+    TextView txtNameMenu, txtChurchMenu;
     ImageView imageViewMenu;
 
     @Override
@@ -63,25 +68,25 @@ public class MenuActivity extends AppCompatActivity
 
         Intent intent = getIntent();
         if(intent != null){
-            usuario = (Usuario) intent.getSerializableExtra("usuario");
+            user = (User) intent.getSerializableExtra("usuario");
         }
 
         View view = navigationView.getHeaderView(0);
         imageViewMenu = view.findViewById(R.id.imageViewMenu);
-        txtNomeMenu = view.findViewById(R.id.txtNomeMenu);
-        txtIgrejaMenu = view.findViewById(R.id.txtIgrejaMenu);
+        txtNameMenu = view.findViewById(R.id.txtNomeMenu);
+        txtChurchMenu = view.findViewById(R.id.txtIgrejaMenu);
 
-        txtNomeMenu.setText(usuario.getNome());
-        txtIgrejaMenu.setText(usuario.getIgreja());
+        txtNameMenu.setText(user.getName());
+        txtChurchMenu.setText(user.getChurch());
 
-        Bitmap aux = BitmapFactory.decodeFile(usuario.getFoto());
-        if(usuario.getFoto() != null && aux != null) {
+        Bitmap aux = BitmapFactory.decodeFile(user.getPhoto());
+        if(user.getPhoto() != null && aux != null) {
             imageViewMenu.setImageBitmap(aux);
         } else {
             imageViewMenu.setImageResource(R.drawable.foto);
         }
 
-        iniciarFragment(new FragmentPerfil(), "Perfil");
+        startFragment(new FragmentProfile(), "Perfil");
     }
 
     @Override
@@ -103,7 +108,7 @@ public class MenuActivity extends AppCompatActivity
 
         switch (id){
             case R.id.opcao_perfil:
-                iniciarFragment(new FragmentPerfil(), "Perfil");
+                startFragment(new FragmentProfile(), "Perfil");
                 break;
             case R.id.opcao_calendario:
                 Intent viewIntent = new Intent("android.intent.action.VIEW", Uri.parse("https://cadier.yolasite.com/calendario-reuni%C3%B5es.php"));
@@ -111,22 +116,22 @@ public class MenuActivity extends AppCompatActivity
                 //iniciarFragment(new FragmentCalendario(), "Calendário");
                 break;
             case R.id.opcao_pedidos:
-                iniciarFragment(new FragmentPedidos(), "Pedidos");
+                startFragment(new FragmentOrders(), "Pedidos");
                 break;
             case R.id.opcao_mensalidades:
-                iniciarFragment(new FragmentMensalidades(), "Mensalidades");
+                startFragment(new FragmentMonthly(), "Mensalidades");
                 break;
             case R.id.opcao_configuracao:
-                iniciarFragment(new FragmentConfiguracoes(), "Configurações");
+                startFragment(new FragmentConfigurations(), "Configurações");
                 break;
             case R.id.opcao_contatos:
-                iniciarFragment(new FragmentContatos(), "Contatos");
+                startFragment(new FragmentContacts(), "Contatos");
                 break;
             case R.id.opcao_ajuda:
-                iniciarFragment(new FragmentAjuda(), "Ajuda");
+                startFragment(new FragmentHelp(), "Ajuda");
                 break;
             case R.id.opcao_logout:
-                usuario = null;
+                user = null;
                 startActivity(new Intent(getApplicationContext(), LoginActivity.class));
                 break;
         }
@@ -135,12 +140,11 @@ public class MenuActivity extends AppCompatActivity
         return true;
     }
 
-    public void iniciarFragment(Fragment fragment, String title) {
+    public void startFragment(Fragment fragment, String title) {
 
         if (fragment != null) {
-
             if (title.equalsIgnoreCase(title)) {
-                getIntent().putExtra("usuario", usuario);
+                getIntent().putExtra("usuario", user);
             }
             FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
             fragmentTransaction.replace(R.id.frameLayout, fragment);

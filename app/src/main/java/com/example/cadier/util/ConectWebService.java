@@ -7,8 +7,13 @@ import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
+import java.util.Map;
+import java.util.StringJoiner;
 
 import javax.net.ssl.HttpsURLConnection;
 
@@ -16,7 +21,7 @@ import javax.net.ssl.HttpsURLConnection;
  * Created by DrGreend on 28/03/2018.
  */
 
-public class ConectaWebService {
+public class ConectWebService {
     private int TIMEOUT_MILLISEC = 300000;
     private static final String USER_AGENT = "Mozilla/5.0";
 
@@ -33,11 +38,11 @@ public class ConectaWebService {
             //add request header
             conn.setRequestProperty("User-Agent", USER_AGENT);
             int responseCode = conn.getResponseCode();
-            if (responseCode == HttpURLConnection.HTTP_OK) {
+            /*if (responseCode == HttpURLConnection.HTTP_OK) {
                 System.out.println("CONECTOU! " + responseCode);
             } else {
                 System.out.println("DEU RUIM!!");
-            }
+            }*/
 
             in = new BufferedReader(
                     new InputStreamReader(conn.getInputStream()));
@@ -72,25 +77,46 @@ public class ConectaWebService {
         }
     }
 
-    public String send(String url, String tipo, String urlParameters) {
-        HttpsURLConnection conn = null;
+    public String send(String url, String tipo, Map<String, String> urlParameters){//String urlParameters) {
+        //HttpsURLConnection conn = null;
         BufferedReader in = null;
         try {
             URL obj = new URL(url);
             HttpURLConnection con = (HttpURLConnection) obj.openConnection();
 
-            //add reuqest header
+            //add request header
             con.setRequestMethod(tipo);
-            con.setRequestProperty("Content-Type", "application/json");
+            //con.setRequestProperty("Content-Type", "application/json");
+            con.setRequestProperty("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
             con.setRequestProperty("User-Agent", USER_AGENT);
             con.setRequestProperty("Accept-Language", "en-US,en;q=0.5");
 
+            String joiner = "";
+            int counter = 0;
+            for (Map.Entry<String, String> entry : urlParameters.entrySet()) {
+                counter++;
+                joiner += URLEncoder.encode(entry.getKey(), "UTF-8") + "="
+                        + URLEncoder.encode(entry.getValue(), "UTF-8");
+                if (counter < urlParameters.size()) {
+                    joiner += "&";
+                }
+            }
+            byte[] out = joiner.getBytes();
+            int length = out.length;
+
             // Send post request
-            con.setDoOutput(true);
+            /*con.setDoOutput(true);
             DataOutputStream wr = new DataOutputStream(con.getOutputStream());
             wr.writeBytes(urlParameters);
             wr.flush();
-            wr.close();
+            wr.close();*/
+
+            con.setFixedLengthStreamingMode(length);
+            con.setRequestProperty("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
+            con.connect();
+            try (OutputStream os = con.getOutputStream()) {
+                os.write(out);
+            }
 
             int responseCode = con.getResponseCode();
 
@@ -104,6 +130,12 @@ public class ConectaWebService {
             }
             in.close();
 
+            return response.toString();
+
+        } catch(Exception ex){
+            return null;
+        }
+/*
             //print result
             if (responseCode == HttpURLConnection.HTTP_OK) {
                 Log.d("XAMPSON", String.valueOf(responseCode));
@@ -138,6 +170,6 @@ public class ConectaWebService {
                 System.out.println("Erro!! " + e.getMessage());
                 return null;
             }
-        }
+        }*/
     }
 }

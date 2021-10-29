@@ -6,8 +6,6 @@ import android.content.DialogInterface;
 import android.net.ConnectivityManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.v4.app.ListFragment;
-import android.support.v7.app.AlertDialog;
 import android.text.InputFilter;
 import android.util.Log;
 import android.view.Gravity;
@@ -19,40 +17,47 @@ import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AlertDialog;
+import androidx.fragment.app.ListFragment;
+
 import com.example.cadier.R;
-import com.example.cadier.modelo.OrdemServico;
-import com.example.cadier.modelo.Usuario;
+import com.example.cadier.modelo.ServiceOrder;
+import com.example.cadier.modelo.User;
 import com.example.cadier.util.CnpjCpfDataMask;
-import com.example.cadier.util.ConectaWebService;
-import com.example.cadier.view.adapter.AdapterAnteriores;
+import com.example.cadier.util.ConectWebService;
+import com.example.cadier.util.Enums.ServiceKindEnum;
+import com.example.cadier.view.adapter.AdapterPrevious;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 
+import java.sql.Date;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by DrGreend on 24/03/2018.
  */
 
-public class TabAnteriores extends ListFragment {
-    Usuario usuario;
-    OrdemServico ordemServico;
+public class TabPrevious extends ListFragment {
+    User user;
+    ServiceOrder serviceOrder;
     //EditText textViewDataExib;
-    ImageButton buttonProcurar;
+    ImageButton buttonSearch;
     ProgressDialog progressDialog;
-    ArrayList<OrdemServico> listaServicos;
-    String data;
+    ArrayList<ServiceOrder> orderList;
+    String date;
 
     @Override
     public View onCreateView(final LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        usuario = (Usuario) getActivity().getIntent().getSerializableExtra("usuario");
+        user = (User) getActivity().getIntent().getSerializableExtra("usuario");
         View view = inflater.inflate(R.layout.tab_anteriores, container, false);
 
       //  textViewDataExib = view.findViewById(R.id.textViewDataExib);
-        buttonProcurar = view.findViewById(R.id.buttonProcurar);
+        buttonSearch = view.findViewById(R.id.buttonProcurar);
 
-        buttonProcurar.setOnClickListener(new View.OnClickListener() {
+        buttonSearch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
         //        data = textViewDataExib.getText().toString();
@@ -75,19 +80,19 @@ public class TabAnteriores extends ListFragment {
                 builder.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        data = input.getText().toString();
+                        date = input.getText().toString();
                         dialog.dismiss();
-                        BuscarAnteriores buscarAnteriores = new BuscarAnteriores();
+                        SearchPrevious searchPrevious = new SearchPrevious();
                         Context context = getContext();
-                        boolean conectado;
+                        boolean connected;
                         ConnectivityManager conectivtyManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
                         if (conectivtyManager.getActiveNetworkInfo() != null && conectivtyManager.getActiveNetworkInfo().isAvailable() && conectivtyManager.getActiveNetworkInfo().isConnected()) {
-                            conectado = true;
+                            connected = true;
                         } else {
-                            conectado = false;
+                            connected = false;
                         }
-                        if(conectado) {
-                            buscarAnteriores.execute();
+                        if(connected) {
+                            searchPrevious.execute();
                         } else {
                             Toast.makeText(context, "Você não está conectado à internet!!", Toast.LENGTH_LONG).show();
                         }
@@ -109,7 +114,7 @@ public class TabAnteriores extends ListFragment {
         return view;
     }
 
-    public class BuscarAnteriores extends AsyncTask<String, String, String> {
+    public class SearchPrevious extends AsyncTask<String, String, String> {
         @Override
         protected void onPreExecute(){
             super.onPreExecute();
@@ -119,10 +124,12 @@ public class TabAnteriores extends ListFragment {
         @Override
         protected String doInBackground(String... strings) {
             String result = null;
-            ConectaWebService cW = new ConectaWebService();
+            ConectWebService cW = new ConectWebService();
 
-            result = cW.request("http://cadier.com.br/WS/wsListAnteriores.php?rol=" + usuario.getRol() + "&data=" + data);
-
+            Map<String,String> arguments = new HashMap<>();
+            arguments.put("IdPFisica", String.valueOf(user.getPhysicalId()));
+            arguments.put("Date", date);
+            result = cW.send("http://cadier.com.br/api/ordersByDate", "POST", arguments);
 
             return result;
         }
@@ -130,22 +137,21 @@ public class TabAnteriores extends ListFragment {
         @Override
         protected void onPostExecute(String result){
             super.onPostExecute(result);
-            Log.d("XAMPSON", result);
-            listaServicos = new ArrayList<>();
+            orderList = new ArrayList<>();
             try {
                 if (result != null) {
                     JSONArray jsonArray = new JSONArray(result);
                     for(int i = 0; i < jsonArray.length(); i++) {
-                        ordemServico = new OrdemServico(jsonArray.getJSONObject(i).getInt("codord"), jsonArray.getJSONObject(i).getInt("fk_rolfis"), jsonArray.getJSONObject(i).getInt("fk_atend"), jsonArray.getJSONObject(i).getString("tiposerv")
-                                , jsonArray.getJSONObject(i).getString("obs"), jsonArray.getJSONObject(i).getString("datasoli"), jsonArray.getJSONObject(i).getString("datafez"), jsonArray.getJSONObject(i).getString("dataent"),
-                                jsonArray.getJSONObject(i).getString("nomelevou"), Float.parseFloat(jsonArray.getJSONObject(i).getString("valorserv")), Float.parseFloat(jsonArray.getJSONObject(i).getString("pghj")), Float.parseFloat(jsonArray.getJSONObject(i).getString("creditoant")),
-                                Float.parseFloat(jsonArray.getJSONObject(i).getString("resta")), Float.parseFloat(jsonArray.getJSONObject(i).getString("deposito")));
+                        serviceOrder = new ServiceOrder(jsonArray.getJSONObject(i).getInt("IdOrdem"), jsonArray.getJSONObject(i).getInt("IdPFisica"), jsonArray.getJSONObject(i).getInt("IdAtendente"), jsonArray.getJSONObject(i).getString("Servico"),
+                                jsonArray.getJSONObject(i).getString("Obs").contains("null") ? null : jsonArray.getJSONObject(i).getString("Obs"), Date.valueOf(jsonArray.getJSONObject(i).getString("DataPedido")), Date.valueOf(jsonArray.getJSONObject(i).getString("DataFeito")), Date.valueOf(jsonArray.getJSONObject(i).getString("DataEntregue")),
+                                jsonArray.getJSONObject(i).getString("QuemLevou"), Float.parseFloat(jsonArray.getJSONObject(i).getString("Valor")), Float.parseFloat(jsonArray.getJSONObject(i).getString("Pago")), Float.parseFloat(jsonArray.getJSONObject(i).getString("CreditoAnterior")),
+                                Float.parseFloat(jsonArray.getJSONObject(i).getString("Deposito")), ServiceKindEnum.fromInteger(jsonArray.getJSONObject(i).getInt("TipoServico")), Date.valueOf(jsonArray.getJSONObject(i).getString("Mensalidade")));
 
-                        listaServicos.add(ordemServico);
+                        orderList.add(serviceOrder);
                     }
-                    AdapterAnteriores adapterAnteriores = new AdapterAnteriores(getActivity(), R.layout.adapter_anteriores, listaServicos);
-                    setListAdapter(adapterAnteriores);
-                    //listviewAnteriores.setAdapter(adapterAnteriores);
+                    AdapterPrevious adapterPrevious = new AdapterPrevious(getActivity(), R.layout.adapter_anteriores, orderList);
+                    setListAdapter(adapterPrevious);
+
                 } else {
                     Toast.makeText(getContext(), "Não foram encontrados registros. Confira se a data está correta ou verifique sua conexão com a internet!", Toast.LENGTH_LONG).show();
                 }

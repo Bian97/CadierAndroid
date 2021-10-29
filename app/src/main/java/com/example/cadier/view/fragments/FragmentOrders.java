@@ -1,29 +1,30 @@
 package com.example.cadier.view.fragments;
 
 import android.os.Bundle;
-import android.support.design.widget.TabLayout;
-import android.support.v4.app.Fragment;
-import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.fragment.app.Fragment;
+import androidx.viewpager.widget.ViewPager;
+
 import com.example.cadier.R;
-import com.example.cadier.modelo.Usuario;
+import com.example.cadier.modelo.User;
 import com.example.cadier.view.pager.Pager;
+import com.google.android.material.tabs.TabLayout;
 
 /**
  * Created by DrGreend on 07/03/2018.
  */
 
-public class FragmentPedidos extends Fragment implements TabLayout.OnTabSelectedListener{
+public class FragmentOrders extends Fragment implements TabLayout.OnTabSelectedListener{
     private TabLayout tabLayout;
     private ViewPager viewPager;
-    Usuario usuario;
+    User user;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        usuario = (Usuario) getActivity().getIntent().getSerializableExtra("usuario");
+        user = (User) getActivity().getIntent().getSerializableExtra("usuario");
         View view = inflater.inflate(R.layout.fragment_pedidos, container, false);
 
         tabLayout = view.findViewById(R.id.tabLayout);
