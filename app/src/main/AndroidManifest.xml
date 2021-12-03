@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="com.example.cadier">
+    package="app.convencao.cadier">
     
     <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
@@ -50,7 +50,7 @@
         android:usesCleartextTraffic="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".view.activity.LoginActivity"
+            android:name="app.convencao.cadier.view.activity.LoginActivity"
             android:label="@string/app_name"
             android:theme="@style/AppTheme.NoActionBar"
             tools:replace="android:label"
@@ -61,9 +61,9 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".view.activity.MenuActivity"/>
-        <activity android:name=".view.activity.ProfileEditActivity"/>
-        <activity android:name=".view.activity.AddressEditActivity"/>
+        <activity android:name="app.convencao.cadier.view.activity.MenuActivity"/>
+        <activity android:name="app.convencao.cadier.view.activity.ProfileEditActivity"/>
+        <activity android:name="app.convencao.cadier.view.activity.AddressEditActivity"/>
     </application>
 
 </manifest>
