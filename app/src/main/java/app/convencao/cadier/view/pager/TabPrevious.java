@@ -11,6 +11,7 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
@@ -42,7 +43,6 @@ import java.util.Map;
 public class TabPrevious extends ListFragment {
     User user;
     ServiceOrder serviceOrder;
-    //EditText textViewDataExib;
     ImageButton buttonSearch;
     ProgressDialog progressDialog;
     ArrayList<ServiceOrder> orderList;
@@ -53,61 +53,39 @@ public class TabPrevious extends ListFragment {
         user = (User) getActivity().getIntent().getSerializableExtra("usuario");
         View view = inflater.inflate(R.layout.tab_anteriores, container, false);
 
-      //  textViewDataExib = view.findViewById(R.id.textViewDataExib);
         buttonSearch = view.findViewById(R.id.buttonProcurar);
 
-        buttonSearch.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-        //        data = textViewDataExib.getText().toString();
+        buttonSearch.setOnClickListener(view1 -> {
+            final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+            final DatePicker input = new DatePicker(getActivity());
+            LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.MATCH_PARENT,
+                    LinearLayout.LayoutParams.MATCH_PARENT);
+            input.setLayoutParams(lp);
+            builder.setTitle("Escolha a data da reunião ou do pedido abaixo!");
+            builder.setView(input);
 
-                final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-                final EditText input = new EditText(getActivity());
+            builder.setPositiveButton(android.R.string.ok, (dialog, which) -> {
+                date = input.getDayOfMonth() + "/" + (input.getMonth() + 1) + "/" + input.getYear();
+                dialog.dismiss();
+                SearchPrevious searchPrevious = new SearchPrevious();
+                Context context = getContext();
+                boolean connected = false;
+                ConnectivityManager connectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+                if (connectivityManager.getActiveNetworkInfo() != null && connectivityManager.getActiveNetworkInfo().isAvailable() && connectivityManager.getActiveNetworkInfo().isConnected()) {
+                    connected = true;
+                }
+                if(connected) {
+                    searchPrevious.execute();
+                } else {
+                    Toast.makeText(context, "Você não está conectado à internet!!", Toast.LENGTH_LONG).show();
+                }
+            });
 
-                input.addTextChangedListener(CnpjCpfDataMask.dataInsert("##/##/####", input));
-                input.setHint("00/00/0000");
-                input.setGravity(Gravity.CENTER);
-                input.setFilters(new InputFilter[]{new InputFilter.LengthFilter(10)});
-                LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
-                        LinearLayout.LayoutParams.MATCH_PARENT,
-                        LinearLayout.LayoutParams.MATCH_PARENT);
-                input.setLayoutParams(lp);
-                builder.setTitle("Digite a data da reunião abaixo!");
-                builder.setView(input);
+            builder.setNegativeButton(android.R.string.cancel, (dialogInterface, i) -> dialogInterface.dismiss());
 
-                //builder.setMessage("Aviso: As senhas não coincidem!");
-                builder.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        date = input.getText().toString();
-                        dialog.dismiss();
-                        SearchPrevious searchPrevious = new SearchPrevious();
-                        Context context = getContext();
-                        boolean connected;
-                        ConnectivityManager conectivtyManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-                        if (conectivtyManager.getActiveNetworkInfo() != null && conectivtyManager.getActiveNetworkInfo().isAvailable() && conectivtyManager.getActiveNetworkInfo().isConnected()) {
-                            connected = true;
-                        } else {
-                            connected = false;
-                        }
-                        if(connected) {
-                            searchPrevious.execute();
-                        } else {
-                            Toast.makeText(context, "Você não está conectado à internet!!", Toast.LENGTH_LONG).show();
-                        }
-                    }
-                });
-
-                builder.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        dialogInterface.dismiss();
-                    }
-                });
-
-                builder.create();
-                builder.show();
-            }
+            builder.create();
+            builder.show();
         });
 
         return view;

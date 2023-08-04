@@ -44,7 +44,7 @@ import java.util.Map;
 
 public class LoginActivity extends AppCompatActivity {
     EditText login, password;
-    Button enter;
+    Button enter, buttonCalendario;
     ProgressDialog progressDialog;
     User user;
     ImageView imageViewLogin;
@@ -60,11 +60,12 @@ public class LoginActivity extends AppCompatActivity {
         enter = findViewById(R.id.buttonLogin);
         imageViewLogin= findViewById(R.id.imageViewLogin);
         txtViewLink = findViewById(R.id.textViewLink);
+        buttonCalendario = findViewById(R.id.buttonCalendario);
 
-        txtViewLink.setOnClickListener(view -> {
+        buttonCalendario.setOnClickListener(view -> {
             Intent viewIntent =
                     new Intent("android.intent.action.VIEW",
-                            Uri.parse("https://cadier.yolasite.com"));
+                            Uri.parse("http://cadier.yolasite.com/calendario-reuni%C3%B5es.php"));
             startActivity(viewIntent);
         });
 
@@ -115,9 +116,9 @@ public class LoginActivity extends AppCompatActivity {
             super.onPostExecute(result);
             progressDialog.dismiss();
             try {
-                if(result != null) {
+                if(result != null && !result.equalsIgnoreCase("errocon")) {
                     if (!login.getText().toString().equals("") || !password.getText().toString().equals("")) {
-                        if (!result.equalsIgnoreCase("errocon") && !result.equalsIgnoreCase("erroli")) {
+                        if (!result.equalsIgnoreCase("Login Inválido")) {
                             JSONArray jsonArray = new JSONArray(result);
                             JSONObject jsonObject = jsonArray.getJSONObject(0);
 
@@ -182,9 +183,7 @@ public class LoginActivity extends AppCompatActivity {
                                     Toast.makeText(getApplicationContext(), "USUÁRIO NÃO EXISTE!", Toast.LENGTH_SHORT).show();
                                 }
                             }
-                        } else if (result.equalsIgnoreCase("errocon")) {
-                            Toast.makeText(LoginActivity.this, "Erro! Verifique se sua conexão com a internet!", Toast.LENGTH_LONG).show();
-                        } else if (result == null) {
+                        } else if (result.equalsIgnoreCase("Login Inválido")) {
                             Toast.makeText(LoginActivity.this, "Erro! Seus dados estão incorretos!", Toast.LENGTH_LONG).show();
                         }
                     } else {

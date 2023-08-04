@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    package="app.convencao.cadier">
+    xmlns:tools="http://schemas.android.com/tools">
     
     <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
@@ -17,19 +16,27 @@
 
     <compatible-screens>
         <!-- all small size screens -->
-        <screen android:screenSize="small" android:screenDensity="ldpi" />
-        <screen android:screenSize="small" android:screenDensity="mdpi" />
-        <screen android:screenSize="small" android:screenDensity="hdpi" />
-        <screen android:screenSize="small" android:screenDensity="xhdpi" />
-        <screen android:screenSize="small" android:screenDensity="xxhdpi" />
-        <screen android:screenSize="small" android:screenDensity="xxxhdpi" />
+        <screen android:screenSize="small" android:screenDensity="ldpi" /> <!-- 120 -->
+        <screen android:screenSize="small" android:screenDensity="mdpi" /> <!-- 160 -->
+        <screen android:screenSize="small" android:screenDensity="hdpi" /> <!-- 240 -->
+        <screen android:screenSize="small" android:screenDensity="280" /> <!-- Workaround -->
+        <screen android:screenSize="small" android:screenDensity="xhdpi" /> <!-- 320 -->
+        <screen android:screenSize="small" android:screenDensity="360" /> <!-- Workaround -->
+        <screen android:screenSize="small" android:screenDensity="420" /> <!-- Workaround Google Pixel, Nexus 5x -->
+        <screen android:screenSize="small" android:screenDensity="xxhdpi" /> <!-- 480 -->
+        <screen android:screenSize="small" android:screenDensity="560" /> <!-- Workaround Google Pixel XL, Nexus 6, Nexus 6P -->
+        <screen android:screenSize="small" android:screenDensity="xxxhdpi" />  <!-- 640 -->
         <!-- all normal size screens -->
-        <screen android:screenSize="normal" android:screenDensity="ldpi" />
-        <screen android:screenSize="normal" android:screenDensity="mdpi" />
-        <screen android:screenSize="normal" android:screenDensity="hdpi" />
-        <screen android:screenSize="normal" android:screenDensity="xhdpi" />
-        <screen android:screenSize="normal" android:screenDensity="xxhdpi" />
-        <screen android:screenSize="normal" android:screenDensity="xxxhdpi" />
+        <screen android:screenSize="normal" android:screenDensity="ldpi" /> <!-- 120 -->
+        <screen android:screenSize="normal" android:screenDensity="mdpi" /> <!-- 160 -->
+        <screen android:screenSize="normal" android:screenDensity="hdpi" /> <!-- 240 -->
+        <screen android:screenSize="normal" android:screenDensity="280" /> <!-- Workaround -->
+        <screen android:screenSize="normal" android:screenDensity="xhdpi" />  <!-- 320 -->
+        <screen android:screenSize="normal" android:screenDensity="360" /> <!-- Workaround -->
+        <screen android:screenSize="normal" android:screenDensity="420" /> <!-- Workaround Google Pixel, Nexus 5x -->
+        <screen android:screenSize="normal" android:screenDensity="xxhdpi" /> <!-- 480 -->
+        <screen android:screenSize="normal" android:screenDensity="560" /> <!-- Workaround Google Pixel XL, Nexus 6, Nexus 6P -->
+        <screen android:screenSize="normal" android:screenDensity="xxxhdpi" /> <!-- 640 -->
         <!-- all large size screens -->
         <screen android:screenSize="large" android:screenDensity="mdpi" />
         <screen android:screenSize="large" android:screenDensity="hdpi" />
