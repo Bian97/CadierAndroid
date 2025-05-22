@@ -82,7 +82,7 @@ public class LoginActivity extends AppCompatActivity {
             try {
                 if((!login.getText().toString().equals("") && !password.getText().toString().equals(""))){
                     LoginTask loginTask = new LoginTask();
-                    loginTask.execute("http://cadier.com.br/api/login", login.getText().toString(), password.getText().toString());
+                    loginTask.execute("https://cadier.com.br/api/login", login.getText().toString(), password.getText().toString());
                 } else {
                     Toast.makeText(getApplicationContext(), "PREENCHA O LOGIN E A SENHA!", Toast.LENGTH_SHORT).show();
                 }
@@ -217,7 +217,7 @@ public class LoginActivity extends AppCompatActivity {
                     String fileName = usu[0];
                     fileName = fileName.substring(fileName.lastIndexOf("/") + 1);
 
-                    URL url = new URL("http://cadier.com.br/WS/wsBaixaImagem.php?arquivo=" + fileName+"&rol="+ user.getPhysicalId());
+                    URL url = new URL("https://cadier.com.br/WS/wsBaixaImagem.php?arquivo=" + fileName+"&rol="+ user.getPhysicalId());
                     bitmap = BitmapFactory.decodeStream((InputStream) url.openStream());
 
                     File direct = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES) + File.separator + "CADIER");

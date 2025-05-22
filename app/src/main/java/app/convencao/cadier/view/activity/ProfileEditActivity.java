@@ -196,7 +196,7 @@ public class ProfileEditActivity extends AppCompatActivity {
                             .addFormDataPart("IdPFisica", String.valueOf(user.getPhysicalId()))
                             //.addFormDataPart("achou", "sim")
                             .build();
-                    Request request = new Request.Builder().url("http://cadier.com.br/api/basicUpdateProfileApp").post(body).build();
+                    Request request = new Request.Builder().url("https://cadier.com.br/api/basicUpdateProfileApp").post(body).build();
                     Response response = client.newCall(request).execute();
                     result = response.body().string();
                 } else {
@@ -210,7 +210,7 @@ public class ProfileEditActivity extends AppCompatActivity {
                             .addFormDataPart("IdPFisica", String.valueOf(user.getPhysicalId()))
                             //.addFormDataPart("achou", "nao")
                             .build();
-                    Request request = new Request.Builder().url("http://cadier.com.br/api/basicUpdateProfileApp").post(body).build();
+                    Request request = new Request.Builder().url("https://cadier.com.br/api/basicUpdateProfileApp").post(body).build();
                     Response response = client.newCall(request).execute();
                     result = response.body().string();
                 }

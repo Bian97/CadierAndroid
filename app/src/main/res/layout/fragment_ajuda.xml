@@ -58,5 +58,17 @@
     O item Logout: Este possui a função de deslogar do aplicativo, podendo logar novamente quando o mesmo for aberto.\n
     O item Contatos: Este possui a função de exibir para o filiado, os meios de comunicação com a CADIER. Podendo acessar o site com apenas um clique no link exibido.\n
     Agradeço imensamente aos filiados por fazerem parte de nossa família! Produzo este aplicativo com carinho e dedicação à obra de Deus! Que a paz do Senhor Jesus seja convosco. Amém!"/>
+
+        <Button
+            android:id="@+id/buttonPolitica"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="80dp"
+            android:layout_marginRight="80dp"
+            android:layout_marginTop="5dp"
+            android:background="@color/colorPrimary"
+            android:text="Política de Privacidade"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textColor="#000000" />
     </LinearLayout>
 </ScrollView>

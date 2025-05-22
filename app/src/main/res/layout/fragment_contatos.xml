@@ -72,24 +72,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="8dp"
-            android:textSize="14sp"
-            android:textStyle="bold"
-            android:textColor="#0247FE"
-            android:text="(21)96559-8833 (Tim)"/>
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="8dp"
-            android:textSize="14sp"
-            android:textStyle="bold"
-            android:textColor="#0247FE"
-            android:text="(21)2116-4447  (Telefone Fixo)"/>
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="8dp"
             android:layout_marginTop="12dp"
             android:textSize="18sp"
             android:textStyle="bold"
@@ -105,6 +87,6 @@
             android:textSize="14sp"
             android:textStyle="bold"
             android:textColor="#0247FE"
-            android:text="http://cadier.com.br -- Clique para acessar"/>
+            android:text="https://cadier.com.br -- Clique para acessar"/>
     </LinearLayout>
 </LinearLayout>

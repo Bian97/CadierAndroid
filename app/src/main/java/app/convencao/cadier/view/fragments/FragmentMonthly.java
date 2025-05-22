@@ -77,11 +77,11 @@ public class FragmentMonthly extends Fragment {
             String result = null;
             ConectWebService cW = new ConectWebService();
 
-            //result = cW.request("http://cadier.com.br/WS/wsGetMensalidade.php?rol=" + user.getPhysicalId());
+            //result = cW.request("https://cadier.com.br/WS/wsGetMensalidade.php?rol=" + user.getPhysicalId());
 
             Map<String,String> arguments = new HashMap<>();
             arguments.put("IdPFisica", String.valueOf(user.getPhysicalId()));
-            result = cW.send("http://cadier.com.br/api/lastMonthly", "POST", arguments);
+            result = cW.send("https://cadier.com.br/api/lastMonthly", "POST", arguments);
 
             return result;
         }

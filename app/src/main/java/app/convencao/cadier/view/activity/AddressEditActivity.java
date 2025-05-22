@@ -69,7 +69,7 @@ public class AddressEditActivity extends AppCompatActivity {
 
                     Map<String,String> arguments = new HashMap<>();
 
-                    arguments.put("url", "http://cadier.com.br/api/changeAddress");
+                    arguments.put("url", "https://cadier.com.br/api/changeAddress");
                     arguments.put("rua", editTextEditStreet.getText().toString());
                     arguments.put("bairro", editTextEditDistrict.getText().toString());
                     arguments.put("cep", editTextEditCode.getText().toString());

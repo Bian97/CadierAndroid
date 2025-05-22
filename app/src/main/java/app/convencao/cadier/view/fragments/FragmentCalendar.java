@@ -26,7 +26,7 @@ public class FragmentCalendar extends Fragment {
         View view = inflater.inflate(R.layout.fragment_calendario, container, false);
 
         calendario = view.findViewById(R.id.imageViewCalendario);
-        String link = "http://cadier.com.br/CalendarioCadier/CalendarioCadier.png";
+        String link = "https://cadier.com.br/CalendarioCadier/CalendarioCadier.png";
         Picasso.get().load(link).into(calendario);
 
         return view;

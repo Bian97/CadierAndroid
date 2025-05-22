@@ -72,7 +72,7 @@ public class TabScheduled extends ListFragment {
 
             Map<String,String> arguments = new HashMap<>();
             arguments.put("IdPFisica", String.valueOf(user.getPhysicalId()));
-            result = cW.send("http://cadier.com.br/api/pendingOrders", "POST", arguments);
+            result = cW.send("https://cadier.com.br/api/pendingOrders", "POST", arguments);
 
             return result;
         }

@@ -106,7 +106,7 @@ public class TabPrevious extends ListFragment {
             Map<String,String> arguments = new HashMap<>();
             arguments.put("IdPFisica", String.valueOf(user.getPhysicalId()));
             arguments.put("Date", date);
-            result = cW.send("http://cadier.com.br/api/ordersByDate", "POST", arguments);
+            result = cW.send("https://cadier.com.br/api/ordersByDate", "POST", arguments);
 
             return result;
         }
