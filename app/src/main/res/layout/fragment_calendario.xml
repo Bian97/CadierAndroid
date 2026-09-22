@@ -6,8 +6,21 @@
     android:layout_height="match_parent"
     android:background="#678FFE">
 
-    <com.github.chrisbanes.photoview.PhotoView
-        android:id="@+id/imageViewCalendario"
+    <ListView
+        android:id="@android:id/list"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        android:divider="@null"
+        android:dividerHeight="0dp"/>
+
+    <TextView
+        android:id="@android:id/empty"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:textColor="#FFFFFF"
+        android:textStyle="bold"
+        android:textSize="18sp"
+        android:padding="16dp"
+        android:text="Nenhum evento encontrado nos próximos meses."/>
 </RelativeLayout>

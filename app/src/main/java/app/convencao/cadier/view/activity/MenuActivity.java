@@ -3,7 +3,6 @@ package app.convencao.cadier.view.activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.appcompat.app.ActionBarDrawerToggle;
@@ -20,6 +19,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import app.convencao.cadier.modelo.User;
+import app.convencao.cadier.view.fragments.FragmentCalendar;
 import app.convencao.cadier.view.fragments.FragmentConfigurations;
 import app.convencao.cadier.view.fragments.FragmentContacts;
 import app.convencao.cadier.view.fragments.FragmentHelp;
@@ -106,9 +106,7 @@ public class MenuActivity extends AppCompatActivity
         if (id == R.id.opcao_perfil) {
             startFragment(new FragmentProfile(), "Perfil");
         } else if (id == R.id.opcao_calendario) {
-            Intent viewIntent = new Intent("android.intent.action.VIEW", Uri.parse("https://cadier.yolasite.com/calendario-reuni%C3%B5es.php"));
-            startActivity(viewIntent);
-            //iniciarFragment(new FragmentCalendario(), "Calendário");
+            startFragment(new FragmentCalendar(), "Calendário");
         } else if (id == R.id.opcao_pedidos) {
             startFragment(new FragmentOrders(), "Pedidos");
         } else if (id == R.id.opcao_mensalidades) {

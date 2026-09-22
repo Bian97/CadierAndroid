@@ -11,7 +11,7 @@
         <item
             android:id="@+id/opcao_calendario"
             android:icon="@drawable/calendario"
-            android:title="Calendário de Reuniões" />
+            android:title="Calendário" />
         <item
             android:id="@+id/opcao_pedidos"
             android:icon="@drawable/pedidos"
