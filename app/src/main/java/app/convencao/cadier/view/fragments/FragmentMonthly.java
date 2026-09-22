@@ -32,9 +32,12 @@ import java.util.Set;
  * O antigo endpoint dedicado "lastMonthly" não existe mais no backend novo (o equivalente mais
  * próximo, PessoaFisica/{id}/UltimoPagamento, só devolve uma data - sem serviço/valor/obs). Em vez
  * disso busca a lista completa de OrdemServico/PorPessoaFisica/{id} (mesma chamada das abas de
- * Pedidos) e pega o pedido pago mais recente cujo tipo de serviço seja Mensalidade, Filiação ou
+ * Pedidos) e pega o pedido quitado mais recente cujo tipo de serviço seja Mensalidade, Filiação ou
  * Reativação de Filiação (ids 2, 3 e 36 - mesmo conjunto que o back considera "em dia" pra fins de
- * inadimplência).
+ * inadimplência). "Quitado" usa o mesmo critério do back (ver
+ * Cadier.DB/Scripts/PessoaFisica/MarcarFiliadosComoInadimplentes.sql: (Pago + Deposito) >= Valor) -
+ * não dá pra exigir "pago > 0" porque uma mensalidade abonada (cortesia, Valor = Pago = 0) também
+ * conta como quitada e nunca teria pago > 0.
  */
 
 public class FragmentMonthly extends Fragment {
@@ -94,10 +97,11 @@ public class FragmentMonthly extends Fragment {
 
                 JSONArray jsonArray = new JSONArray(result);
                 // A lista já vem mais recente primeiro (ver OrdemServicoController.ListarPorPessoaFisica),
-                // então o primeiro pedido pago que bater o filtro já é o mais recente.
+                // então o primeiro pedido quitado que bater o filtro já é o mais recente.
                 for (int i = 0; i < jsonArray.length(); i++) {
                     JSONObject pedido = jsonArray.getJSONObject(i);
-                    if (pedido.optDouble("pago", 0) <= 0) continue;
+                    double quitado = pedido.optDouble("pago", 0) + pedido.optDouble("deposito", 0);
+                    if (quitado < pedido.optDouble("valor", 0)) continue;
                     if (pedido.isNull("tipoServico")) continue;
 
                     int idTipoServico = pedido.getJSONObject("tipoServico").optInt("idTipoServico", -1);

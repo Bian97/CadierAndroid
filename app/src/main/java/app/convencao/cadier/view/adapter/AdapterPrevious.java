@@ -15,8 +15,6 @@ import app.convencao.cadier.modelo.ServiceOrder;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.GregorianCalendar;
 
 /**
  * Created by DrGreend on 01/04/2018.
@@ -56,11 +54,11 @@ public class AdapterPrevious extends ArrayAdapter<ServiceOrder>{
         if(serviceOrder != null && holder != null) {
             holder.textViewWish.setText(serviceOrder.getService());
             SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-            holder.textViewDateWish.setText(sdf.format(serviceOrder.getOrderDate()));
-            holder.textViewDateGive.setText(sdf.format(serviceOrder.getDeliveryDate()));
+            holder.textViewDateWish.setText(serviceOrder.getOrderDate() != null ? sdf.format(serviceOrder.getOrderDate()) : "-");
+            holder.textViewDateGive.setText(serviceOrder.getDeliveryDate() != null ? sdf.format(serviceOrder.getDeliveryDate()) : "-");
             holder.textViewObs.setText(serviceOrder.getObs() == null ? "Não há!" : serviceOrder.getObs());
 
-            if ((serviceOrder.getDeliveryDate() == null || serviceOrder.getDeliveryDate().before(new GregorianCalendar(2000, Calendar.JANUARY,01).getTime())) || serviceOrder.getRemains() > 0) {
+            if (serviceOrder.isPendente()) {
                 holder.textViewStatus.setText("Pendência!");
             } else {
                 holder.textViewStatus.setText("Finalizado!");

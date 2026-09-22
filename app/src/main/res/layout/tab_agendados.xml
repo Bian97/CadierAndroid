@@ -2,12 +2,40 @@
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     android:background="#DBE5FF">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:background="#FFF3CD"
+        android:padding="12dp">
+
+        <TextView
+            android:id="@+id/textViewAvisoSecretaria"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="#5C4400"
+            android:textSize="16sp"
+            android:text="Em caso de divergência, problema ou dúvida sobre seus pedidos, entre em contato com a secretaria."/>
+
+        <Button
+            android:id="@+id/buttonFalarSecretaria"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:backgroundTint="#25D366"
+            android:textColor="#FFFFFF"
+            android:textAllCaps="false"
+            android:text="Falar com a Secretaria"/>
+    </LinearLayout>
 
     <ListView
         android:id="@android:id/list"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="0dp"
+        android:layout_weight="1">
     </ListView>
 
 </LinearLayout>

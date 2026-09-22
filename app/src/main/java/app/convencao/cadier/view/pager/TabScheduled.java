@@ -8,12 +8,14 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.Toast;
 
 import androidx.fragment.app.ListFragment;
 
 import app.convencao.cadier.util.ApiConfig;
 import app.convencao.cadier.util.OrdemServicoParser;
+import app.convencao.cadier.util.WhatsApp;
 import app.convencao.cadier.view.adapter.AdapterScheduled;
 import app.convencao.cadier.R;
 import app.convencao.cadier.modelo.ServiceOrder;
@@ -28,9 +30,10 @@ import java.util.ArrayList;
 
 /**
  * Created by DrGreend on 24/03/2018.
- * "Agendados" no backend novo = pedidos que ainda não foram entregues (dataEntregue nulo), obtidos
- * filtrando client-side a lista completa de OrdemServico/PorPessoaFisica/{id} - o antigo endpoint
- * dedicado "pendingOrders" não existe mais no backend novo.
+ * "Agendados" = pedidos pendentes (ainda não entregues OU com saldo em aberto - ver
+ * ServiceOrder.isPendente()), obtidos filtrando client-side a lista completa de
+ * OrdemServico/PorPessoaFisica/{id} - o antigo endpoint dedicado "pendingOrders" não existe mais
+ * no backend novo.
  */
 
 public class TabScheduled extends ListFragment {
@@ -43,6 +46,10 @@ public class TabScheduled extends ListFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         user = (User) getActivity().getIntent().getSerializableExtra("usuario");
         View view = inflater.inflate(R.layout.tab_agendados, container, false);
+
+        Button buttonFalarSecretaria = view.findViewById(R.id.buttonFalarSecretaria);
+        buttonFalarSecretaria.setOnClickListener(v -> WhatsApp.abrirChatSecretaria(getContext(), "Olá! Tenho uma dúvida sobre meus pedidos na CADIER."));
+
         SearchAgended searchAgended = new SearchAgended();
         Context context = getContext();
         boolean connected;
@@ -82,9 +89,9 @@ public class TabScheduled extends ListFragment {
                     JSONArray jsonArray = new JSONArray(result);
                     for(int i = 0; i < jsonArray.length(); i++) {
                         JSONObject pedido = jsonArray.getJSONObject(i);
-                        if (!pedido.isNull("dataEntregue")) continue; // só os ainda não entregues
-
                         serviceOrder = OrdemServicoParser.paraServiceOrder(pedido);
+                        if (!serviceOrder.isPendente()) continue; // só os pendentes (entrega ou pagamento em aberto)
+
                         ordersList.add(serviceOrder);
                     }
                     if (ordersList.isEmpty()) {

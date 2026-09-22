@@ -57,7 +57,10 @@ public class AdapterScheduled extends ArrayAdapter<ServiceOrder>{
             SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
             holder.textViewAgendedWish.setText(serviceOrder.getServiceKind().toString());
             holder.textViewAgendedValue.setText("R$ "+ String.format("%.02f", serviceOrder.getServicePrice()));
-            holder.textViewAgendedDate.setText(sdf.format(serviceOrder.getDeliveryDate()));
+            // "Data do Pedido" (rótulo do layout) - pedido pendente normalmente ainda não tem
+            // dataEntregue (fica null até ser entregue de verdade), então usar a data de entrega
+            // aqui faria o sdf.format() estourar exceção pra qualquer pedido realmente pendente.
+            holder.textViewAgendedDate.setText(serviceOrder.getOrderDate() != null ? sdf.format(serviceOrder.getOrderDate()) : "-");
             holder.textViewAgendedPayed.setText("R$ "+ String.format("%.02f", serviceOrder.getPayedToday()));
             holder.textViewAgendedStillPay.setText("R$ "+ String.format("%.02f", serviceOrder.getRemains()));
             holder.textViewAgendedObs.setText(serviceOrder.getObs());
