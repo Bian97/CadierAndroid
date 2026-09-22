@@ -7,6 +7,14 @@
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
 
+    <!-- Android 11+ (API 30+) esconde outros apps instalados por padrão - sem isso, o
+         Intent com setPackage("com.whatsapp"/"com.whatsapp.w4b") em util/WhatsApp.java pode
+         não resolver mesmo com o app instalado. -->
+    <queries>
+        <package android:name="com.whatsapp"/>
+        <package android:name="com.whatsapp.w4b"/>
+    </queries>
+
     <supports-screens android:resizeable="true"
         android:smallScreens="true"
         android:normalScreens="true"
@@ -25,9 +33,9 @@
     <application
         android:allowBackup="true"
         android:requestLegacyExternalStorage="true"
-        android:icon="@drawable/pomba"
+        android:icon="@drawable/logo"
         android:label="@string/app_name"
-        android:roundIcon="@drawable/pomba"
+        android:roundIcon="@drawable/logo"
         android:supportsRtl="true"
         android:usesCleartextTraffic="true"
         android:theme="@style/AppTheme">
@@ -46,6 +54,7 @@
         <activity android:name="app.convencao.cadier.view.activity.MenuActivity"/>
         <activity android:name="app.convencao.cadier.view.activity.ProfileEditActivity"/>
         <activity android:name="app.convencao.cadier.view.activity.AddressEditActivity"/>
+        <activity android:name="app.convencao.cadier.view.activity.CalendarioPublicoActivity"/>
     </application>
 
 </manifest>

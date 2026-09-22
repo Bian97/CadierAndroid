@@ -19,6 +19,13 @@
         android:layout_height="match_parent"
         android:layout_gravity="start"
         android:fitsSystemWindows="true"
+        android:background="@color/cadier_surface"
+        app:itemIconTint="@color/nav_item_tint"
+        app:itemTextColor="@color/nav_item_tint"
+        app:itemTextAppearance="@style/Cadier.Text.NavItem"
+        app:itemBackground="@color/nav_item_background"
+        app:itemIconPadding="20dp"
+        app:itemHorizontalPadding="20dp"
         app:headerLayout="@layout/nav_header_main"
         app:menu="@menu/activity_main_drawer" />
 

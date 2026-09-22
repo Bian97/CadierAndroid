@@ -1,100 +1,218 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<ScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:background="#DBE5FF">
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
+    android:background="@color/cadier_bg"
+    android:fillViewport="true">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="20dp"
-        android:layout_marginTop="10dp"
-        android:layout_gravity="center"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:paddingBottom="16dp">
+
+        <TextView
+            style="@style/Cadier.Text.Title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="16dp"
+            android:layout_marginBottom="4dp"
+            android:gravity="center"
+            android:text="Mensalidades"/>
+
+        <!-- Minha mensalidade (pessoa física) -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="16dp"
+            android:orientation="vertical"
+            android:background="@drawable/bg_cadier_card"
+            android:elevation="3dp"
+            android:padding="16dp">
 
             <TextView
-                android:layout_width="wrap_content"
+                style="@style/Cadier.Text.Subtitle"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Última(s) Mensalidade(s) Pago"
-                android:layout_gravity="center"
-                android:textSize="16sp"
-                android:textStyle="bold"
-                android:textColor="#091534"/>
+                android:text="Minha última mensalidade paga"/>
 
             <TextView
                 android:id="@+id/textViewMens"
-                android:layout_width="wrap_content"
+                style="@style/Cadier.Text.Body"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="8dp"
-                android:textSize="14sp"
-                android:textColor="#0247FE"
-                android:layout_gravity="center"
-                android:text="Não foram encontrados dados! Por favor, ligue para secretaria!"/>
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="16sp"
-            android:textStyle="bold"
-            android:textColor="#091534"
-            android:layout_gravity="center"
-            android:text="Data do Pagamento " />
-
-        <TextView
-            android:id="@+id/textViewMesPago"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="14sp"
-            android:textColor="#0247FE"
-            android:layout_gravity="center"
-            android:layout_margin="8dp"
-            android:text="00/00/0000"/>
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textSize="16sp"
+                android:layout_marginTop="10dp"
+                android:textColor="@color/cadier_teal_dark"
                 android:textStyle="bold"
-                android:textColor="#091534"
-                android:layout_gravity="center"
-                android:text="Valor Pago" />
+                android:visibility="gone"
+                android:text="Serviço"/>
+
+            <LinearLayout
+                android:id="@+id/layoutStatsMens"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:orientation="horizontal"
+                android:visibility="gone">
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginEnd="6dp"
+                    android:orientation="vertical"
+                    android:background="@drawable/bg_cadier_stat_teal"
+                    android:padding="8dp">
+
+                    <TextView
+                        style="@style/Cadier.Text.Caption"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Data do Pagamento"/>
+
+                    <TextView
+                        android:id="@+id/textViewMesPago"
+                        style="@style/Cadier.Text.Body"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/cadier_teal_dark"
+                        android:textStyle="bold"
+                        android:text="00/00/0000"/>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:background="@drawable/bg_cadier_stat_teal"
+                    android:padding="8dp">
+
+                    <TextView
+                        style="@style/Cadier.Text.Caption"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Valor Pago"/>
+
+                    <TextView
+                        android:id="@+id/textViewValor"
+                        style="@style/Cadier.Text.Body"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/cadier_teal_dark"
+                        android:textStyle="bold"
+                        android:text="R$ 00,00"/>
+                </LinearLayout>
+            </LinearLayout>
 
             <TextView
-                android:id="@+id/textViewValor"
-                android:layout_width="wrap_content"
+                android:id="@+id/textViewMensVazio"
+                style="@style/Cadier.Text.Body.Secondary"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textSize="14sp"
-                android:textColor="#0247FE"
-                android:layout_gravity="center"
-                android:layout_margin="8dp"
-                android:text="R$ 00,00"/>
+                android:layout_marginTop="10dp"
+                android:text="Não foram encontrados dados! Por favor, ligue para a secretaria."/>
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="16sp"
-            android:textStyle="bold"
-            android:textColor="#091534"
-            android:layout_gravity="center"
-            android:text="Observações Adicionais" />
+        </LinearLayout>
 
-        <TextView
-            android:id="@+id/textViewObs"
-            android:layout_width="wrap_content"
+        <!-- Mensalidade da igreja (só aparece se a pessoa for presidente/responsável por alguma) -->
+        <LinearLayout
+            android:id="@+id/cardMensalidadeIgreja"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textSize="14sp"
-            android:textColor="#0247FE"
-            android:layout_gravity="center"
-            android:layout_margin="8dp"
-            android:textAlignment="center"
-            android:text="OBS"/>
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:orientation="vertical"
+            android:background="@drawable/bg_cadier_card"
+            android:elevation="3dp"
+            android:padding="16dp"
+            android:visibility="gone">
+
+            <TextView
+                android:id="@+id/textViewNomeIgreja"
+                style="@style/Cadier.Text.Subtitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Última mensalidade paga - Nome da Igreja"/>
+
+            <TextView
+                android:id="@+id/textViewMensIgreja"
+                style="@style/Cadier.Text.Body"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:textColor="@color/cadier_teal_dark"
+                android:textStyle="bold"
+                android:text="Serviço"/>
+
+            <LinearLayout
+                android:id="@+id/layoutStatsMensIgreja"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:orientation="horizontal">
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginEnd="6dp"
+                    android:orientation="vertical"
+                    android:background="@drawable/bg_cadier_stat_teal"
+                    android:padding="8dp">
+
+                    <TextView
+                        style="@style/Cadier.Text.Caption"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Data do Pagamento"/>
+
+                    <TextView
+                        android:id="@+id/textViewMesPagoIgreja"
+                        style="@style/Cadier.Text.Body"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/cadier_teal_dark"
+                        android:textStyle="bold"
+                        android:text="00/00/0000"/>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:background="@drawable/bg_cadier_stat_teal"
+                    android:padding="8dp">
+
+                    <TextView
+                        style="@style/Cadier.Text.Caption"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Valor Pago"/>
+
+                    <TextView
+                        android:id="@+id/textViewValorIgreja"
+                        style="@style/Cadier.Text.Body"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/cadier_teal_dark"
+                        android:textStyle="bold"
+                        android:text="R$ 00,00"/>
+                </LinearLayout>
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/textViewMensIgrejaVazio"
+                style="@style/Cadier.Text.Body.Secondary"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:visibility="gone"
+                android:text="Nenhuma mensalidade paga encontrada para essa igreja."/>
+
+        </LinearLayout>
 
     </LinearLayout>
-    </LinearLayout>
-</LinearLayout>
+</ScrollView>

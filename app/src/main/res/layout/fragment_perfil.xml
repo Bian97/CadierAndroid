@@ -1,168 +1,238 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<ScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
-
+    android:background="@color/cadier_bg"
+    android:fillViewport="true">
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="130dp"
-        android:weightSum="2"
-        android:background="#DDE3FD"
-        android:orientation="horizontal">
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="25dp"
-            android:layout_weight="1"
-            android:orientation="vertical">
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingBottom="16dp">
 
-            <ImageView
-                android:id="@+id/imageViewPerfil"
-                android:layout_width="60dp"
-                android:layout_height="60dp"
-                android:layout_marginTop="7dp"
-                android:background="@drawable/foto"
-                android:scaleType="fitXY"/>
+        <!-- Cabeçalho: foto + nome + rol + editar -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="16dp"
+            android:orientation="vertical"
+            android:background="@drawable/bg_cadier_card"
+            android:elevation="3dp"
+            android:padding="16dp">
+
             <LinearLayout
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:weightSum="2"
-                android:orientation="vertical">
-            <TextView
-                android:id="@+id/textViewNomePerfil"
-                android:layout_width="130dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:layout_gravity="left"
-                android:text="Bian Medeiros Daflon"
-                android:textSize="10sp"
-                android:textStyle="bold"/>
-            <TextView
-                android:id="@+id/textViewRolPerfil"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:textAlignment="center"
-                android:text="5050"
-                android:textSize="8sp"/>
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
+
+                <FrameLayout
+                    android:layout_width="88dp"
+                    android:layout_height="88dp">
+
+                    <View
+                        android:layout_width="88dp"
+                        android:layout_height="88dp"
+                        android:background="@drawable/bg_cadier_avatar_ring"/>
+
+                    <ImageView
+                        android:id="@+id/imageViewPerfil"
+                        android:layout_width="80dp"
+                        android:layout_height="80dp"
+                        android:layout_gravity="center"
+                        android:background="@drawable/bg_cadier_avatar_mask"
+                        android:clipToOutline="true"
+                        android:scaleType="centerInside"/>
+                </FrameLayout>
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginStart="16dp"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/textViewNomePerfil"
+                        style="@style/Cadier.Text.Subtitle"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Nome do Filiado"/>
+
+                    <TextView
+                        android:id="@+id/textViewRolPerfil"
+                        style="@style/Cadier.Text.Body.Secondary"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="2dp"
+                        android:text="Rol nº 0000"/>
+                </LinearLayout>
             </LinearLayout>
+
+            <Button
+                android:id="@+id/buttonEditarPerfilAtalho"
+                style="@style/Cadier.Button.Secondary"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:layout_marginTop="16dp"
+                android:text="Editar Perfil"/>
         </LinearLayout>
+
+        <!-- Situação -->
         <LinearLayout
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="center_vertical"
-            android:layout_weight="1"
-            android:orientation="vertical">
-
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_marginTop="15dp"
-                android:layout_marginLeft="20dp">
-
-            <ImageView
-                android:layout_width="20dp"
-                android:layout_height="20dp"
-                android:src="@drawable/endereco" />
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginBottom="12dp"
+            android:orientation="vertical"
+            android:background="@drawable/bg_cadier_card"
+            android:elevation="3dp"
+            android:padding="16dp">
 
             <TextView
-                android:id="@+id/textViewEnderecoPerfil"
-                android:layout_width="130dp"
-                android:layout_height="match_parent"
-                android:layout_marginLeft="10dp"
-                android:text="ENDEREÇO"
-                android:textAlignment="center"
+                style="@style/Cadier.Text.Caption"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp"
+                android:text="SITUAÇÃO"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
                 android:gravity="center_vertical"
-                android:textSize="8sp"/>
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_marginTop="5dp"
-                android:layout_marginLeft="20dp">
+                android:orientation="horizontal">
 
                 <ImageView
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"
-                    android:src="@drawable/igrejinhablur" />
+                    android:layout_width="26dp"
+                    android:layout_height="26dp"
+                    android:src="@drawable/status"
+                    android:tint="@color/cadier_teal"/>
 
                 <TextView
-                    android:id="@+id/textViewIgreja"
-                    android:layout_width="130dp"
-                    android:layout_height="match_parent"
-                    android:layout_marginLeft="10dp"
-                    android:text="IGREJA"
-                    android:textAlignment="center"
-                    android:gravity="center_vertical"
-                    android:textSize="8sp"/>
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_marginTop="5dp"
-                android:layout_marginLeft="20dp">
-
-                <ImageView
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"
-                    android:src="@drawable/datapresente" />
-
-                <TextView
-                    android:id="@+id/textViewDataPresente"
-                    android:layout_width="130dp"
-                    android:layout_height="match_parent"
-                    android:layout_marginLeft="10dp"
-                    android:text="DATA PRESENTE"
-                    android:textAlignment="center"
-                    android:gravity="center_vertical"
-                    android:textSize="8sp"/>
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_marginTop="5dp"
-                android:layout_marginLeft="20dp">
-
-                <ImageView
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"
-                    android:src="@drawable/status" />
+                    style="@style/Cadier.Text.Body"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginStart="14dp"
+                    android:text="Status"/>
 
                 <TextView
                     android:id="@+id/textViewStatus"
-                    android:layout_width="130dp"
-                    android:layout_height="match_parent"
-                    android:layout_marginLeft="10dp"
-                    android:text="STATUS"
-                    android:textAlignment="center"
-                    android:gravity="center_vertical"
-                    android:textSize="8sp"/>
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/cadier_text_on_dark"
+                    android:textStyle="bold"
+                    android:textSize="@dimen/cadier_text_caption"
+                    android:background="@color/status_success"
+                    android:paddingLeft="10dp"
+                    android:paddingRight="10dp"
+                    android:paddingTop="4dp"
+                    android:paddingBottom="4dp"
+                    android:text="Ativo"/>
+            </LinearLayout>
 
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginTop="12dp"
+                android:layout_marginBottom="12dp"
+                android:background="@color/cadier_divider_light"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:layout_width="26dp"
+                    android:layout_height="26dp"
+                    android:src="@drawable/datapresente"
+                    android:tint="@color/cadier_teal"/>
+
+                <TextView
+                    android:id="@+id/textViewDataPresente"
+                    style="@style/Cadier.Text.Body"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginStart="14dp"
+                    android:text="Data Presente"/>
             </LinearLayout>
         </LinearLayout>
-    </LinearLayout>
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
 
-        <ImageView
-            android:id="@+id/imageViewAnuncio"
-            android:contentDescription="@string/app_name"
+        <!-- Vínculo -->
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:adjustViewBounds="true"
-            android:background="@drawable/cadierjuntos"
-            android:scaleType="fitXY" />
-    </LinearLayout>
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:orientation="vertical"
+            android:background="@drawable/bg_cadier_card"
+            android:elevation="3dp"
+            android:padding="16dp">
 
-</LinearLayout>
+            <TextView
+                style="@style/Cadier.Text.Caption"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp"
+                android:text="VÍNCULO"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:layout_width="26dp"
+                    android:layout_height="26dp"
+                    android:src="@drawable/igrejinhablur"
+                    android:tint="@color/cadier_teal"/>
+
+                <TextView
+                    android:id="@+id/textViewIgreja"
+                    style="@style/Cadier.Text.Body"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginStart="14dp"
+                    android:text="Igreja"/>
+            </LinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginTop="12dp"
+                android:layout_marginBottom="12dp"
+                android:background="@color/cadier_divider_light"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:layout_width="26dp"
+                    android:layout_height="26dp"
+                    android:src="@drawable/endereco"
+                    android:tint="@color/cadier_teal"/>
+
+                <TextView
+                    android:id="@+id/textViewEnderecoPerfil"
+                    style="@style/Cadier.Text.Body"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginStart="14dp"
+                    android:text="Endereço"/>
+            </LinearLayout>
+        </LinearLayout>
+
+    </LinearLayout>
+</ScrollView>

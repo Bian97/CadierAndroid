@@ -2,73 +2,349 @@
 <ScrollView
     xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:background="#DBE5FF">
+    android:background="@color/cadier_bg">
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
 
         <TextView
+            style="@style/Cadier.Text.Title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="AJUDA"
-            android:layout_margin="18dp"
-            android:textSize="20sp"
-            android:textStyle="bold"
-            android:textColor="#091534"
+            android:text="Ajuda"
+            android:layout_marginBottom="16dp"
             android:textAlignment="center"
             android:layout_gravity="center"/>
 
-        <TextView
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="8dp"
-            android:layout_marginTop="8dp"
-            android:textSize="15sp"
-            android:textStyle="bold"
-            android:textColor="#0247FE"
-            android:text="  Primeiramente, desejo que a paz do todo poderoso Senhor Jesus seja convosco. Pois ele é quem me capacitou para disponibilizar tal aplicativo para vós."/>
+            android:orientation="vertical"
+            android:layout_marginBottom="12dp"
+            android:background="@drawable/bg_cadier_card"
+            android:elevation="3dp"
+            android:padding="16dp">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="8dp"
-            android:textSize="18sp"
-            android:textStyle="bold"
-            android:textColor="#012998"
-            android:text="
-            Como usar o aplicativo?"/>
+            <TextView
+                style="@style/Cadier.Text.Body"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Que a paz do Senhor Jesus esteja convosco! Este aplicativo foi feito com carinho para facilitar a sua vida como filiado da CADIER."/>
+        </LinearLayout>
 
-        <TextView
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="8dp"
-            android:layout_marginTop="8dp"
-            android:textSize="14sp"
-            android:textStyle="bold"
-            android:textColor="#0247FE"
-            android:text="  Como usar o aplicativo? Usá-lo é simples. Você precisa saber que o aplicativo foi separado por itens no menu para facilitar o seu manuseio. São estes:\n
-    O item Perfil: Possui a função de mostrar apenas os seus dados principais, e sua assiduidade nas reuniões da CADIER. Mostrando qual foi sua última data presente na reunião.\n
-    O item Calendário: Possui a função de exibir os dias das reuniões e seus respectivos locais.\n
-    O item Pedidos: Este possui a função de mostrar para o filiado, os seus pedidos de Pessoa FÍSICA, apenas. Seja os agendados, ou pedidos feitos anteriormente.\n
-    O item Mensalidades: Possui a função de exibir para o filiado, a sua situação com a CADIER na área das mensalidades. OBS: Somente Pessoa FÍSICA!\n
-    O item Configuração: Este possuirá mais funcionalidades posteriormente, mas agora possui a função de alterar os dados do filiado. Como endereço, telefone, etc.\n
-    O item Logout: Este possui a função de deslogar do aplicativo, podendo logar novamente quando o mesmo for aberto.\n
-    O item Contatos: Este possui a função de exibir para o filiado, os meios de comunicação com a CADIER. Podendo acessar o site com apenas um clique no link exibido.\n
-    Agradeço imensamente aos filiados por fazerem parte de nossa família! Produzo este aplicativo com carinho e dedicação à obra de Deus! Que a paz do Senhor Jesus seja convosco. Amém!"/>
+            android:orientation="vertical"
+            android:layout_marginBottom="12dp"
+            android:background="@drawable/bg_cadier_card"
+            android:elevation="3dp"
+            android:padding="8dp">
+
+            <TextView
+                style="@style/Cadier.Text.Subtitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="8dp"
+                android:text="O que cada item do menu faz"/>
+
+            <!-- Perfil -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:padding="8dp">
+
+                <ImageView
+                    android:layout_width="26dp"
+                    android:layout_height="26dp"
+                    android:layout_marginTop="2dp"
+                    android:src="@drawable/inicioperfil"
+                    android:tint="@color/cadier_teal"/>
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginStart="14dp"
+                    android:orientation="vertical">
+
+                    <TextView
+                        style="@style/Cadier.Text.Body"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/cadier_teal_dark"
+                        android:textStyle="bold"
+                        android:text="Perfil"/>
+
+                    <TextView
+                        style="@style/Cadier.Text.Body.Secondary"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Seus dados principais e a data da sua última presença numa reunião."/>
+                </LinearLayout>
+            </LinearLayout>
+
+            <View style="@style/Cadier.Divider"/>
+
+            <!-- Calendário -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:padding="8dp">
+
+                <ImageView
+                    android:layout_width="26dp"
+                    android:layout_height="26dp"
+                    android:layout_marginTop="2dp"
+                    android:src="@drawable/calendario"
+                    android:tint="@color/cadier_teal"/>
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginStart="14dp"
+                    android:orientation="vertical">
+
+                    <TextView
+                        style="@style/Cadier.Text.Body"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/cadier_teal_dark"
+                        android:textStyle="bold"
+                        android:text="Calendário"/>
+
+                    <TextView
+                        style="@style/Cadier.Text.Body.Secondary"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Eventos e aulas cadastrados pela secretaria - dá pra ver sem entrar na conta, direto na tela de login."/>
+                </LinearLayout>
+            </LinearLayout>
+
+            <View style="@style/Cadier.Divider"/>
+
+            <!-- Pedidos -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:padding="8dp">
+
+                <ImageView
+                    android:layout_width="26dp"
+                    android:layout_height="26dp"
+                    android:layout_marginTop="2dp"
+                    android:src="@drawable/pedidos"
+                    android:tint="@color/cadier_teal"/>
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginStart="14dp"
+                    android:orientation="vertical">
+
+                    <TextView
+                        style="@style/Cadier.Text.Body"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/cadier_teal_dark"
+                        android:textStyle="bold"
+                        android:text="Pedidos"/>
+
+                    <TextView
+                        style="@style/Cadier.Text.Body.Secondary"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Seus pedidos de Pessoa Física - os pendentes numa aba, os já concluídos em outra."/>
+                </LinearLayout>
+            </LinearLayout>
+
+            <View style="@style/Cadier.Divider"/>
+
+            <!-- Mensalidades -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:padding="8dp">
+
+                <ImageView
+                    android:layout_width="26dp"
+                    android:layout_height="26dp"
+                    android:layout_marginTop="2dp"
+                    android:src="@drawable/datapresente"
+                    android:tint="@color/cadier_teal"/>
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginStart="14dp"
+                    android:orientation="vertical">
+
+                    <TextView
+                        style="@style/Cadier.Text.Body"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/cadier_teal_dark"
+                        android:textStyle="bold"
+                        android:text="Mensalidades"/>
+
+                    <TextView
+                        style="@style/Cadier.Text.Body.Secondary"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Sua situação com a CADIER (só Pessoa Física) - e, se você for responsável por uma igreja, a mensalidade dela também aparece aqui."/>
+                </LinearLayout>
+            </LinearLayout>
+
+            <View style="@style/Cadier.Divider"/>
+
+            <!-- Configurações -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:padding="8dp">
+
+                <ImageView
+                    android:layout_width="26dp"
+                    android:layout_height="26dp"
+                    android:layout_marginTop="2dp"
+                    android:src="@drawable/configuracoes"
+                    android:tint="@color/cadier_teal"/>
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginStart="14dp"
+                    android:orientation="vertical">
+
+                    <TextView
+                        style="@style/Cadier.Text.Body"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/cadier_teal_dark"
+                        android:textStyle="bold"
+                        android:text="Configurações"/>
+
+                    <TextView
+                        style="@style/Cadier.Text.Body.Secondary"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Altere seus dados: telefone, e-mail, endereço, cônjuge, profissão e foto de perfil."/>
+                </LinearLayout>
+            </LinearLayout>
+
+            <View style="@style/Cadier.Divider"/>
+
+            <!-- Contatos -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:padding="8dp">
+
+                <ImageView
+                    android:layout_width="26dp"
+                    android:layout_height="26dp"
+                    android:layout_marginTop="2dp"
+                    android:src="@drawable/contatos1"
+                    android:tint="@color/cadier_teal"/>
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginStart="14dp"
+                    android:orientation="vertical">
+
+                    <TextView
+                        style="@style/Cadier.Text.Body"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/cadier_teal_dark"
+                        android:textStyle="bold"
+                        android:text="Contatos"/>
+
+                    <TextView
+                        style="@style/Cadier.Text.Body.Secondary"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Os meios de comunicação com a CADIER - WhatsApp, e-mail, Facebook e site."/>
+                </LinearLayout>
+            </LinearLayout>
+
+            <View style="@style/Cadier.Divider"/>
+
+            <!-- Sair -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:padding="8dp">
+
+                <ImageView
+                    android:layout_width="26dp"
+                    android:layout_height="26dp"
+                    android:layout_marginTop="2dp"
+                    android:src="@drawable/deslogar"
+                    android:tint="@color/cadier_teal"/>
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginStart="14dp"
+                    android:orientation="vertical">
+
+                    <TextView
+                        style="@style/Cadier.Text.Body"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/cadier_teal_dark"
+                        android:textStyle="bold"
+                        android:text="Sair"/>
+
+                    <TextView
+                        style="@style/Cadier.Text.Body.Secondary"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Desloga do aplicativo. Você pode entrar novamente a qualquer momento."/>
+                </LinearLayout>
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginBottom="12dp"
+            android:background="@drawable/bg_cadier_card"
+            android:elevation="3dp"
+            android:padding="16dp">
+
+            <TextView
+                style="@style/Cadier.Text.Body"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Agradeço imensamente por fazer parte da nossa família! Que a paz do Senhor Jesus seja convosco. Amém!"/>
+        </LinearLayout>
 
         <Button
             android:id="@+id/buttonPolitica"
+            style="@style/Cadier.Button.Secondary"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="80dp"
-            android:layout_marginRight="80dp"
-            android:layout_marginTop="5dp"
-            android:background="@color/colorPrimary"
-            android:text="Política de Privacidade"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:textColor="#000000" />
+            android:layout_height="56dp"
+            android:text="Política de Privacidade" />
     </LinearLayout>
 </ScrollView>

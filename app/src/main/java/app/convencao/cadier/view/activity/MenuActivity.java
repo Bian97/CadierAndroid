@@ -18,6 +18,8 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.core.content.ContextCompat;
+
 import app.convencao.cadier.modelo.User;
 import app.convencao.cadier.view.fragments.FragmentCalendar;
 import app.convencao.cadier.view.fragments.FragmentConfigurations;
@@ -74,11 +76,17 @@ public class MenuActivity extends AppCompatActivity
         txtNameMenu.setText(user.getName());
         txtChurchMenu.setText(user.getChurch());
 
-        Bitmap aux = BitmapFactory.decodeFile(user.getPhoto());
-        if(user.getPhoto() != null && aux != null) {
+        Bitmap aux = user.getPhoto() != null ? BitmapFactory.decodeFile(user.getPhoto()) : null;
+        if (aux != null) {
+            imageViewMenu.setPadding(0, 0, 0, 0);
+            imageViewMenu.clearColorFilter();
             imageViewMenu.setImageBitmap(aux);
         } else {
-            imageViewMenu.setImageResource(R.drawable.foto);
+            // Sem foto cadastrada - ícone de silhueta em vez do quadrado preto de "foto.png".
+            int padding = (int) (getResources().getDisplayMetrics().density * 12);
+            imageViewMenu.setPadding(padding, padding, padding, padding);
+            imageViewMenu.setImageResource(R.drawable.perfil);
+            imageViewMenu.setColorFilter(ContextCompat.getColor(this, R.color.cadier_teal));
         }
 
         startFragment(new FragmentProfile(), "Perfil");
@@ -124,6 +132,21 @@ public class MenuActivity extends AppCompatActivity
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    /**
+     * User trafega inteiro (Serializable) por Intent extra entre Activities - cada Activity que
+     * recebe recebe uma CÓPIA independente, então editar em ProfileEditActivity/AddressEditActivity
+     * não atualiza sozinho o "user" que já estava guardado aqui (bug real: salvar endereço, voltar,
+     * abrir editar endereço de novo mostrava os dados antigos). Cada tela que edita esses dados
+     * precisa devolver o User atualizado via setResult/onActivityResult, que cai aqui pra virar a
+     * cópia "oficial" - startFragment() já reescreve esse valor no Intent a cada navegação, então
+     * bastando atualizar esse campo, todas as fragments recriadas depois já leem a versão nova.
+     */
+    public void updateUser(User usuarioAtualizado) {
+        if (usuarioAtualizado == null) return;
+        this.user = usuarioAtualizado;
+        getIntent().putExtra("usuario", usuarioAtualizado);
     }
 
     public void startFragment(Fragment fragment, String title) {

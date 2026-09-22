@@ -48,6 +48,7 @@ public class AdapterEventoCalendario extends ArrayAdapter<OcorrenciaEventoCalend
             holder.textViewTitulo = row.findViewById(R.id.textViewTituloEvento);
             holder.textViewCurso = row.findViewById(R.id.textViewCursoEvento);
             holder.textViewData = row.findViewById(R.id.textViewDataEvento);
+            holder.layoutLocal = row.findViewById(R.id.layoutLocalEvento);
             holder.textViewLocal = row.findViewById(R.id.textViewLocalEvento);
             holder.textViewDescricao = row.findViewById(R.id.textViewDescricaoEvento);
             holder.textViewLink = row.findViewById(R.id.textViewLinkEvento);
@@ -80,15 +81,15 @@ public class AdapterEventoCalendario extends ArrayAdapter<OcorrenciaEventoCalend
 
             if (evento.getLocal() != null && !evento.getLocal().isEmpty()) {
                 holder.textViewLocal.setText(evento.getLocal());
-                holder.textViewLocal.setVisibility(View.VISIBLE);
+                holder.layoutLocal.setVisibility(View.VISIBLE);
                 final String local = evento.getLocal();
-                holder.textViewLocal.setOnClickListener(v -> {
+                holder.layoutLocal.setOnClickListener(v -> {
                     Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("geo:0,0?q=" + Uri.encode(local)));
                     context.startActivity(intent);
                 });
             } else {
-                holder.textViewLocal.setVisibility(View.GONE);
-                holder.textViewLocal.setOnClickListener(null);
+                holder.layoutLocal.setVisibility(View.GONE);
+                holder.layoutLocal.setOnClickListener(null);
             }
 
             if (evento.getDescricao() != null && !evento.getDescricao().isEmpty()) {
@@ -116,5 +117,6 @@ public class AdapterEventoCalendario extends ArrayAdapter<OcorrenciaEventoCalend
 
     static class ViewHolder {
         TextView textViewTitulo, textViewCurso, textViewData, textViewLocal, textViewDescricao, textViewLink;
+        View layoutLocal;
     }
 }

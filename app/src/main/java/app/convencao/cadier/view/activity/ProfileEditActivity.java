@@ -1,28 +1,27 @@
 package app.convencao.cadier.view.activity;
 
-import android.annotation.TargetApi;
 import android.app.ProgressDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.AsyncTask;
-import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.util.Patterns;
 import android.view.View;
 import android.webkit.MimeTypeMap;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import app.convencao.cadier.R;
 import app.convencao.cadier.modelo.User;
 import app.convencao.cadier.util.ApiConfig;
+import app.convencao.cadier.util.CnpjCpfDataMask;
 import app.convencao.cadier.util.ConectWebService;
 
 import org.json.JSONObject;
@@ -38,25 +37,14 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
-import static android.Manifest.permission.READ_EXTERNAL_STORAGE;
-import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
-
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
 
 /**
  * Created by DrGreend on 26/03/2018.
- * Reescrito pro backend novo. Autoatendimento (PessoaFisica/MeusDadosDocumento) só permite o
- * filiado alterar Telefone1/igreja/endereço - de propósito não inclui Telefone2, Cônjuge ou
- * Profissão (ver comentário no ViewModel do backend: esses campos só continuam editáveis pelo
- * atendente). Por isso esses 3 campos aqui viraram somente leitura (em vez de sumir da tela, pra
- * não perder o layout já pronto) - se o usuário tentar editar e salvar, o valor digitado é
- * simplesmente ignorado pelo back, então travar o campo evita a falsa impressão de que salvou.
- * E-mail tem endpoint próprio (PessoaFisica/MeuEmail). Foto de perfil agora é um documento
- * (DocumentoPFisica, tipo Foto3x4) em vez de um campo solto em basicUpdateProfileApp.
+ * Reescrito pro backend novo. Autoatendimento (PessoaFisica/MeusDadosDocumento) permite o filiado
+ * alterar Telefone1/Telefone2/igreja/endereço/Cônjuge/Profissão. E-mail tem endpoint próprio
+ * (PessoaFisica/MeuEmail). Foto de perfil agora é um documento (DocumentoPFisica, tipo Foto3x4)
+ * em vez de um campo solto em basicUpdateProfileApp.
  */
 
 public class ProfileEditActivity extends AppCompatActivity {
@@ -66,11 +54,11 @@ public class ProfileEditActivity extends AppCompatActivity {
     boolean find;
     Uri selectedImage;
     static int RESULT_LOAD_IMAGE = 2;
+    private static final int REQUEST_EDITAR_ENDERECO = 3;
     User user;
     EditText textViewEditPhone, textViewEditPhone2, textViewEditSpouse, textViewEditProfession, textViewEditEmail;
     Button buttonSaveProfile;
     ProgressDialog progressDialog;
-    private static final int PERMISSION_REQUEST_CODE = 200;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -82,16 +70,8 @@ public class ProfileEditActivity extends AppCompatActivity {
             user = (User) intent.getSerializableExtra("usuario");
         }
 
-        if (!checkPermission()) {
-            openActivity();
-        } else {
-            if (checkPermission()) {
-                requestPermissionAndContinue();
-            } else {
-                openActivity();
-            }
-        }
-
+        TextView textViewVoltar = findViewById(R.id.textViewVoltarEditarPerfil);
+        Button buttonIrParaEndereco = findViewById(R.id.buttonIrParaEndereco);
         imageViewEditProfile = findViewById(R.id.imageViewEditarPerfil);
         textViewEditPhone = findViewById(R.id.textViewEditarTelefone);
         textViewEditPhone2 = findViewById(R.id.textViewEditarTelefone2);
@@ -100,10 +80,19 @@ public class ProfileEditActivity extends AppCompatActivity {
         textViewEditEmail = findViewById(R.id.textViewEditarEmail);
         buttonSaveProfile = findViewById(R.id.buttonGuardarPerfil);
 
-        // Telefone2/Cônjuge/Profissão: só leitura, ver comentário da classe.
-        textViewEditPhone2.setEnabled(false);
-        textViewEditSpouse.setEnabled(false);
-        textViewEditProfession.setEnabled(false);
+        textViewVoltar.setOnClickListener(v -> onBackPressed());
+        buttonIrParaEndereco.setOnClickListener(v -> {
+            // Trava no primeiro toque - duplo toque abriria a tela de endereço duas vezes
+            // empilhadas (mesmo racional das outras telas de navegação).
+            v.setEnabled(false);
+            startActivityForResult(new Intent(ProfileEditActivity.this, AddressEditActivity.class).putExtra("usuario", user), REQUEST_EDITAR_ENDERECO);
+        });
+
+        // Telefone2 continua só leitura (autoatendimento não altera - ver comentário da classe).
+        // Telefone2/Cônjuge/Profissão agora são editáveis (PessoaFisica/MeusDadosDocumento passou
+        // a aceitar os três campos).
+        textViewEditPhone.addTextChangedListener(CnpjCpfDataMask.phoneInsert(textViewEditPhone));
+        textViewEditPhone2.addTextChangedListener(CnpjCpfDataMask.phoneInsert(textViewEditPhone2));
 
         imageViewEditProfile.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -125,15 +114,27 @@ public class ProfileEditActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 try {
-                    if(!textViewEditPhone.getText().toString().equals("")){
+                    String telefone1 = CnpjCpfDataMask.unmask(textViewEditPhone.getText().toString());
+                    String email = textViewEditEmail.getText().toString().trim();
 
-                        EditProfileTask editTask = new EditProfileTask();
-                        user.setPhone1(textViewEditPhone.getText().toString());
-                        user.setEmail(textViewEditEmail.getText().toString());
-                        editTask.execute();
-                    } else {
-                        Toast.makeText(getApplicationContext(), "Precisamos de um Telefone 1!", Toast.LENGTH_SHORT).show();
+                    if (telefone1.isEmpty()) {
+                        textViewEditPhone.setError("Informe pelo menos um telefone");
+                        textViewEditPhone.requestFocus();
+                        return;
                     }
+                    if (email.isEmpty() || !Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+                        textViewEditEmail.setError("Informe um e-mail válido");
+                        textViewEditEmail.requestFocus();
+                        return;
+                    }
+
+                    EditProfileTask editTask = new EditProfileTask();
+                    user.setPhone1(telefone1);
+                    user.setPhone2(CnpjCpfDataMask.unmask(textViewEditPhone2.getText().toString()));
+                    user.setEmail(email);
+                    user.setSpouse(textViewEditSpouse.getText().toString().trim());
+                    user.setJob(textViewEditProfession.getText().toString().trim());
+                    editTask.execute();
                 } catch (Exception e){
                     e.printStackTrace();
                 }
@@ -152,6 +153,20 @@ public class ProfileEditActivity extends AppCompatActivity {
             imageViewEditProfile.setImageURI(selectedImage);
 
             user.setPhoto(getRealPathFromURI(selectedImage));
+        } else if (requestCode == REQUEST_EDITAR_ENDERECO) {
+            findViewById(R.id.buttonIrParaEndereco).setEnabled(true);
+            if (resultCode == RESULT_OK && data != null) {
+                // AddressEditActivity devolve o User com o endereço já salvo - sem isso, ao voltar
+                // pra cá o endereço editado lá sumiria (só existia numa cópia local dela).
+                User usuarioComEnderecoNovo = (User) data.getSerializableExtra("usuario");
+                if (usuarioComEnderecoNovo != null) {
+                    user = usuarioComEnderecoNovo;
+                    // Repassa na hora pra quem abriu essa tela (FragmentProfile/FragmentConfigurations),
+                    // mesmo que o usuário só tenha editado o endereço e volte sem tocar em "Guardar
+                    // Alterações" aqui - senão o endereço novo fica preso só nessa Activity e some.
+                    setResult(RESULT_OK, new Intent().putExtra("usuario", user));
+                }
+            }
         }
     }
 
@@ -165,11 +180,6 @@ public class ProfileEditActivity extends AppCompatActivity {
         return cursor.getString(column_index);
     }
 
-    @Override
-    public void onBackPressed() {
-        super.onBackPressed();
-        startActivity(new Intent(ProfileEditActivity.this, MenuActivity.class).putExtra("usuario", user));
-    }
     public class EditProfileTask extends AsyncTask<String,String,Boolean> {
         @Override
         protected void onPreExecute() {
@@ -189,12 +199,16 @@ public class ProfileEditActivity extends AppCompatActivity {
             try {
                 ConectWebService cW = new ConectWebService();
 
-                // telefone1 e idPessoaJuridica são sobrescritos incondicionalmente por esse
-                // endpoint (null de verdade apaga) - por isso sempre manda o valor atual do
-                // usuário nesses dois, mesmo quando só o telefone está mudando aqui.
+                // telefone1/idPessoaJuridica são sobrescritos incondicionalmente por esse endpoint
+                // (null de verdade apaga) - por isso sempre manda o valor atual do usuário neles,
+                // mesmo quando só outro campo está mudando aqui. Telefone2/Cônjuge/Profissão idem,
+                // mas aqui vêm sempre dos campos da tela (não travam mais).
                 JSONObject corpo = new JSONObject();
                 corpo.put("telefone1", user.getPhone1());
+                corpo.put("telefone2", user.getPhone2());
                 corpo.put("idPessoaJuridica", user.getIdPessoaJuridica() == null ? JSONObject.NULL : user.getIdPessoaJuridica());
+                corpo.put("conjuge", user.getSpouse());
+                corpo.put("profissao", user.getJob());
                 int statusDados = cW.sendJsonStatus(ApiConfig.BASE_URL + "PessoaFisica/MeusDadosDocumento", "PATCH", corpo.toString(), user.getToken());
                 sucesso = sucesso && statusDados >= 200 && statusDados < 300;
 
@@ -242,74 +256,12 @@ public class ProfileEditActivity extends AppCompatActivity {
             progressDialog.dismiss();
             if(Boolean.TRUE.equals(sucesso)) {
                 Toast.makeText(getApplicationContext(), "Alterado com Sucesso!", Toast.LENGTH_SHORT).show();
+                // Devolve o User atualizado pra quem abriu essa tela (ver comentário em
+                // MenuActivity.updateUser) - senão os dados editados aqui somem ao voltar.
+                setResult(RESULT_OK, new Intent().putExtra("usuario", user));
             } else {
                 Toast.makeText(getApplicationContext(), "Erro na Alteração, verifique sua conexão com a internet!", Toast.LENGTH_SHORT).show();
             }
         }
-    }
-
-    private boolean checkPermission() {
-
-        return ContextCompat.checkSelfPermission(this, WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED
-                && ContextCompat.checkSelfPermission(this, READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED
-                ;
-    }
-
-    private void requestPermissionAndContinue() {
-        if (ContextCompat.checkSelfPermission(this, WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED
-                && ContextCompat.checkSelfPermission(this, READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-
-            if (ActivityCompat.shouldShowRequestPermissionRationale(this, WRITE_EXTERNAL_STORAGE)
-                    && ActivityCompat.shouldShowRequestPermissionRationale(this, READ_EXTERNAL_STORAGE)) {
-                AlertDialog.Builder alertBuilder = new AlertDialog.Builder(this);
-                alertBuilder.setCancelable(true);
-                alertBuilder.setTitle("Permissão para manuseio de arquivo!");
-                alertBuilder.setMessage("Você permite a leitura de imagens pelo aplicativo?");
-                alertBuilder.setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-                    @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
-                    public void onClick(DialogInterface dialog, int which) {
-                        ActivityCompat.requestPermissions(ProfileEditActivity.this, new String[]{WRITE_EXTERNAL_STORAGE
-                                , READ_EXTERNAL_STORAGE}, PERMISSION_REQUEST_CODE);
-                    }
-                });
-                AlertDialog alert = alertBuilder.create();
-                alert.show();
-            } else {
-                ActivityCompat.requestPermissions(ProfileEditActivity.this, new String[]{WRITE_EXTERNAL_STORAGE,
-                        READ_EXTERNAL_STORAGE}, PERMISSION_REQUEST_CODE);
-            }
-        } else {
-            openActivity();
-        }
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-
-        if (requestCode == PERMISSION_REQUEST_CODE) {
-            if (permissions.length > 0 && grantResults.length > 0) {
-
-                boolean flag = true;
-                for (int i = 0; i < grantResults.length; i++) {
-                    if (grantResults[i] != PackageManager.PERMISSION_GRANTED) {
-                        flag = false;
-                    }
-                }
-                if (flag) {
-                    openActivity();
-                } else {
-                    finish();
-                }
-
-            } else {
-                finish();
-            }
-        } else {
-            super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        }
-    }
-
-    private void openActivity() {
-        //add your further process after giving permission or to download images from remote server.
     }
 }

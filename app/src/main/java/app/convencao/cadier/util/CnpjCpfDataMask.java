@@ -76,6 +76,52 @@ public abstract class CnpjCpfDataMask {
         CNPJ
     }
 
+    private static final String PhoneMaskFixo = "(##) ####-####";
+    private static final String PhoneMaskCelular = "(##) #####-####";
+
+    /** Máscara de telefone BR, alternando fixo (10 dígitos) e celular (11) conforme o usuário
+     *  digita - só a máscara na tela muda, o valor enviado pra API continua só números. */
+    public static TextWatcher phoneInsert(final EditText editText) {
+        return new TextWatcher() {
+
+            boolean isUpdating;
+            String oldValue = "";
+
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                String value = CnpjCpfDataMask.unmask(s.toString());
+                if (value.length() > 11) value = value.substring(0, 11);
+                String mask = value.length() > 10 ? PhoneMaskCelular : PhoneMaskFixo;
+
+                String maskAux = "";
+                if (isUpdating) {
+                    oldValue = value;
+                    isUpdating = false;
+                    return;
+                }
+                int i = 0;
+                for (char m : mask.toCharArray()) {
+                    if ((m != '#' && value.length() > oldValue.length()) || (m != '#' && value.length() < oldValue.length() && value.length() != i)) {
+                        maskAux += m;
+                        continue;
+                    }
+
+                    try {
+                        maskAux += value.charAt(i);
+                    } catch (Exception e) {
+                        break;
+                    }
+                    i++;
+                }
+                isUpdating = true;
+                editText.setText(maskAux);
+                editText.setSelection(maskAux.length());
+            }
+
+            public void beforeTextChanged(CharSequence s, int start, int count,int after) {}
+            public void afterTextChanged(Editable s) {}
+        };
+    }
+
     public static TextWatcher dataInsert(final String mask, final EditText et) {
         return new TextWatcher() {
             boolean isUpdating;

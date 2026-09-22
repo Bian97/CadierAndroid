@@ -10,8 +10,12 @@
         android:id="@+id/tabLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="#0000CD"
+        android:background="@color/cadier_teal"
         android:minHeight="?attr/actionBarSize"
+        app:tabIndicatorColor="@color/cadier_orange"
+        app:tabIndicatorHeight="4dp"
+        app:tabSelectedTextColor="@color/cadier_text_on_dark"
+        app:tabTextColor="@color/cadier_teal_light_bg"
         android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar" />
 
     <androidx.viewpager.widget.ViewPager

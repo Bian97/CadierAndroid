@@ -27,4 +27,20 @@ public enum StatusEnum {
         }
         return null;
     }
+
+    /** Rótulo em português legível pra exibir na UI - toString() sozinho dá nomes de enum crus
+     *  (ex.: "AguardandoAprovacaoDocumentos"), ruim pra tela do filiado. */
+    public String getLabelPtBr() {
+        switch (this) {
+            case Ativo: return "Ativo";
+            case Inativo: return "Inativo";
+            case ProcessoInterno: return "Em processo interno";
+            case Desligado: return "Desligado";
+            case Excluido: return "Excluído";
+            case Falecido: return "Falecido";
+            case AguardandoAprovacaoDocumentos: return "Aguardando aprovação de documentos";
+            case Inadimplente: return "Inadimplente";
+            default: return toString();
+        }
+    }
 }

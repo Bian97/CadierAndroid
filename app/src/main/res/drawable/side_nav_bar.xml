@@ -1,9 +1,11 @@
 <shape xmlns:android="http://schemas.android.com/apk/res/android"
     android:shape="rectangle">
+    <!-- Mesmo gradiente teal do menu lateral do site (Menu.css: linear-gradient(160deg, #128C86
+         0%, #0C6C67 65%, #094e4a 100%)) - ângulo aproximado, XML shape só aceita múltiplos de 45. -->
     <gradient
         android:angle="135"
-        android:centerColor="#009688"
-        android:endColor="#00695C"
-        android:startColor="#4DB6AC"
+        android:startColor="@color/cadier_teal"
+        android:centerColor="@color/cadier_teal_dark"
+        android:endColor="@color/cadier_teal_darkest"
         android:type="linear" />
 </shape>

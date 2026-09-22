@@ -63,7 +63,7 @@ public class AdapterScheduled extends ArrayAdapter<ServiceOrder>{
             holder.textViewAgendedDate.setText(serviceOrder.getOrderDate() != null ? sdf.format(serviceOrder.getOrderDate()) : "-");
             holder.textViewAgendedPayed.setText("R$ "+ String.format("%.02f", serviceOrder.getPayedToday()));
             holder.textViewAgendedStillPay.setText("R$ "+ String.format("%.02f", serviceOrder.getRemains()));
-            holder.textViewAgendedObs.setText(serviceOrder.getObs());
+            holder.textViewAgendedObs.setText(serviceOrder.getService());
         }
         return row;
     }

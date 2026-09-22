@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
@@ -63,12 +62,8 @@ public class LoginActivity extends AppCompatActivity {
         txtViewLink = findViewById(R.id.textViewLink);
         buttonCalendario = findViewById(R.id.buttonCalendario);
 
-        buttonCalendario.setOnClickListener(view -> {
-            Intent viewIntent =
-                    new Intent("android.intent.action.VIEW",
-                            Uri.parse("http://cadier.yolasite.com/calendario-reuni%C3%B5es.php"));
-            startActivity(viewIntent);
-        });
+        buttonCalendario.setOnClickListener(view ->
+                startActivity(new Intent(LoginActivity.this, CalendarioPublicoActivity.class)));
 
         imageViewLogin.setImageResource(R.drawable.logo);
         login.addTextChangedListener(CnpjCpfDataMask.insert(login, CnpjCpfDataMask.MaskType.CPF));

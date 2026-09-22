@@ -1,92 +1,284 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<ScrollView
     xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:background="#DBE5FF">
+    android:background="@color/cadier_bg">
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
 
         <TextView
+            style="@style/Cadier.Text.Title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="CONTATOS DISPONÍVEIS"
-            android:layout_margin="18dp"
-            android:textSize="20sp"
-            android:textStyle="bold"
-            android:textColor="#091534"
+            android:text="Contatos Disponíveis"
+            android:layout_marginBottom="16dp"
             android:textAlignment="center"
             android:layout_gravity="center"/>
 
-        <TextView
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="8dp"
-            android:textSize="18sp"
-            android:textStyle="bold"
-            android:textColor="#012998"
-            android:text="Telefones:"/>
+            android:orientation="vertical"
+            android:layout_marginBottom="12dp"
+            android:background="@drawable/bg_cadier_warning"
+            android:elevation="2dp"
+            android:padding="14dp">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="8dp"
-            android:textSize="16sp"
-            android:textStyle="bold"
-            android:textColor="#012998"
-            android:text="Ouvidoria"/>
+            <TextView
+                style="@style/Cadier.Text.Body"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="A forma mais rápida de falar com a Secretaria é pelo WhatsApp:"/>
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="8dp"
-            android:layout_marginTop="8dp"
-            android:textSize="14sp"
-            android:textStyle="bold"
-            android:textColor="#0247FE"
-            android:text="(21)98076-8759 (Tim)"/>
+            <Button
+                android:id="@+id/buttonWhatsappSecretaria"
+                style="@style/Cadier.Button.WhatsApp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:text="Falar com a Secretaria"/>
+        </LinearLayout>
 
-        <TextView
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="8dp"
-            android:layout_marginTop="8dp"
-            android:textSize="16sp"
-            android:textStyle="bold"
-            android:textColor="#012998"
-            android:text="Secretaria"/>
+            android:orientation="vertical"
+            android:background="@drawable/bg_cadier_card"
+            android:elevation="3dp"
+            android:padding="8dp">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="8dp"
-            android:textSize="14sp"
-            android:textStyle="bold"
-            android:textColor="#0247FE"
-            android:text="(21)98527-3164 (Oi)"/>
+            <TextView
+                style="@style/Cadier.Text.Subtitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="8dp"
+                android:text="Outros canais"/>
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="8dp"
-            android:layout_marginTop="12dp"
-            android:textSize="18sp"
-            android:textStyle="bold"
-            android:textColor="#012998"
-            android:text="Site:"/>
+            <!-- E-mail da Secretaria -->
+            <LinearLayout
+                android:id="@+id/layoutEmailSecretaria"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:padding="8dp"
+                android:clickable="true"
+                android:focusable="true"
+                android:foreground="?android:attr/selectableItemBackground">
 
-        <TextView
-            android:id="@+id/textViewLink"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="8dp"
-            android:layout_marginTop="12dp"
-            android:textSize="14sp"
-            android:textStyle="bold"
-            android:textColor="#0247FE"
-            android:text="https://cadier.com.br -- Clique para acessar"/>
+                <ImageView
+                    android:layout_width="22dp"
+                    android:layout_height="22dp"
+                    android:src="@drawable/ic_email"
+                    android:tint="@color/cadier_teal"/>
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginStart="14dp"
+                    android:orientation="vertical">
+
+                    <TextView
+                        style="@style/Cadier.Text.Caption"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="E-mail da Secretaria"/>
+
+                    <TextView
+                        android:id="@+id/textViewEmailSecretaria"
+                        style="@style/Cadier.Text.Body"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/cadier_teal"
+                        android:textStyle="bold"
+                        android:text="atendimentocadier@gmail.com"/>
+                </LinearLayout>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/cadier_teal"
+                    android:textStyle="bold"
+                    android:textSize="@dimen/cadier_text_subtitle"
+                    android:text="›"/>
+            </LinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginEnd="8dp"
+                android:background="@color/cadier_divider_light"/>
+
+            <!-- E-mail da Ouvidoria -->
+            <LinearLayout
+                android:id="@+id/layoutEmailOuvidoria"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:padding="8dp"
+                android:clickable="true"
+                android:focusable="true"
+                android:foreground="?android:attr/selectableItemBackground">
+
+                <ImageView
+                    android:layout_width="22dp"
+                    android:layout_height="22dp"
+                    android:src="@drawable/ic_email"
+                    android:tint="@color/cadier_teal"/>
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginStart="14dp"
+                    android:orientation="vertical">
+
+                    <TextView
+                        style="@style/Cadier.Text.Caption"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="E-mail da Ouvidoria"/>
+
+                    <TextView
+                        android:id="@+id/textViewEmailOuvidoria"
+                        style="@style/Cadier.Text.Body"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/cadier_teal"
+                        android:textStyle="bold"
+                        android:text="jjrio2015@gmail.com"/>
+                </LinearLayout>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/cadier_teal"
+                    android:textStyle="bold"
+                    android:textSize="@dimen/cadier_text_subtitle"
+                    android:text="›"/>
+            </LinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginEnd="8dp"
+                android:background="@color/cadier_divider_light"/>
+
+            <!-- Facebook -->
+            <LinearLayout
+                android:id="@+id/layoutFacebook"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:padding="8dp"
+                android:clickable="true"
+                android:focusable="true"
+                android:foreground="?android:attr/selectableItemBackground">
+
+                <ImageView
+                    android:layout_width="22dp"
+                    android:layout_height="22dp"
+                    android:src="@drawable/ic_facebook"
+                    android:tint="@color/cadier_teal"/>
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginStart="14dp"
+                    android:orientation="vertical">
+
+                    <TextView
+                        style="@style/Cadier.Text.Caption"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Facebook"/>
+
+                    <TextView
+                        android:id="@+id/textViewFacebook"
+                        style="@style/Cadier.Text.Body"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/cadier_teal"
+                        android:textStyle="bold"
+                        android:text="/cadier.convencaoassembleiadedeus"/>
+                </LinearLayout>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/cadier_teal"
+                    android:textStyle="bold"
+                    android:textSize="@dimen/cadier_text_subtitle"
+                    android:text="›"/>
+            </LinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginEnd="8dp"
+                android:background="@color/cadier_divider_light"/>
+
+            <!-- Site -->
+            <LinearLayout
+                android:id="@+id/layoutSite"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:padding="8dp"
+                android:clickable="true"
+                android:focusable="true"
+                android:foreground="?android:attr/selectableItemBackground">
+
+                <ImageView
+                    android:layout_width="22dp"
+                    android:layout_height="22dp"
+                    android:src="@drawable/ic_link"
+                    android:tint="@color/cadier_teal"/>
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginStart="14dp"
+                    android:orientation="vertical">
+
+                    <TextView
+                        style="@style/Cadier.Text.Caption"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Site"/>
+
+                    <TextView
+                        android:id="@+id/textViewLink"
+                        style="@style/Cadier.Text.Body"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/cadier_teal"
+                        android:textStyle="bold"
+                        android:text="cadier.com.br"/>
+                </LinearLayout>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/cadier_teal"
+                    android:textStyle="bold"
+                    android:textSize="@dimen/cadier_text_subtitle"
+                    android:text="›"/>
+            </LinearLayout>
+
+        </LinearLayout>
     </LinearLayout>
-</LinearLayout>
+</ScrollView>
