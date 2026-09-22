@@ -3,7 +3,7 @@
 buildscript {
     
     ext {
-        agp_version = '8.13.2'
+        agp_version = '9.4.0'
     }
     repositories {
         google()
@@ -21,7 +21,7 @@ buildscript {
 allprojects {
     repositories {
         google()
-        maven { url "https://jitpack.io" }
+        maven { url = "https://jitpack.io" }
         mavenCentral()
     }
 }

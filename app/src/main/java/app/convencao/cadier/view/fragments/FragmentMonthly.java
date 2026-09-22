@@ -13,25 +13,38 @@ import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
 
-import app.convencao.cadier.util.Enums.ServiceKindEnum;
 import app.convencao.cadier.R;
 import app.convencao.cadier.modelo.ServiceOrder;
 import app.convencao.cadier.modelo.User;
+import app.convencao.cadier.util.ApiConfig;
 import app.convencao.cadier.util.ConectWebService;
+import app.convencao.cadier.util.OrdemServicoParser;
 
-import org.json.JSONException;
+import org.json.JSONArray;
 import org.json.JSONObject;
 
-import java.sql.Date;
 import java.text.SimpleDateFormat;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Created by DrGreend on 07/03/2018.
+ * O antigo endpoint dedicado "lastMonthly" não existe mais no backend novo (o equivalente mais
+ * próximo, PessoaFisica/{id}/UltimoPagamento, só devolve uma data - sem serviço/valor/obs). Em vez
+ * disso busca a lista completa de OrdemServico/PorPessoaFisica/{id} (mesma chamada das abas de
+ * Pedidos) e pega o pedido pago mais recente cujo tipo de serviço seja Mensalidade, Filiação ou
+ * Reativação de Filiação (ids 2, 3 e 36 - mesmo conjunto que o back considera "em dia" pra fins de
+ * inadimplência).
  */
 
 public class FragmentMonthly extends Fragment {
+    private static final Set<Integer> IDS_TIPO_SERVICO_MENSALIDADE_OU_EQUIVALENTE = new HashSet<>();
+    static {
+        IDS_TIPO_SERVICO_MENSALIDADE_OU_EQUIVALENTE.add(2);  // Mensalidade
+        IDS_TIPO_SERVICO_MENSALIDADE_OU_EQUIVALENTE.add(3);  // Filiação
+        IDS_TIPO_SERVICO_MENSALIDADE_OU_EQUIVALENTE.add(36); // Reativação de Filiação
+    }
+
     TextView textViewMonthly, textViewPayedMonthly, textViewValue, textViewObs;
     ProgressDialog progressDialog;
     User user;
@@ -65,7 +78,7 @@ public class FragmentMonthly extends Fragment {
         return view;
     }
 
-    public class GetMonthly extends AsyncTask<String,String,String>{
+    public class GetMonthly extends AsyncTask<String,String,ServiceOrder>{
         @Override
         protected void onPreExecute(){
             super.onPreExecute();
@@ -73,44 +86,51 @@ public class FragmentMonthly extends Fragment {
         }
 
         @Override
-        protected String doInBackground(String... strings) {
-            String result = null;
-            ConectWebService cW = new ConectWebService();
+        protected ServiceOrder doInBackground(String... strings) {
+            try {
+                ConectWebService cW = new ConectWebService();
+                String result = cW.get(ApiConfig.BASE_URL + "OrdemServico/PorPessoaFisica/" + user.getPhysicalId(), user.getToken());
+                if (result == null) return null;
 
-            //result = cW.request("https://cadier.com.br/WS/wsGetMensalidade.php?rol=" + user.getPhysicalId());
+                JSONArray jsonArray = new JSONArray(result);
+                // A lista já vem mais recente primeiro (ver OrdemServicoController.ListarPorPessoaFisica),
+                // então o primeiro pedido pago que bater o filtro já é o mais recente.
+                for (int i = 0; i < jsonArray.length(); i++) {
+                    JSONObject pedido = jsonArray.getJSONObject(i);
+                    if (pedido.optDouble("pago", 0) <= 0) continue;
+                    if (pedido.isNull("tipoServico")) continue;
 
-            Map<String,String> arguments = new HashMap<>();
-            arguments.put("IdPFisica", String.valueOf(user.getPhysicalId()));
-            result = cW.send("https://cadier.com.br/api/lastMonthly", "POST", arguments);
+                    int idTipoServico = pedido.getJSONObject("tipoServico").optInt("idTipoServico", -1);
+                    if (!IDS_TIPO_SERVICO_MENSALIDADE_OU_EQUIVALENTE.contains(idTipoServico)) continue;
 
-            return result;
+                    return OrdemServicoParser.paraServiceOrder(pedido);
+                }
+                return null;
+            } catch (Exception e) {
+                e.printStackTrace();
+                return null;
+            }
         }
 
         @Override
-        protected void onPostExecute(String result){
-            super.onPostExecute(result);
+        protected void onPostExecute(ServiceOrder resultado){
+            super.onPostExecute(resultado);
 
             progressDialog.dismiss();
             try {
-                if (result != null) {
-                    JSONObject jsonObject = new JSONObject(result);
-
-                    serviceOrder = new ServiceOrder(jsonObject.getInt("IdOrdem"), jsonObject.getInt("IdPFisica"), jsonObject.getInt("IdAtendente"), jsonObject.getString("Servico"),
-                            jsonObject.getString("Obs").contains("null") ? null : jsonObject.getString("Obs") , Date.valueOf(jsonObject.getString("DataPedido")), Date.valueOf(jsonObject.getString("DataFeito")), Date.valueOf(jsonObject.getString("DataEntregue")),
-                            jsonObject.getString("QuemLevou").contains("null") ? null : jsonObject.getString("QuemLevou"), Float.parseFloat(jsonObject.getString("Valor")), Float.parseFloat(jsonObject.getString("Pago")), Float.parseFloat(jsonObject.getString("CreditoAnterior")),
-                            Float.parseFloat(jsonObject.getString("Deposito")), ServiceKindEnum.fromInteger(jsonObject.getInt("TipoServico")), Date.valueOf(jsonObject.getString("Mensalidade")));
-
+                if (resultado != null) {
+                    serviceOrder = resultado;
                     textViewMonthly.setText(serviceOrder.getService());
                     SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-                    textViewPayedMonthly.setText(sdf.format(serviceOrder.getDeliveryDate()));
+                    textViewPayedMonthly.setText(serviceOrder.getDeliveryDate() != null
+                            ? sdf.format(serviceOrder.getDeliveryDate())
+                            : (serviceOrder.getOrderDate() != null ? sdf.format(serviceOrder.getOrderDate()) : ""));
 
                     textViewValue.setText("R$ " + String.format("%.02f", serviceOrder.getServicePrice()));
                     textViewObs.setText(serviceOrder.getObs() == null ? "Não há!" : serviceOrder.getObs());
                 } else {
                     Toast.makeText(getContext(), "Não foram encontrados registros. Por favor, verifique se você já pagou alguma mensalidade ou verifique sua conexão com a internet!", Toast.LENGTH_LONG).show();
                 }
-            } catch (JSONException e){
-                e.printStackTrace();
             } catch (Exception e){
                 e.printStackTrace();
             }

@@ -1,23 +1,35 @@
 apply plugin: 'com.android.application'
 
+// x-api-key do backend novo - lida do local.properties (gitignored, ver comentário lá) em vez de
+// hardcoded no código-fonte, pra não commitar o segredo real no repositório.
+def localProperties = new Properties()
+def localPropertiesFile = rootProject.file('local.properties')
+if (localPropertiesFile.exists()) {
+    localProperties.load(new FileInputStream(localPropertiesFile))
+}
+
 android {
     compileSdk 36
     defaultConfig {
         applicationId "app.convencao.cadier"
         minSdkVersion 21
         targetSdk 36
-        versionCode 16
-        versionName '1.0.9'
-        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        versionCode 17
+        versionName '1.0.10'
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        buildConfigField "String", "API_KEY", "\"${localProperties.getProperty('apiKey', '')}\""
+    }
+    buildFeatures {
+        buildConfig = true
     }
     buildTypes {
         release {
             minifyEnabled true
-            shrinkResources false
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            shrinkResources = false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
-    namespace 'app.convencao.cadier'
+    namespace = 'app.convencao.cadier'
     buildToolsVersion '36.1.0'
 }
 

@@ -1,125 +1,97 @@
 package app.convencao.cadier.util;
 
-import android.util.Log;
-import android.util.MalformedJsonException;
-
-import java.io.BufferedReader;
-import java.io.DataOutputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
-import java.util.Map;
-import java.util.StringJoiner;
+import java.util.concurrent.TimeUnit;
 
-import javax.net.ssl.HttpsURLConnection;
+import okhttp3.MediaType;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
+import okhttp3.ResponseBody;
 
 /**
  * Created by DrGreend on 28/03/2018.
+ * Reescrito pra falar com o backend novo (Cadier.API, JSON + JWT) em vez do antigo (PHP,
+ * form-urlencoded, sem autenticação). Consolidado em cima do OkHttp (já era dependência, usado
+ * em ProfileEditActivity) em vez do HttpURLConnection cru que essa classe usava antes, porque
+ * agora toda chamada autenticada precisa do header "Authorization: Bearer <token>".
  */
-
 public class ConectWebService {
-    private static final String USER_AGENT = "Mozilla/5.0";
+    private static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
 
-    public String request(String stringUrl) {
-        HttpURLConnection conn = null;
-        BufferedReader in = null;
-        try {
-            URL obj = new URL(stringUrl);
-            conn = (HttpURLConnection) obj.openConnection();
+    private static final OkHttpClient client = new OkHttpClient.Builder()
+            .connectTimeout(30, TimeUnit.SECONDS)
+            .writeTimeout(30, TimeUnit.SECONDS)
+            .readTimeout(30, TimeUnit.SECONDS)
+            .build();
 
-            conn.setRequestMethod("GET");
+    private Request.Builder authorized(String url, String token) {
+        // "x-api-key" é obrigatório em toda chamada (ver ApiConfig.API_KEY) - inclusive no login,
+        // antes de existir token. Depois de logado, o Bearer também vai junto (não custa nada mandar
+        // os dois, e evita qualquer chamada esquecida de token que dependeria só da ApiKey).
+        Request.Builder builder = new Request.Builder().url(url).header("x-api-key", ApiConfig.API_KEY);
+        if (token != null && !token.isEmpty()) {
+            builder.header("Authorization", "Bearer " + token);
+        }
+        return builder;
+    }
 
-            conn.setRequestProperty("User-Agent", USER_AGENT);
-            int responseCode = conn.getResponseCode();
-            if (responseCode == HttpURLConnection.HTTP_OK) {
-                in = new BufferedReader(
-                        new InputStreamReader(conn.getInputStream()));
-                String inputLine;
-                StringBuffer response = new StringBuffer();
-
-                while ((inputLine = in.readLine()) != null) {
-                    response.append(inputLine);
-                }
-                in.close();
-                return response.toString();
-            } else {
-                in.close();
-                return null;
-            }
-        } catch (MalformedJsonException e) {
-            return null;
+    /** GET autenticado - devolve o corpo da resposta como String, ou null em erro/falha de rede. */
+    public String get(String url, String token) {
+        Request request = authorized(url, token).get().build();
+        try (Response response = client.newCall(request).execute()) {
+            ResponseBody body = response.body();
+            String texto = body != null ? body.string() : null;
+            if (!response.isSuccessful()) return null;
+            return texto;
         } catch (IOException e) {
+            e.printStackTrace();
             return null;
-        } finally {
-            if (conn != null) {
-                conn.disconnect();
-            }
-            try {
-                if (in != null) {
-                    in.close();
-                }
-            } catch (IOException e) {
-            }
         }
     }
 
-    public String send(String url, String tipo, Map<String, String> urlParameters){
-        BufferedReader in = null;
-        try {
-            URL obj = new URL(url);
-            HttpURLConnection con = (HttpURLConnection) obj.openConnection();
-
-            con.setRequestMethod(tipo);
-            //con.setRequestProperty("Content-Type", "application/json");
-            con.setRequestProperty("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
-            con.setRequestProperty("User-Agent", USER_AGENT);
-            con.setRequestProperty("Accept-Language", "en-US,en;q=0.5");
-
-            String joiner = "";
-            int counter = 0;
-            for (Map.Entry<String, String> entry : urlParameters.entrySet()) {
-                counter++;
-                joiner += URLEncoder.encode(entry.getKey(), "UTF-8") + "="
-                        + URLEncoder.encode(entry.getValue(), "UTF-8");
-                if (counter < urlParameters.size()) {
-                    joiner += "&";
-                }
-            }
-            byte[] out = joiner.getBytes();
-            int length = out.length;
-
-            con.setFixedLengthStreamingMode(length);
-            con.setRequestProperty("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
-            con.connect();
-            try (OutputStream os = con.getOutputStream()) {
-                os.write(out);
-            }
-
-            int responseCode = con.getResponseCode();
-
-            if(responseCode != 200 || responseCode != 401) {
-
-                in = new BufferedReader(
-                        new InputStreamReader(con.getInputStream()));
-                String inputLine;
-                StringBuffer response = new StringBuffer();
-
-                while ((inputLine = in.readLine()) != null) {
-                    response.append(inputLine);
-                }
-                in.close();
-
-                return response.toString();
-            } else {
-                return "errocon";
-            }
-
-        } catch(Exception ex){
+    /** GET autenticado que devolve os bytes crus (download de arquivo/imagem), ou null em erro. */
+    public byte[] getBytes(String url, String token) {
+        Request request = authorized(url, token).get().build();
+        try (Response response = client.newCall(request).execute()) {
+            if (!response.isSuccessful() || response.body() == null) return null;
+            return response.body().bytes();
+        } catch (IOException e) {
+            e.printStackTrace();
             return null;
+        }
+    }
+
+    /**
+     * POST/PATCH com corpo JSON (não mais form-urlencoded como no sistema antigo). "corpoJson" já
+     * deve vir pronto (org.json.JSONObject.toString()). Devolve o corpo da resposta em caso de
+     * sucesso (2xx), "errocon" em caso de erro HTTP (mesma sinalização que as telas antigas já
+     * verificavam), ou null em falha de rede.
+     */
+    public String sendJson(String url, String metodo, String corpoJson, String token) {
+        RequestBody body = RequestBody.create(corpoJson, JSON);
+        Request request = authorized(url, token).method(metodo, body).build();
+        try (Response response = client.newCall(request).execute()) {
+            ResponseBody responseBody = response.body();
+            String texto = responseBody != null ? responseBody.string() : null;
+            if (!response.isSuccessful()) return "errocon";
+            return texto;
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    /** Devolve o código de status HTTP de um POST/PATCH JSON, ou -1 em falha de rede. */
+    public int sendJsonStatus(String url, String metodo, String corpoJson, String token) {
+        RequestBody body = RequestBody.create(corpoJson, JSON);
+        Request request = authorized(url, token).method(metodo, body).build();
+        try (Response response = client.newCall(request).execute()) {
+            return response.code();
+        } catch (IOException e) {
+            e.printStackTrace();
+            return -1;
         }
     }
 }

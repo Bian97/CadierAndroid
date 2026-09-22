@@ -2,17 +2,13 @@ package app.convencao.cadier.view.pager;
 
 import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.net.ConnectivityManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.text.InputFilter;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.DatePicker;
-import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.Toast;
@@ -20,24 +16,28 @@ import android.widget.Toast;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.ListFragment;
 
-import app.convencao.cadier.util.Enums.ServiceKindEnum;
+import app.convencao.cadier.util.ApiConfig;
+import app.convencao.cadier.util.OrdemServicoParser;
 import app.convencao.cadier.view.adapter.AdapterPrevious;
 import app.convencao.cadier.R;
 import app.convencao.cadier.modelo.ServiceOrder;
 import app.convencao.cadier.modelo.User;
-import app.convencao.cadier.util.CnpjCpfDataMask;
 import app.convencao.cadier.util.ConectWebService;
 
 import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
 
-import java.sql.Date;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.Calendar;
+import java.util.Locale;
 
 /**
  * Created by DrGreend on 24/03/2018.
+ * O antigo endpoint dedicado "ordersByDate" (filtro por data no servidor) não existe mais no
+ * backend novo - busca a lista completa de OrdemServico/PorPessoaFisica/{id} e filtra pela data
+ * escolhida no DatePicker aqui mesmo, comparando só a parte "yyyy-MM-dd" de dataPedido.
  */
 
 public class TabPrevious extends ListFragment {
@@ -46,7 +46,7 @@ public class TabPrevious extends ListFragment {
     ImageButton buttonSearch;
     ProgressDialog progressDialog;
     ArrayList<ServiceOrder> orderList;
-    String date;
+    String dataEscolhida; // yyyy-MM-dd
 
     @Override
     public View onCreateView(final LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -66,7 +66,9 @@ public class TabPrevious extends ListFragment {
             builder.setView(input);
 
             builder.setPositiveButton(android.R.string.ok, (dialog, which) -> {
-                date = input.getDayOfMonth() + "/" + (input.getMonth() + 1) + "/" + input.getYear();
+                Calendar calendario = Calendar.getInstance();
+                calendario.set(input.getYear(), input.getMonth(), input.getDayOfMonth());
+                dataEscolhida = new SimpleDateFormat("yyyy-MM-dd", Locale.US).format(calendario.getTime());
                 dialog.dismiss();
                 SearchPrevious searchPrevious = new SearchPrevious();
                 Context context = getContext();
@@ -100,15 +102,8 @@ public class TabPrevious extends ListFragment {
 
         @Override
         protected String doInBackground(String... strings) {
-            String result = null;
             ConectWebService cW = new ConectWebService();
-
-            Map<String,String> arguments = new HashMap<>();
-            arguments.put("IdPFisica", String.valueOf(user.getPhysicalId()));
-            arguments.put("Date", date);
-            result = cW.send("https://cadier.com.br/api/ordersByDate", "POST", arguments);
-
-            return result;
+            return cW.get(ApiConfig.BASE_URL + "OrdemServico/PorPessoaFisica/" + user.getPhysicalId(), user.getToken());
         }
 
         @Override
@@ -119,18 +114,19 @@ public class TabPrevious extends ListFragment {
                 if (result != null) {
                     JSONArray jsonArray = new JSONArray(result);
                     for(int i = 0; i < jsonArray.length(); i++) {
-                        serviceOrder = new ServiceOrder(jsonArray.getJSONObject(i).getInt("IdOrdem"), jsonArray.getJSONObject(i).getInt("IdPFisica"), jsonArray.getJSONObject(i).getInt("IdAtendente"), jsonArray.getJSONObject(i).getString("Servico"),
-                                jsonArray.getJSONObject(i).getString("Obs").contains("null") ? null : jsonArray.getJSONObject(i).getString("Obs"), Date.valueOf(jsonArray.getJSONObject(i).getString("DataPedido")), Date.valueOf(jsonArray.getJSONObject(i).getString("DataFeito")), Date.valueOf(jsonArray.getJSONObject(i).getString("DataEntregue")),
-                                jsonArray.getJSONObject(i).getString("QuemLevou"), Float.parseFloat(jsonArray.getJSONObject(i).getString("Valor")), Float.parseFloat(jsonArray.getJSONObject(i).getString("Pago")), Float.parseFloat(jsonArray.getJSONObject(i).getString("CreditoAnterior")),
-                                Float.parseFloat(jsonArray.getJSONObject(i).getString("Deposito")), ServiceKindEnum.fromInteger(jsonArray.getJSONObject(i).getInt("TipoServico")), Date.valueOf(jsonArray.getJSONObject(i).getString("Mensalidade")));
+                        JSONObject pedido = jsonArray.getJSONObject(i);
+                        String dataPedido = pedido.optString("dataPedido", "");
+                        if (!dataPedido.startsWith(dataEscolhida)) continue;
 
+                        serviceOrder = OrdemServicoParser.paraServiceOrder(pedido);
                         orderList.add(serviceOrder);
                     }
+                }
+                if (orderList.isEmpty()) {
+                    Toast.makeText(getContext(), "Não foram encontrados registros. Confira se a data está correta ou verifique sua conexão com a internet!", Toast.LENGTH_LONG).show();
+                } else {
                     AdapterPrevious adapterPrevious = new AdapterPrevious(getActivity(), R.layout.adapter_anteriores, orderList);
                     setListAdapter(adapterPrevious);
-
-                } else {
-                    Toast.makeText(getContext(), "Não foram encontrados registros. Confira se a data está correta ou verifique sua conexão com a internet!", Toast.LENGTH_LONG).show();
                 }
                 progressDialog.dismiss();
             } catch (JSONException e){

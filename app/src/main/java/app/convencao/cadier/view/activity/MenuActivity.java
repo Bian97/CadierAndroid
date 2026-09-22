@@ -101,34 +101,27 @@ public class MenuActivity extends AppCompatActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        switch (id){
-            case R.id.opcao_perfil:
-                startFragment(new FragmentProfile(), "Perfil");
-                break;
-            case R.id.opcao_calendario:
-                Intent viewIntent = new Intent("android.intent.action.VIEW", Uri.parse("https://cadier.yolasite.com/calendario-reuni%C3%B5es.php"));
-                startActivity(viewIntent);
-                //iniciarFragment(new FragmentCalendario(), "Calendário");
-                break;
-            case R.id.opcao_pedidos:
-                startFragment(new FragmentOrders(), "Pedidos");
-                break;
-            case R.id.opcao_mensalidades:
-                startFragment(new FragmentMonthly(), "Mensalidades");
-                break;
-            case R.id.opcao_configuracao:
-                startFragment(new FragmentConfigurations(), "Configurações");
-                break;
-            case R.id.opcao_contatos:
-                startFragment(new FragmentContacts(), "Contatos");
-                break;
-            case R.id.opcao_ajuda:
-                startFragment(new FragmentHelp(), "Ajuda");
-                break;
-            case R.id.opcao_logout:
-                user = null;
-                startActivity(new Intent(getApplicationContext(), LoginActivity.class));
-                break;
+        // if/else em vez de switch: a partir do AGP 9 os ids de R.id deixaram de ser constantes de
+        // compilação por padrão (android.nonFinalResIds), e switch/case exige constante.
+        if (id == R.id.opcao_perfil) {
+            startFragment(new FragmentProfile(), "Perfil");
+        } else if (id == R.id.opcao_calendario) {
+            Intent viewIntent = new Intent("android.intent.action.VIEW", Uri.parse("https://cadier.yolasite.com/calendario-reuni%C3%B5es.php"));
+            startActivity(viewIntent);
+            //iniciarFragment(new FragmentCalendario(), "Calendário");
+        } else if (id == R.id.opcao_pedidos) {
+            startFragment(new FragmentOrders(), "Pedidos");
+        } else if (id == R.id.opcao_mensalidades) {
+            startFragment(new FragmentMonthly(), "Mensalidades");
+        } else if (id == R.id.opcao_configuracao) {
+            startFragment(new FragmentConfigurations(), "Configurações");
+        } else if (id == R.id.opcao_contatos) {
+            startFragment(new FragmentContacts(), "Contatos");
+        } else if (id == R.id.opcao_ajuda) {
+            startFragment(new FragmentHelp(), "Ajuda");
+        } else if (id == R.id.opcao_logout) {
+            user = null;
+            startActivity(new Intent(getApplicationContext(), LoginActivity.class));
         }
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);

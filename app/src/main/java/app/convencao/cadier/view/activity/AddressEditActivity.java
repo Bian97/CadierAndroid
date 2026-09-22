@@ -13,13 +13,17 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import app.convencao.cadier.R;
 import app.convencao.cadier.modelo.User;
+import app.convencao.cadier.util.ApiConfig;
 import app.convencao.cadier.util.ConectWebService;
 
-import java.util.HashMap;
-import java.util.Map;
+import org.json.JSONObject;
 
 /**
  * Created by DrGreend on 26/03/2018.
+ * Reescrito pro backend novo (PessoaFisica/MeusDadosDocumento). Telefone1/idPessoaJuridica são
+ * sobrescritos incondicionalmente por esse endpoint (ver comentário em ProfileEditActivity), por
+ * isso sempre reenvia os valores atuais do usuário nesses 2 campos mesmo só editando endereço
+ * aqui - senão apaga telefone/igreja sem querer.
  */
 
 public class AddressEditActivity extends AppCompatActivity {
@@ -67,19 +71,8 @@ public class AddressEditActivity extends AppCompatActivity {
                     user.setState(editTextEditState.getText().toString());
                     user.setCountry(editTextEditCountry.getText().toString());
 
-                    Map<String,String> arguments = new HashMap<>();
-
-                    arguments.put("url", "https://cadier.com.br/api/changeAddress");
-                    arguments.put("rua", editTextEditStreet.getText().toString());
-                    arguments.put("bairro", editTextEditDistrict.getText().toString());
-                    arguments.put("cep", editTextEditCode.getText().toString());
-                    arguments.put("cidade", editTextEditCity.getText().toString());
-                    arguments.put("estado", editTextEditState.getText().toString());
-                    arguments.put("pais", editTextEditCountry.getText().toString());
-                    arguments.put("IdPFisica", String.valueOf(user.getPhysicalId()));
-
                     EditarEnderecoTask editarEnderecoTask = new EditarEnderecoTask();
-                    editarEnderecoTask.execute(arguments);
+                    editarEnderecoTask.execute();
 
                 } catch (Exception e){
                     e.printStackTrace();
@@ -93,7 +86,7 @@ public class AddressEditActivity extends AppCompatActivity {
         super.onBackPressed();
         startActivity(new Intent(AddressEditActivity.this, MenuActivity.class).putExtra("usuario", user));
     }
-    public class EditarEnderecoTask extends AsyncTask<Map<String, String>,String,String> {
+    public class EditarEnderecoTask extends AsyncTask<Void,String,Boolean> {
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
@@ -101,21 +94,33 @@ public class AddressEditActivity extends AppCompatActivity {
         }
 
         @Override
-        protected String doInBackground(Map<String, String>... strings) {
-            String result;
-            ConectWebService cW = new ConectWebService();
-            String url = strings[0].get("url");
-            strings[0].remove("url");
+        protected Boolean doInBackground(Void... nada) {
+            try {
+                ConectWebService cW = new ConectWebService();
 
-            result = cW.send(url, "POST", strings[0]);
-            return result;
+                JSONObject corpo = new JSONObject();
+                corpo.put("telefone1", user.getPhone1());
+                corpo.put("idPessoaJuridica", user.getIdPessoaJuridica() == null ? JSONObject.NULL : user.getIdPessoaJuridica());
+                corpo.put("rua", user.getStreet());
+                corpo.put("bairro", user.getDistrict());
+                corpo.put("cidade", user.getCity());
+                corpo.put("estado", user.getState());
+                corpo.put("cep", user.getCode());
+                corpo.put("pais", user.getCountry());
+
+                int status = cW.sendJsonStatus(ApiConfig.BASE_URL + "PessoaFisica/MeusDadosDocumento", "PATCH", corpo.toString(), user.getToken());
+                return status >= 200 && status < 300;
+            } catch (Exception e) {
+                e.printStackTrace();
+                return false;
+            }
         }
 
         @Override
-        protected void onPostExecute(String result) {
-            super.onPostExecute(result);
+        protected void onPostExecute(Boolean sucesso) {
+            super.onPostExecute(sucesso);
             progressDialog.dismiss();
-            if(result.equalsIgnoreCase("Alterado")) {
+            if(Boolean.TRUE.equals(sucesso)) {
                 Toast.makeText(getApplicationContext(), "Alterado com Sucesso!", Toast.LENGTH_SHORT).show();
             } else {
                 Toast.makeText(getApplicationContext(), "Erro na Alteração, verifique sua conexão com a internet!", Toast.LENGTH_SHORT).show();

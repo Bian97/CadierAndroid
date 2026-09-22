@@ -22,7 +22,10 @@ import android.widget.Toast;
 
 import app.convencao.cadier.R;
 import app.convencao.cadier.modelo.User;
+import app.convencao.cadier.util.ApiConfig;
 import app.convencao.cadier.util.ConectWebService;
+
+import org.json.JSONObject;
 
 import java.io.File;
 import java.io.IOException;
@@ -46,9 +49,19 @@ import androidx.core.content.ContextCompat;
 
 /**
  * Created by DrGreend on 26/03/2018.
+ * Reescrito pro backend novo. Autoatendimento (PessoaFisica/MeusDadosDocumento) só permite o
+ * filiado alterar Telefone1/igreja/endereço - de propósito não inclui Telefone2, Cônjuge ou
+ * Profissão (ver comentário no ViewModel do backend: esses campos só continuam editáveis pelo
+ * atendente). Por isso esses 3 campos aqui viraram somente leitura (em vez de sumir da tela, pra
+ * não perder o layout já pronto) - se o usuário tentar editar e salvar, o valor digitado é
+ * simplesmente ignorado pelo back, então travar o campo evita a falsa impressão de que salvou.
+ * E-mail tem endpoint próprio (PessoaFisica/MeuEmail). Foto de perfil agora é um documento
+ * (DocumentoPFisica, tipo Foto3x4) em vez de um campo solto em basicUpdateProfileApp.
  */
 
 public class ProfileEditActivity extends AppCompatActivity {
+    private static final int ID_TIPO_DOCUMENTO_FOTO_3X4 = 3;
+
     ImageView imageViewEditProfile;
     boolean find;
     Uri selectedImage;
@@ -87,6 +100,11 @@ public class ProfileEditActivity extends AppCompatActivity {
         textViewEditEmail = findViewById(R.id.textViewEditarEmail);
         buttonSaveProfile = findViewById(R.id.buttonGuardarPerfil);
 
+        // Telefone2/Cônjuge/Profissão: só leitura, ver comentário da classe.
+        textViewEditPhone2.setEnabled(false);
+        textViewEditSpouse.setEnabled(false);
+        textViewEditProfession.setEnabled(false);
+
         imageViewEditProfile.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -94,13 +112,15 @@ public class ProfileEditActivity extends AppCompatActivity {
                 startActivityForResult(new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI), RESULT_LOAD_IMAGE);
             }
         });
-        textViewEditPhone.setText(!user.getPhone1().contains("null") ? user.getPhone1() : "");
-        textViewEditPhone2.setText(!user.getPhone2().contains("null") ? user.getPhone2() : "");
-        textViewEditSpouse.setText(!user.getSpouse().contains("null") ? user.getSpouse() : "");
-        textViewEditProfession.setText(!user.getJob().contains("null") ? user.getJob() : "");
-        textViewEditEmail.setText(!user.getEmail().contains("null") ? user.getEmail() : "");
-        Bitmap aux = BitmapFactory.decodeFile(user.getPhoto());
-        imageViewEditProfile.setImageBitmap(aux);
+        textViewEditPhone.setText(user.getPhone1() != null ? user.getPhone1() : "");
+        textViewEditPhone2.setText(user.getPhone2() != null ? user.getPhone2() : "");
+        textViewEditSpouse.setText(user.getSpouse() != null ? user.getSpouse() : "");
+        textViewEditProfession.setText(user.getJob() != null ? user.getJob() : "");
+        textViewEditEmail.setText(user.getEmail() != null ? user.getEmail() : "");
+        if (user.getPhoto() != null) {
+            Bitmap aux = BitmapFactory.decodeFile(user.getPhoto());
+            if (aux != null) imageViewEditProfile.setImageBitmap(aux);
+        }
         buttonSaveProfile.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -109,9 +129,6 @@ public class ProfileEditActivity extends AppCompatActivity {
 
                         EditProfileTask editTask = new EditProfileTask();
                         user.setPhone1(textViewEditPhone.getText().toString());
-                        user.setPhone2(textViewEditPhone2.getText().toString());
-                        user.setSpouse(textViewEditSpouse.getText().toString());
-                        user.setJob(textViewEditProfession.getText().toString());
                         user.setEmail(textViewEditEmail.getText().toString());
                         editTask.execute();
                     } else {
@@ -153,7 +170,7 @@ public class ProfileEditActivity extends AppCompatActivity {
         super.onBackPressed();
         startActivity(new Intent(ProfileEditActivity.this, MenuActivity.class).putExtra("usuario", user));
     }
-    public class EditProfileTask extends AsyncTask<String,String,String> {
+    public class EditProfileTask extends AsyncTask<String,String,Boolean> {
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
@@ -167,70 +184,63 @@ public class ProfileEditActivity extends AppCompatActivity {
         }
 
         @Override
-        protected String doInBackground(String... strings) {
-            String result = "";
-
+        protected Boolean doInBackground(String... strings) {
+            boolean sucesso = true;
             try {
-                OkHttpClient client = new OkHttpClient.Builder()
-                        .connectTimeout(30, TimeUnit.SECONDS)
-                        .writeTimeout(30, TimeUnit.SECONDS)
-                        .readTimeout(30, TimeUnit.SECONDS)
-                        .build();
+                ConectWebService cW = new ConectWebService();
 
-                RequestBody body;
+                // telefone1 e idPessoaJuridica são sobrescritos incondicionalmente por esse
+                // endpoint (null de verdade apaga) - por isso sempre manda o valor atual do
+                // usuário nesses dois, mesmo quando só o telefone está mudando aqui.
+                JSONObject corpo = new JSONObject();
+                corpo.put("telefone1", user.getPhone1());
+                corpo.put("idPessoaJuridica", user.getIdPessoaJuridica() == null ? JSONObject.NULL : user.getIdPessoaJuridica());
+                int statusDados = cW.sendJsonStatus(ApiConfig.BASE_URL + "PessoaFisica/MeusDadosDocumento", "PATCH", corpo.toString(), user.getToken());
+                sucesso = sucesso && statusDados >= 200 && statusDados < 300;
 
-                if(selectedImage != null) {
+                JSONObject corpoEmail = new JSONObject();
+                corpoEmail.put("email", user.getEmail());
+                int statusEmail = cW.sendJsonStatus(ApiConfig.BASE_URL + "PessoaFisica/MeuEmail", "PATCH", corpoEmail.toString(), user.getToken());
+                sucesso = sucesso && statusEmail >= 200 && statusEmail < 300;
+
+                if (selectedImage != null) {
                     File file = new File(getRealPathFromURI(selectedImage));
                     String content_type = getMimeType(file.getPath());
-                    //Log.e("POST", "com foto");
 
-                    ConectWebService cW = new ConectWebService();
+                    OkHttpClient client = new OkHttpClient.Builder()
+                            .connectTimeout(30, TimeUnit.SECONDS)
+                            .writeTimeout(30, TimeUnit.SECONDS)
+                            .readTimeout(30, TimeUnit.SECONDS)
+                            .build();
 
-                    body = new MultipartBody.Builder().setType(MultipartBody.FORM)
-                            .addFormDataPart("url_da_foto", file.getName(), RequestBody.create(MediaType.parse(content_type), file))
-                            .addFormDataPart("telefone", user.getPhone1())
-                            .addFormDataPart("telefone2", user.getPhone2())
-                            .addFormDataPart("conjuge", user.getSpouse())
-                            .addFormDataPart("profissao", user.getJob())
-                            .addFormDataPart("email", user.getEmail())
-                            .addFormDataPart("IdPFisica", String.valueOf(user.getPhysicalId()))
-                            //.addFormDataPart("achou", "sim")
+                    RequestBody body = new MultipartBody.Builder().setType(MultipartBody.FORM)
+                            .addFormDataPart("arquivo", file.getName(), RequestBody.create(file, MediaType.parse(content_type)))
                             .build();
-                    Request request = new Request.Builder().url("https://cadier.com.br/api/basicUpdateProfileApp").post(body).build();
-                    Response response = client.newCall(request).execute();
-                    result = response.body().string();
-                } else {
-                    //Log.e("POST", "sem foto");
-                    body = new MultipartBody.Builder().setType(MultipartBody.FORM)
-                            .addFormDataPart("telefone", user.getPhone1())
-                            .addFormDataPart("telefone2", user.getPhone2())
-                            .addFormDataPart("conjuge", user.getSpouse())
-                            .addFormDataPart("profissao", user.getJob())
-                            .addFormDataPart("email", user.getEmail())
-                            .addFormDataPart("IdPFisica", String.valueOf(user.getPhysicalId()))
-                            //.addFormDataPart("achou", "nao")
+                    Request request = new Request.Builder()
+                            .url(ApiConfig.BASE_URL + "DocumentoPFisica/" + user.getPhysicalId() + "/" + ID_TIPO_DOCUMENTO_FOTO_3X4)
+                            .header("x-api-key", ApiConfig.API_KEY)
+                            .header("Authorization", "Bearer " + user.getToken())
+                            .post(body)
                             .build();
-                    Request request = new Request.Builder().url("https://cadier.com.br/api/basicUpdateProfileApp").post(body).build();
-                    Response response = client.newCall(request).execute();
-                    result = response.body().string();
+                    try (Response response = client.newCall(request).execute()) {
+                        sucesso = sucesso && response.isSuccessful();
+                    }
                 }
-            /*String result;
-            ConectaWebService cW = new ConectaWebService();
-            result = cW.send(strings[0], "PUT", strings[1]);*/
-                //Log.d("POST", result);
             } catch (IOException e){
                 e.printStackTrace();
+                sucesso = false;
             } catch (Exception e){
                 e.printStackTrace();
+                sucesso = false;
             }
-            return result;
+            return sucesso;
         }
 
         @Override
-        protected void onPostExecute(String result) {
-            super.onPostExecute(result);
+        protected void onPostExecute(Boolean sucesso) {
+            super.onPostExecute(sucesso);
             progressDialog.dismiss();
-            if(result.equalsIgnoreCase("Alterado")) {
+            if(Boolean.TRUE.equals(sucesso)) {
                 Toast.makeText(getApplicationContext(), "Alterado com Sucesso!", Toast.LENGTH_SHORT).show();
             } else {
                 Toast.makeText(getApplicationContext(), "Erro na Alteração, verifique sua conexão com a internet!", Toast.LENGTH_SHORT).show();
@@ -264,7 +274,6 @@ public class ProfileEditActivity extends AppCompatActivity {
                 });
                 AlertDialog alert = alertBuilder.create();
                 alert.show();
-                //Log.e("", "permission denied, show dialog");
             } else {
                 ActivityCompat.requestPermissions(ProfileEditActivity.this, new String[]{WRITE_EXTERNAL_STORAGE,
                         READ_EXTERNAL_STORAGE}, PERMISSION_REQUEST_CODE);
