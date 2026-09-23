@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:layout_marginStart="16dp"
+    android:layout_marginEnd="16dp"
+    android:layout_marginBottom="12dp"
+    android:background="@drawable/bg_cadier_card"
+    android:elevation="3dp"
+    android:padding="16dp">
+
+    <!-- Só visível no slot de Foto3x4 -->
+    <FrameLayout
+        android:id="@+id/frameAvatarItemDocumento"
+        android:layout_width="72dp"
+        android:layout_height="72dp"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginBottom="10dp"
+        android:visibility="gone">
+
+        <View
+            android:layout_width="72dp"
+            android:layout_height="72dp"
+            android:background="@drawable/bg_cadier_avatar_ring"/>
+
+        <ImageView
+            android:id="@+id/imageViewAvatarItemDocumento"
+            android:layout_width="64dp"
+            android:layout_height="64dp"
+            android:layout_gravity="center"
+            android:background="@drawable/bg_cadier_avatar_mask"
+            android:clipToOutline="true"
+            android:scaleType="centerInside"/>
+    </FrameLayout>
+
+    <!-- Só visível no slot de Foto3x4 -->
+    <LinearLayout
+        android:id="@+id/containerObsItemDocumento"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_marginBottom="12dp"
+        android:background="@drawable/bg_cadier_warning"
+        android:padding="12dp"
+        android:visibility="gone">
+
+        <TextView
+            style="@style/Cadier.Text.Body.Secondary"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textAlignment="center"
+            android:text="Essa foto será usada na confecção da sua Credencial PVC. Escolha uma foto nítida, de rosto, com fundo neutro."/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/textViewNomeItemDocumento"
+            style="@style/Cadier.Text.Body"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:textStyle="bold"
+            android:text="Nome do Documento"/>
+
+        <TextView
+            android:id="@+id/textViewStatusItemDocumento"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/cadier_text_on_dark"
+            android:textStyle="bold"
+            android:textSize="@dimen/cadier_text_caption"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
+            android:paddingTop="4dp"
+            android:paddingBottom="4dp"
+            android:text="Pendente"/>
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/textViewMotivoRejeicaoItemDocumento"
+        style="@style/Cadier.Text.Caption"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:textColor="@color/status_error"
+        android:visibility="gone"
+        android:text="Motivo da rejeição"/>
+
+    <Button
+        android:id="@+id/buttonEnviarItemDocumento"
+        style="@style/Cadier.Button.Secondary"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:layout_marginTop="12dp"
+        android:text="Enviar"/>
+
+</LinearLayout>

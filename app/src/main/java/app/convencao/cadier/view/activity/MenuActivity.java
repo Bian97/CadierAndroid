@@ -24,6 +24,7 @@ import app.convencao.cadier.modelo.User;
 import app.convencao.cadier.view.fragments.FragmentCalendar;
 import app.convencao.cadier.view.fragments.FragmentConfigurations;
 import app.convencao.cadier.view.fragments.FragmentContacts;
+import app.convencao.cadier.view.fragments.FragmentDocumentos;
 import app.convencao.cadier.view.fragments.FragmentHelp;
 import app.convencao.cadier.view.fragments.FragmentMonthly;
 import app.convencao.cadier.view.fragments.FragmentOrders;
@@ -73,6 +74,15 @@ public class MenuActivity extends AppCompatActivity
         txtNameMenu = view.findViewById(R.id.txtNomeMenu);
         txtChurchMenu = view.findViewById(R.id.txtIgrejaMenu);
 
+        atualizarCabecalhoMenu();
+
+        startFragment(new FragmentProfile(), "Perfil");
+    }
+
+    /** Cabeçalho do drawer (nome/igreja/foto) - separado do onCreate pra poder re-executar em
+     *  updateUser() também, senão a foto trocada em Editar Perfil nunca aparecia aqui sem reabrir
+     *  o app/relogar. */
+    private void atualizarCabecalhoMenu() {
         txtNameMenu.setText(user.getName());
         txtChurchMenu.setText(user.getChurch());
 
@@ -88,8 +98,6 @@ public class MenuActivity extends AppCompatActivity
             imageViewMenu.setImageResource(R.drawable.perfil);
             imageViewMenu.setColorFilter(ContextCompat.getColor(this, R.color.cadier_teal));
         }
-
-        startFragment(new FragmentProfile(), "Perfil");
     }
 
     @Override
@@ -113,6 +121,8 @@ public class MenuActivity extends AppCompatActivity
         // compilação por padrão (android.nonFinalResIds), e switch/case exige constante.
         if (id == R.id.opcao_perfil) {
             startFragment(new FragmentProfile(), "Perfil");
+        } else if (id == R.id.opcao_documentos) {
+            startFragment(new FragmentDocumentos(), "Envio de Documentos");
         } else if (id == R.id.opcao_calendario) {
             startFragment(new FragmentCalendar(), "Calendário");
         } else if (id == R.id.opcao_pedidos) {
@@ -147,6 +157,7 @@ public class MenuActivity extends AppCompatActivity
         if (usuarioAtualizado == null) return;
         this.user = usuarioAtualizado;
         getIntent().putExtra("usuario", usuarioAtualizado);
+        atualizarCabecalhoMenu();
     }
 
     public void startFragment(Fragment fragment, String title) {

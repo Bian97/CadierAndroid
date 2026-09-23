@@ -20,7 +20,9 @@ import app.convencao.cadier.modelo.User;
 import app.convencao.cadier.util.ApiConfig;
 import app.convencao.cadier.util.CnpjCpfDataMask;
 import app.convencao.cadier.util.ConectWebService;
+import app.convencao.cadier.util.Enums.StatusDocumentoEnum;
 import app.convencao.cadier.util.Enums.StatusEnum;
+import app.convencao.cadier.util.Enums.TipoDocumentoEnum;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
@@ -239,7 +241,6 @@ public class LoginActivity extends AppCompatActivity {
     // login: se não encontrar/baixar a foto (filiado nunca enviou uma, por exemplo), segue pro
     // menu mesmo assim - MenuActivity já trata user.getPhoto() nulo mostrando um ícone padrão.
     public class GetImage extends AsyncTask<String, String, String> {
-        private static final int ID_TIPO_DOCUMENTO_FOTO_3X4 = 3;
 
         @Override
         protected void onPreExecute() {
@@ -249,34 +250,44 @@ public class LoginActivity extends AppCompatActivity {
 
         @Override
         protected String doInBackground(String... usu) {
+            // Arquivo local da execução anterior (login passado) - se a foto não estiver mais
+            // disponível pra uso (rejeitada, por ex.), remove o cache velho em vez de deixar lixo
+            // no aparelho apontando pra uma foto que não deveria mais aparecer como perfil.
+            File direct = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES) + File.separator + "CADIER");
+            File file = new File(direct, "perfil_" + user.getPhysicalId() + ".jpg");
+
             try {
                 ConectWebService cW = new ConectWebService();
                 String respostaLista = cW.get(ApiConfig.BASE_URL + "DocumentoPFisica/PorFiliado/" + user.getPhysicalId(), user.getToken());
-                if (respostaLista == null) return null;
+                if (respostaLista == null) return apagarCacheLocal(file);
 
                 JSONArray documentos = new JSONArray(respostaLista);
                 int idDocumentoFoto = -1;
                 for (int i = 0; i < documentos.length(); i++) {
                     JSONObject doc = documentos.getJSONObject(i);
-                    if (doc.optInt("tipoDocumento") == ID_TIPO_DOCUMENTO_FOTO_3X4) {
+                    if (doc.optInt("tipoDocumento") != TipoDocumentoEnum.Foto3x4.getId()) continue;
+
+                    // Documento rejeitado não deve ser usado como ícone de perfil em nenhum lugar
+                    // do app - só aparece na tela de Documentos (onde o motivo da rejeição é
+                    // mostrado e o filiado pode reenviar). Mesma regra já aplicada na geração da
+                    // Credencial PVC no site (aceita Aprovado ou Enviado, nunca Rejeitado).
+                    StatusDocumentoEnum status = StatusDocumentoEnum.fromInteger(doc.optInt("status"));
+                    if (status == StatusDocumentoEnum.Aprovado || status == StatusDocumentoEnum.Enviado) {
                         idDocumentoFoto = doc.optInt("idDocumento");
                     }
                 }
-                if (idDocumentoFoto == -1) return null;
+                if (idDocumentoFoto == -1) return apagarCacheLocal(file);
 
                 byte[] bytes = cW.getBytes(ApiConfig.BASE_URL + "DocumentoPFisica/" + idDocumentoFoto + "/Download", user.getToken());
-                if (bytes == null) return null;
+                if (bytes == null) return apagarCacheLocal(file);
 
                 Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
-                if (bitmap == null) return null;
+                if (bitmap == null) return apagarCacheLocal(file);
 
-                File direct = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES) + File.separator + "CADIER");
-                if(!direct.exists()){
+                if (!direct.exists()) {
                     direct.mkdirs();
                 }
-                String fileName = "perfil_" + user.getPhysicalId() + ".jpg";
-                File file = new File(direct, fileName);
-                if(file.exists()){
+                if (file.exists()) {
                     file.delete();
                 }
 
@@ -287,8 +298,13 @@ public class LoginActivity extends AppCompatActivity {
                 return file.getAbsolutePath();
             } catch (Exception e) {
                 e.printStackTrace();
-                return null;
+                return apagarCacheLocal(file);
             }
+        }
+
+        private String apagarCacheLocal(File file) {
+            if (file.exists()) file.delete();
+            return null;
         }
         @Override
         protected void onPostExecute(String caminhoFoto){

@@ -88,6 +88,22 @@
                     android:textStyle="bold"
                     android:text="Toque na foto para alterar"/>
 
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:layout_marginTop="12dp"
+                    android:background="@drawable/bg_cadier_warning"
+                    android:padding="12dp">
+
+                    <TextView
+                        style="@style/Cadier.Text.Body.Secondary"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textAlignment="center"
+                        android:text="Essa foto será usada na confecção da sua Credencial PVC. Escolha uma foto nítida, de rosto, com fundo neutro."/>
+                </LinearLayout>
+
                 <TextView
                     style="@style/Cadier.Text.Caption"
                     android:layout_width="match_parent"

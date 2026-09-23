@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/cadier_bg">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:background="@color/cadier_teal">
+
+        <TextView
+            android:id="@+id/textViewVoltarAjusteFoto"
+            style="@style/Cadier.Text.Subtitle"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:gravity="center_vertical"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:textColor="@color/cadier_text_on_dark"
+            android:text="‹ Voltar"/>
+
+        <TextView
+            style="@style/Cadier.Text.Subtitle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center_vertical"
+            android:paddingEnd="60dp"
+            android:textColor="@color/cadier_text_on_dark"
+            android:textAlignment="center"
+            android:text="Ajustar Foto"/>
+    </LinearLayout>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fillViewport="true">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingBottom="16dp">
+
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="16dp">
+
+                <ImageView
+                    android:id="@+id/imageViewPreviaAjuste"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:adjustViewBounds="true"
+                    android:scaleType="fitCenter"
+                    android:background="@drawable/bg_cadier_card"
+                    android:contentDescription="Prévia da foto"/>
+            </FrameLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
+                android:layout_marginBottom="12dp"
+                android:background="@drawable/bg_cadier_card"
+                android:elevation="3dp"
+                android:padding="16dp">
+
+                <Button
+                    android:id="@+id/buttonMelhorarFotoAuto"
+                    style="@style/Cadier.Button"
+                    android:layout_width="match_parent"
+                    android:layout_height="52dp"
+                    android:text="Melhorar a foto automaticamente"/>
+
+                <Button
+                    android:id="@+id/buttonDesfazerMelhoria"
+                    style="@style/Cadier.Button.Secondary"
+                    android:layout_width="match_parent"
+                    android:layout_height="52dp"
+                    android:layout_marginTop="10dp"
+                    android:text="Desfazer melhoria"/>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginBottom="4dp"
+                    android:background="@color/cadier_divider_light"/>
+
+                <!-- Brilho -->
+                <TextView
+                    android:id="@+id/textViewLabelBrilho"
+                    style="@style/Cadier.Text.Caption"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:text="Brilho: 100%"/>
+                <SeekBar
+                    android:id="@+id/seekBarBrilho"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:max="100"
+                    android:progress="50"/>
+
+                <!-- Contraste -->
+                <TextView
+                    android:id="@+id/textViewLabelContraste"
+                    style="@style/Cadier.Text.Caption"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Contraste: 100%"/>
+                <SeekBar
+                    android:id="@+id/seekBarContraste"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:max="100"
+                    android:progress="50"/>
+
+                <!-- Cores/Saturação -->
+                <TextView
+                    android:id="@+id/textViewLabelCores"
+                    style="@style/Cadier.Text.Caption"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Cores: 100%"/>
+                <SeekBar
+                    android:id="@+id/seekBarCores"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:max="200"
+                    android:progress="100"/>
+
+                <!-- Nitidez -->
+                <TextView
+                    android:id="@+id/textViewLabelNitidez"
+                    style="@style/Cadier.Text.Caption"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Nitidez: 0%"/>
+                <SeekBar
+                    android:id="@+id/seekBarNitidez"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:max="100"
+                    android:progress="0"/>
+            </LinearLayout>
+
+            <Button
+                android:id="@+id/buttonConfirmarFoto"
+                style="@style/Cadier.Button"
+                android:layout_width="match_parent"
+                android:layout_height="56dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
+                android:layout_marginTop="8dp"
+                android:text="Confirmar"/>
+
+        </LinearLayout>
+    </ScrollView>
+</LinearLayout>

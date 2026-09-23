@@ -55,6 +55,12 @@
         <activity android:name="app.convencao.cadier.view.activity.ProfileEditActivity"/>
         <activity android:name="app.convencao.cadier.view.activity.AddressEditActivity"/>
         <activity android:name="app.convencao.cadier.view.activity.CalendarioPublicoActivity"/>
+        <activity android:name="app.convencao.cadier.view.activity.FotoCropActivity"/>
+        <!-- Activity da lib uCrop (recorte da Foto 3x4) - tema exigido pela própria lib. -->
+        <activity
+            android:name="com.yalantis.ucrop.UCropActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar"/>
     </application>
 
 </manifest>

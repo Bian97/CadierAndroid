@@ -2,16 +2,13 @@ package app.convencao.cadier.view.activity;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
-import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.provider.MediaStore;
 import android.util.Patterns;
 import android.view.View;
-import android.webkit.MimeTypeMap;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -27,17 +24,9 @@ import app.convencao.cadier.util.ConectWebService;
 import org.json.JSONObject;
 
 import java.io.File;
-import java.io.IOException;
-import java.util.concurrent.TimeUnit;
-
-import okhttp3.MediaType;
-import okhttp3.MultipartBody;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.RequestBody;
-import okhttp3.Response;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 
 /**
  * Created by DrGreend on 26/03/2018.
@@ -51,9 +40,9 @@ public class ProfileEditActivity extends AppCompatActivity {
     private static final int ID_TIPO_DOCUMENTO_FOTO_3X4 = 3;
 
     ImageView imageViewEditProfile;
-    boolean find;
-    Uri selectedImage;
-    static int RESULT_LOAD_IMAGE = 2;
+    File arquivoFotoFinal; // foto já recortada/melhorada (FotoCropActivity) - null se o usuário não trocou a foto
+    static int REQUEST_ESCOLHER_FOTO = 2;
+    private static final int REQUEST_CROP_FOTO = 4;
     private static final int REQUEST_EDITAR_ENDERECO = 3;
     User user;
     EditText textViewEditPhone, textViewEditPhone2, textViewEditSpouse, textViewEditProfession, textViewEditEmail;
@@ -97,8 +86,9 @@ public class ProfileEditActivity extends AppCompatActivity {
         imageViewEditProfile.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                find = true;
-                startActivityForResult(new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI), RESULT_LOAD_IMAGE);
+                Intent escolherImagem = new Intent(Intent.ACTION_GET_CONTENT);
+                escolherImagem.setType("image/*");
+                startActivityForResult(escolherImagem, REQUEST_ESCOLHER_FOTO);
             }
         });
         textViewEditPhone.setText(user.getPhone1() != null ? user.getPhone1() : "");
@@ -106,9 +96,18 @@ public class ProfileEditActivity extends AppCompatActivity {
         textViewEditSpouse.setText(user.getSpouse() != null ? user.getSpouse() : "");
         textViewEditProfession.setText(user.getJob() != null ? user.getJob() : "");
         textViewEditEmail.setText(user.getEmail() != null ? user.getEmail() : "");
-        if (user.getPhoto() != null) {
-            Bitmap aux = BitmapFactory.decodeFile(user.getPhoto());
-            if (aux != null) imageViewEditProfile.setImageBitmap(aux);
+        Bitmap fotoAtual = user.getPhoto() != null ? BitmapFactory.decodeFile(user.getPhoto()) : null;
+        if (fotoAtual != null) {
+            imageViewEditProfile.setPadding(0, 0, 0, 0);
+            imageViewEditProfile.clearColorFilter();
+            imageViewEditProfile.setImageBitmap(fotoAtual);
+        } else {
+            // Sem foto cadastrada - mesmo ícone de silhueta usado em FragmentProfile/MenuActivity,
+            // em vez de deixar o círculo branco vazio.
+            int padding = (int) (getResources().getDisplayMetrics().density * 16);
+            imageViewEditProfile.setPadding(padding, padding, padding, padding);
+            imageViewEditProfile.setImageResource(R.drawable.perfil);
+            imageViewEditProfile.setColorFilter(ContextCompat.getColor(this, R.color.cadier_teal_light));
         }
         buttonSaveProfile.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -146,13 +145,26 @@ public class ProfileEditActivity extends AppCompatActivity {
     @Override
     public void onActivityResult(int requestCode, int resultCode, final Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == RESULT_LOAD_IMAGE && resultCode == RESULT_OK && data != null) {
-
-            selectedImage = data.getData();
-
-            imageViewEditProfile.setImageURI(selectedImage);
-
-            user.setPhoto(getRealPathFromURI(selectedImage));
+        if (requestCode == REQUEST_ESCOLHER_FOTO && resultCode == RESULT_OK && data != null) {
+            Uri imagemEscolhida = extrairUriEscolhida(data);
+            if (imagemEscolhida == null) return;
+            // Abre o recorte+melhoria compartilhado (mesma tela usada em FragmentDocumentos pro
+            // slot de Foto3x4) em vez de usar a imagem original direto.
+            // O Uri devolvido pelo seletor só vem com permissão de leitura garantida pra esta
+            // Activity - repassar pra FotoCropActivity/uCrop sem isso derruba com
+            // SecurityException assim que tentam ler o conteúdo (a tela "pisca" e volta).
+            grantUriPermission(getPackageName(), imagemEscolhida, Intent.FLAG_GRANT_READ_URI_PERMISSION);
+            Intent intentCrop = new Intent(this, FotoCropActivity.class);
+            intentCrop.putExtra(FotoCropActivity.EXTRA_IMAGEM_URI, imagemEscolhida);
+            intentCrop.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+            startActivityForResult(intentCrop, REQUEST_CROP_FOTO);
+        } else if (requestCode == REQUEST_CROP_FOTO && resultCode == RESULT_OK && data != null) {
+            String caminho = data.getStringExtra(FotoCropActivity.EXTRA_CAMINHO_FOTO_FINAL);
+            if (caminho != null) {
+                arquivoFotoFinal = new File(caminho);
+                Bitmap previa = BitmapFactory.decodeFile(caminho);
+                if (previa != null) imageViewEditProfile.setImageBitmap(previa);
+            }
         } else if (requestCode == REQUEST_EDITAR_ENDERECO) {
             findViewById(R.id.buttonIrParaEndereco).setEnabled(true);
             if (resultCode == RESULT_OK && data != null) {
@@ -170,14 +182,17 @@ public class ProfileEditActivity extends AppCompatActivity {
         }
     }
 
-    public String getRealPathFromURI(Uri uri) {
-        String[] projection = {MediaStore.Images.Media.DATA};
-        @SuppressWarnings("deprecation")
-        Cursor cursor = getApplicationContext().getContentResolver().query(uri, projection, null, null, null);
-        int column_index = cursor
-                .getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
-        cursor.moveToFirst();
-        return cursor.getString(column_index);
+    /**
+     * Alguns seletores (o Photo Picker do Android moderno, quando permite seleção múltipla e
+     * mostra um botão "Concluído"/"Done") devolvem o Uri escolhido só em getClipData(), deixando
+     * getData() nulo - sem esse fallback, o clique em "Concluído" não fazia nada.
+     */
+    private Uri extrairUriEscolhida(Intent data) {
+        if (data.getData() != null) return data.getData();
+        if (data.getClipData() != null && data.getClipData().getItemCount() > 0) {
+            return data.getClipData().getItemAt(0).getUri();
+        }
+        return null;
     }
 
     public class EditProfileTask extends AsyncTask<String,String,Boolean> {
@@ -185,12 +200,6 @@ public class ProfileEditActivity extends AppCompatActivity {
         protected void onPreExecute() {
             super.onPreExecute();
             progressDialog = ProgressDialog.show(ProfileEditActivity.this, "Alterando Dados", "Aguarde um instante...", false, false);
-        }
-
-        private String getMimeType(String path) {
-            String extension = MimeTypeMap.getFileExtensionFromUrl(path);
-
-            return MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension);
         }
 
         @Override
@@ -217,32 +226,13 @@ public class ProfileEditActivity extends AppCompatActivity {
                 int statusEmail = cW.sendJsonStatus(ApiConfig.BASE_URL + "PessoaFisica/MeuEmail", "PATCH", corpoEmail.toString(), user.getToken());
                 sucesso = sucesso && statusEmail >= 200 && statusEmail < 300;
 
-                if (selectedImage != null) {
-                    File file = new File(getRealPathFromURI(selectedImage));
-                    String content_type = getMimeType(file.getPath());
-
-                    OkHttpClient client = new OkHttpClient.Builder()
-                            .connectTimeout(30, TimeUnit.SECONDS)
-                            .writeTimeout(30, TimeUnit.SECONDS)
-                            .readTimeout(30, TimeUnit.SECONDS)
-                            .build();
-
-                    RequestBody body = new MultipartBody.Builder().setType(MultipartBody.FORM)
-                            .addFormDataPart("arquivo", file.getName(), RequestBody.create(file, MediaType.parse(content_type)))
-                            .build();
-                    Request request = new Request.Builder()
-                            .url(ApiConfig.BASE_URL + "DocumentoPFisica/" + user.getPhysicalId() + "/" + ID_TIPO_DOCUMENTO_FOTO_3X4)
-                            .header("x-api-key", ApiConfig.API_KEY)
-                            .header("Authorization", "Bearer " + user.getToken())
-                            .post(body)
-                            .build();
-                    try (Response response = client.newCall(request).execute()) {
-                        sucesso = sucesso && response.isSuccessful();
-                    }
+                if (arquivoFotoFinal != null) {
+                    int statusFoto = cW.uploadArquivo(
+                            ApiConfig.BASE_URL + "DocumentoPFisica/" + user.getPhysicalId() + "/" + ID_TIPO_DOCUMENTO_FOTO_3X4,
+                            user.getToken(), "arquivo", arquivoFotoFinal, "image/jpeg");
+                    sucesso = sucesso && statusFoto >= 200 && statusFoto < 300;
+                    if (sucesso) user.setPhoto(arquivoFotoFinal.getAbsolutePath());
                 }
-            } catch (IOException e){
-                e.printStackTrace();
-                sucesso = false;
             } catch (Exception e){
                 e.printStackTrace();
                 sucesso = false;

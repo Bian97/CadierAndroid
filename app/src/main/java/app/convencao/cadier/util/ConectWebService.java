@@ -1,9 +1,11 @@
 package app.convencao.cadier.util;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
 import okhttp3.MediaType;
+import okhttp3.MultipartBody;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
@@ -87,6 +89,27 @@ public class ConectWebService {
     public int sendJsonStatus(String url, String metodo, String corpoJson, String token) {
         RequestBody body = RequestBody.create(corpoJson, JSON);
         Request request = authorized(url, token).method(metodo, body).build();
+        try (Response response = client.newCall(request).execute()) {
+            return response.code();
+        } catch (IOException e) {
+            e.printStackTrace();
+            return -1;
+        }
+    }
+
+    /**
+     * POST multipart genérico (upload de arquivo) - substitui o OkHttpClient/MultipartBody montado
+     * à mão que antes só existia dentro de ProfileEditActivity.EditProfileTask. Usado tanto pelo
+     * upload de Foto3x4 em ProfileEditActivity/FotoCropActivity quanto pelos 6 tipos de documento
+     * em FragmentDocumentos. Devolve o código HTTP (2xx = sucesso), ou -1 em falha de rede/IO.
+     */
+    public int uploadArquivo(String url, String token, String nomeCampoArquivo, File arquivo, String tipoConteudo) {
+        RequestBody corpoArquivo = RequestBody.create(arquivo, MediaType.parse(
+                tipoConteudo != null ? tipoConteudo : "application/octet-stream"));
+        RequestBody body = new MultipartBody.Builder().setType(MultipartBody.FORM)
+                .addFormDataPart(nomeCampoArquivo, arquivo.getName(), corpoArquivo)
+                .build();
+        Request request = authorized(url, token).post(body).build();
         try (Response response = client.newCall(request).execute()) {
             return response.code();
         } catch (IOException e) {

@@ -76,6 +76,16 @@ public class FragmentProfile extends Fragment {
             startActivityForResult(new Intent(getContext(), ProfileEditActivity.class).putExtra("usuario", user), REQUEST_EDITAR_PERFIL);
         });
 
+        preencherTela();
+
+        return view;
+    }
+
+    /** Popula as views a partir de `user` - separado do onCreateView pra poder re-executar depois
+     *  de voltar de ProfileEditActivity com dados novos, sem depender de recriar o Fragment inteiro
+     *  (antes disso, editar a foto - ou qualquer outro dado - só aparecia atualizado ao navegar pra
+     *  outro item do menu e voltar). */
+    private void preencherTela() {
         textViewProfileName.setText(user.getName());
         textViewIdProfile.setText("Rol nº " + user.getPhysicalId());
         if(user.getStreet() != null && user.getCity() != null && user.getCode() != null) {
@@ -107,23 +117,22 @@ public class FragmentProfile extends Fragment {
             imageViewProfile.setImageResource(R.drawable.perfil);
             imageViewProfile.setColorFilter(ContextCompat.getColor(getContext(), R.color.cadier_teal_light));
         }
-
-        return view;
     }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         // ProfileEditActivity devolve o User atualizado - repassa pro MenuActivity, que guarda a
-        // cópia "oficial" (ver comentário em MenuActivity.updateUser). Não precisa re-renderizar
-        // esta tela aqui: ao navegar pra outro item do menu e voltar, o Fragment é recriado do zero
-        // e já lê os dados novos.
+        // cópia "oficial" (ver comentário em MenuActivity.updateUser), e já atualiza esta tela na
+        // hora (preencherTela()), sem precisar navegar pra outro item do menu e voltar.
         if (requestCode == REQUEST_EDITAR_PERFIL) {
             buttonEditarPerfilAtalho.setEnabled(true); // reabilita ao voltar, mesmo sem salvar nada
             if (resultCode == android.app.Activity.RESULT_OK && data != null) {
                 User usuarioAtualizado = (User) data.getSerializableExtra("usuario");
                 if (usuarioAtualizado != null) {
+                    user = usuarioAtualizado;
                     ((MenuActivity) getActivity()).updateUser(usuarioAtualizado);
+                    preencherTela();
                 }
             }
         }

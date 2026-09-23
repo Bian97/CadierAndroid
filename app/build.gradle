@@ -53,4 +53,8 @@ dependencies {
     implementation 'com.github.chrisbanes:PhotoView:2.3.0'
     implementation 'com.squareup.okhttp3:okhttp:5.3.2'
     implementation 'com.squareup.picasso:picasso:2.71828'
+
+    // Recorte de imagem (Foto 3x4, aspecto 3:4 + rotação) - via JitPack, já configurado no
+    // build.gradle raiz. Evita reimplementar a matemática de crop/zoom/limites do zero.
+    implementation 'com.github.yalantis:ucrop:2.2.6'
 }

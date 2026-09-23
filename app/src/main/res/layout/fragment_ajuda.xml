@@ -90,6 +90,45 @@
 
             <View style="@style/Cadier.Divider"/>
 
+            <!-- Documentos -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:padding="8dp">
+
+                <ImageView
+                    android:layout_width="26dp"
+                    android:layout_height="26dp"
+                    android:layout_marginTop="2dp"
+                    android:src="@drawable/ic_documentos"
+                    android:tint="@color/cadier_teal"/>
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginStart="14dp"
+                    android:orientation="vertical">
+
+                    <TextView
+                        style="@style/Cadier.Text.Body"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/cadier_teal_dark"
+                        android:textStyle="bold"
+                        android:text="Documentos"/>
+
+                    <TextView
+                        style="@style/Cadier.Text.Body.Secondary"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Envie os documentos exigidos na sua filiação (identidade, comprovante de residência, foto 3x4 e outros) e acompanhe o status de cada um: Pendente, Enviado, Aprovado ou Rejeitado. Sua filiação só é efetivada depois que um atendente aprova todos. A foto 3x4 pode ser trocada a qualquer momento e é usada na sua Credencial PVC - ao enviá-la, você pode recortar a imagem e usar o botão de melhorar a foto automaticamente."/>
+                </LinearLayout>
+            </LinearLayout>
+
+            <View style="@style/Cadier.Divider"/>
+
             <!-- Calendário -->
             <LinearLayout
                 android:layout_width="match_parent"
