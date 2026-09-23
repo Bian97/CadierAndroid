@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:state_pressed="true">
+        <shape android:shape="rectangle">
+            <solid android:color="#1EBE57"/>
+            <corners android:radius="@dimen/cadier_radius_button"/>
+        </shape>
+    </item>
+    <item>
+        <shape android:shape="rectangle">
+            <!-- Verde oficial do WhatsApp - mantido de propósito diferente da paleta CADIER, pra
+                 continuar reconhecível como "abrir WhatsApp" (mesmo racional do ícone do app). -->
+            <solid android:color="#25D366"/>
+            <corners android:radius="@dimen/cadier_radius_button"/>
+        </shape>
+    </item>
+</selector>

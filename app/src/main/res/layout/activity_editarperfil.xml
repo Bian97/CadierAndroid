@@ -3,110 +3,232 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#678FFE">
+    android:orientation="vertical"
+    android:background="@color/cadier_bg">
 
     <LinearLayout
         android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:background="@color/cadier_teal">
+
+        <TextView
+            android:id="@+id/textViewVoltarEditarPerfil"
+            style="@style/Cadier.Text.Subtitle"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:gravity="center_vertical"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:textColor="@color/cadier_text_on_dark"
+            android:text="‹ Voltar"/>
+
+        <TextView
+            style="@style/Cadier.Text.Subtitle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center_vertical"
+            android:paddingEnd="60dp"
+            android:textColor="@color/cadier_text_on_dark"
+            android:textAlignment="center"
+            android:text="Editar Perfil"/>
+    </LinearLayout>
+
+    <ScrollView
+        android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical">
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-                <ImageView
-                    android:id="@+id/imageViewEditarPerfil"
-                    android:layout_width="60dp"
-                    android:layout_height="60dp"
-                    android:layout_margin="15dp"
-                    android:layout_gravity="center"
-                    android:background="@drawable/foto"
-                    android:scaleType="fitXY"/>
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    android:layout_gravity="center"
-                    android:orientation="vertical">
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textStyle="bold"
-                        android:text="Telefone"/>
-                     <EditText
-                         android:id="@+id/textViewEditarTelefone"
-                         android:layout_width="150dp"
-                         android:layout_height="wrap_content"
-                         android:hint="Seu Telefone 1"
-                         android:textSize="14sp"/>
-                     <EditText
-                         android:id="@+id/textViewEditarTelefone2"
-                         android:layout_width="150dp"
-                         android:layout_height="wrap_content"
-                         android:hint="Seu Telefone 2"
-                         android:textSize="14sp"/>
-                </LinearLayout>
-            </LinearLayout>
+        android:fillViewport="true">
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:layout_margin="8dp">
+            android:paddingBottom="16dp">
 
-            <TextView
-                android:layout_width="wrap_content"
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="8dp"
-                android:textStyle="bold"
-                android:layout_gravity="left"
-                android:text="Estado civil"/>
-            <EditText
-                android:id="@+id/textViewEditarConjuge"
-                android:layout_width="250dp"
+                android:layout_margin="16dp"
+                android:orientation="vertical"
+                android:gravity="center_horizontal"
+                android:background="@drawable/bg_cadier_card"
+                android:elevation="3dp"
+                android:padding="16dp">
+
+                <FrameLayout
+                    android:layout_width="88dp"
+                    android:layout_height="88dp">
+
+                    <View
+                        android:layout_width="88dp"
+                        android:layout_height="88dp"
+                        android:background="@drawable/bg_cadier_avatar_ring"/>
+
+                    <ImageView
+                        android:id="@+id/imageViewEditarPerfil"
+                        android:layout_width="80dp"
+                        android:layout_height="80dp"
+                        android:layout_gravity="center"
+                        android:background="@drawable/bg_cadier_avatar_mask"
+                        android:clipToOutline="true"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:foreground="?android:attr/selectableItemBackground"
+                        android:scaleType="centerInside"/>
+                </FrameLayout>
+
+                <TextView
+                    style="@style/Cadier.Text.Body.Secondary"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:textColor="@color/cadier_teal"
+                    android:textStyle="bold"
+                    android:text="Toque na foto para alterar"/>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:layout_marginTop="12dp"
+                    android:background="@drawable/bg_cadier_warning"
+                    android:padding="12dp">
+
+                    <TextView
+                        style="@style/Cadier.Text.Body.Secondary"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textAlignment="center"
+                        android:text="Essa foto será usada na confecção da sua Credencial PVC. Escolha uma foto nítida, de rosto, com fundo neutro."/>
+                </LinearLayout>
+
+                <TextView
+                    style="@style/Cadier.Text.Caption"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:text="Telefone 1 *"/>
+                 <EditText
+                     android:id="@+id/textViewEditarTelefone"
+                     style="@style/Cadier.Text.Body"
+                     android:layout_width="match_parent"
+                     android:layout_height="wrap_content"
+                     android:layout_marginTop="6dp"
+                     android:background="@drawable/bg_cadier_input"
+                     android:padding="10dp"
+                     android:inputType="phone"
+                     android:hint="(00) 00000-0000"/>
+
+                <TextView
+                    style="@style/Cadier.Text.Caption"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:text="Telefone 2"/>
+                 <EditText
+                     android:id="@+id/textViewEditarTelefone2"
+                     style="@style/Cadier.Text.Body"
+                     android:layout_width="match_parent"
+                     android:layout_height="wrap_content"
+                     android:layout_marginTop="6dp"
+                     android:background="@drawable/bg_cadier_input"
+                     android:padding="10dp"
+                     android:inputType="phone"
+                     android:hint="(00) 00000-0000"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="8dp"
-                android:hint="Seu Cônjuge"
-                android:textSize="14sp"/>
-            <TextView
-                android:layout_width="wrap_content"
+                android:orientation="vertical"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
+                android:layout_marginBottom="12dp"
+                android:background="@drawable/bg_cadier_card"
+                android:elevation="3dp"
+                android:padding="16dp">
+
+                <TextView
+                    style="@style/Cadier.Text.Caption"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="E-mail *"/>
+                <EditText
+                    android:id="@+id/textViewEditarEmail"
+                    style="@style/Cadier.Text.Body"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="6dp"
+                    android:background="@drawable/bg_cadier_input"
+                    android:padding="10dp"
+                    android:hint="Seu e-mail"
+                    android:inputType="textEmailAddress"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="5dp"
-                android:layout_marginLeft="8dp"
-                android:layout_gravity="left"
-                android:textStyle="bold"
-                android:text="Profissão"/>
-            <EditText
-                android:id="@+id/textViewEditarProfissao"
-                android:layout_width="200dp"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="8dp"
-                android:hint="Sua Profissão"
-                android:textSize="14sp"/>
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="5dp"
-                android:layout_marginLeft="8dp"
-                android:textStyle="bold"
-                android:layout_gravity="left"
-                android:text="E-mail"/>
-            <EditText
-                android:id="@+id/textViewEditarEmail"
-                android:layout_width="200dp"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="8dp"
-                android:hint="Seu e-mail"
-                android:textSize="14sp"/>
+                android:orientation="vertical"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
+                android:background="@drawable/bg_cadier_card"
+                android:elevation="3dp"
+                android:padding="16dp">
+
+                <TextView
+                    style="@style/Cadier.Text.Caption"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Cônjuge"/>
+                <EditText
+                    android:id="@+id/textViewEditarConjuge"
+                    style="@style/Cadier.Text.Body"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="6dp"
+                    android:background="@drawable/bg_cadier_input"
+                    android:padding="10dp"
+                    android:hint="Seu Cônjuge (se houver)"/>
+
+                <TextView
+                    style="@style/Cadier.Text.Caption"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:text="Profissão"/>
+                <EditText
+                    android:id="@+id/textViewEditarProfissao"
+                    style="@style/Cadier.Text.Body"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="6dp"
+                    android:background="@drawable/bg_cadier_input"
+                    android:padding="10dp"
+                    android:hint="Sua Profissão"/>
+            </LinearLayout>
 
             <Button
                 android:id="@+id/buttonGuardarPerfil"
-                android:layout_width="200dp"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="50dp"
-                android:text="Guardar Alterações"
-                android:background="@drawable/background_button_login"
-                android:layout_gravity="center"
-                android:textSize="13sp"/>
-        </LinearLayout>
-    </LinearLayout>
+                style="@style/Cadier.Button"
+                android:layout_width="match_parent"
+                android:layout_height="56dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
+                android:layout_marginTop="20dp"
+                android:text="Guardar Alterações"/>
 
+            <Button
+                android:id="@+id/buttonIrParaEndereco"
+                style="@style/Cadier.Button.Secondary"
+                android:layout_width="match_parent"
+                android:layout_height="56dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
+                android:layout_marginTop="12dp"
+                android:text="Editar Endereço"/>
+
+        </LinearLayout>
+    </ScrollView>
 </LinearLayout>

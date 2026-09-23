@@ -12,15 +12,24 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     android:theme="@style/ThemeOverlay.AppCompat.Dark">
 
-    <ImageView
-        android:id="@+id/imageViewMenu"
-        android:layout_width="60dp"
-        android:layout_height="60dp"
-        android:paddingTop="@dimen/nav_header_vertical_spacing"
-        android:scaleType="fitXY"/>
-        <!--android:background="@drawable/foto"-->
+    <FrameLayout
+        android:layout_width="68dp"
+        android:layout_height="68dp">
 
-        <!--app:srcCompat="@mipmap/ic_launcher_round" -->
+        <View
+            android:layout_width="68dp"
+            android:layout_height="68dp"
+            android:background="@drawable/bg_cadier_avatar_ring_white"/>
+
+        <ImageView
+            android:id="@+id/imageViewMenu"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:layout_gravity="center"
+            android:background="@drawable/bg_cadier_avatar_mask"
+            android:clipToOutline="true"
+            android:scaleType="centerInside"/>
+    </FrameLayout>
 
     <TextView
         android:id="@+id/txtNomeMenu"
@@ -28,12 +37,16 @@
         android:layout_height="wrap_content"
         android:paddingTop="@dimen/nav_header_vertical_spacing"
         android:text="Nome"
-        android:textAppearance="@style/TextAppearance.AppCompat.Body1" />
+        android:textColor="@color/cadier_text_on_dark"
+        android:textSize="@dimen/cadier_text_subtitle"
+        android:textStyle="bold" />
 
     <TextView
         android:id="@+id/txtIgrejaMenu"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Igreja" />
+        android:text="Igreja"
+        android:textColor="@color/cadier_teal_light_bg"
+        android:textSize="@dimen/cadier_text_body_secondary" />
 
 </LinearLayout>

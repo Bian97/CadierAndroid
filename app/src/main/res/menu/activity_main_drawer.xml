@@ -9,9 +9,13 @@
             android:icon="@drawable/inicioperfil"
             android:title="Perfil" />
         <item
+            android:id="@+id/opcao_documentos"
+            android:icon="@drawable/ic_documentos"
+            android:title="Documentos" />
+        <item
             android:id="@+id/opcao_calendario"
             android:icon="@drawable/calendario"
-            android:title="Calendário de Reuniões" />
+            android:title="Calendário" />
         <item
             android:id="@+id/opcao_pedidos"
             android:icon="@drawable/pedidos"

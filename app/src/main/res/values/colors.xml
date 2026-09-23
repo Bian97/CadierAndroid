@@ -1,6 +1,42 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#3F51B5</color>
-    <color name="colorPrimaryDark">#303F9F</color>
-    <color name="colorAccent">#0043FA</color>
+    <!--
+      Paleta CADIER - espelha exatamente o tema do site React (src/theme.js e src/index.css):
+      anel teal da logo, texto slate, chama laranja. colorPrimary/colorPrimaryDark/colorAccent são
+      os nomes exigidos pelo AppTheme (Theme.AppCompat) - mantidos como alias das cores da marca
+      pra não quebrar nada que ainda referencie esses 3 nomes.
+    -->
+    <color name="cadier_teal">#128C86</color>
+    <color name="cadier_teal_dark">#0C6C67</color>
+    <color name="cadier_teal_light">#4FA9A4</color>
+    <color name="cadier_teal_light_bg">#E3F3F2</color>
+    <color name="cadier_teal_darkest">#094E4A</color>
+
+    <color name="cadier_orange">#F5821F</color>
+    <color name="cadier_orange_dark">#C9660F</color>
+    <color name="cadier_orange_light">#FDB44B</color>
+    <color name="cadier_orange_hover">#D96F14</color>
+
+    <color name="cadier_bg">#F4F9F9</color>
+    <color name="cadier_surface">#FFFFFF</color>
+    <color name="cadier_border">#D7E6E5</color>
+
+    <color name="cadier_text_primary">#2B3E42</color>
+    <color name="cadier_text_secondary">#5C7377</color>
+    <color name="cadier_text_on_dark">#FFFFFF</color>
+
+    <color name="cadier_divider_light">#F0F5F5</color>
+    <color name="cadier_warning_bg">#FFF3E6</color>
+    <color name="cadier_warning_border">#F5CBA0</color>
+
+    <!-- Status semânticos - mesmos valores padrão do MUI v5 usados no site (sem override lá). -->
+    <color name="status_success">#2E7D32</color>
+    <color name="status_warning">#ED6C02</color>
+    <color name="status_error">#D32F2F</color>
+    <color name="status_info">#0288D1</color>
+
+    <!-- Alias do tema Android - ver comentário acima. -->
+    <color name="colorPrimary">@color/cadier_teal</color>
+    <color name="colorPrimaryDark">@color/cadier_teal_dark</color>
+    <color name="colorAccent">@color/cadier_orange</color>
 </resources>

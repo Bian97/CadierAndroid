@@ -1,63 +1,53 @@
 package app.convencao.cadier.view.activity;
 
-import android.annotation.TargetApi;
 import android.app.ProgressDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.AsyncTask;
-import android.os.Build;
 import android.os.Bundle;
-import android.provider.MediaStore;
+import android.util.Patterns;
 import android.view.View;
-import android.webkit.MimeTypeMap;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import app.convencao.cadier.R;
 import app.convencao.cadier.modelo.User;
+import app.convencao.cadier.util.ApiConfig;
+import app.convencao.cadier.util.CnpjCpfDataMask;
 import app.convencao.cadier.util.ConectWebService;
 
+import org.json.JSONObject;
+
 import java.io.File;
-import java.io.IOException;
-import java.util.concurrent.TimeUnit;
 
-import okhttp3.MediaType;
-import okhttp3.MultipartBody;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.RequestBody;
-import okhttp3.Response;
-
-import static android.Manifest.permission.READ_EXTERNAL_STORAGE;
-import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
-
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 /**
  * Created by DrGreend on 26/03/2018.
+ * Reescrito pro backend novo. Autoatendimento (PessoaFisica/MeusDadosDocumento) permite o filiado
+ * alterar Telefone1/Telefone2/igreja/endereço/Cônjuge/Profissão. E-mail tem endpoint próprio
+ * (PessoaFisica/MeuEmail). Foto de perfil agora é um documento (DocumentoPFisica, tipo Foto3x4)
+ * em vez de um campo solto em basicUpdateProfileApp.
  */
 
 public class ProfileEditActivity extends AppCompatActivity {
+    private static final int ID_TIPO_DOCUMENTO_FOTO_3X4 = 3;
+
     ImageView imageViewEditProfile;
-    boolean find;
-    Uri selectedImage;
-    static int RESULT_LOAD_IMAGE = 2;
+    File arquivoFotoFinal; // foto já recortada/melhorada (FotoCropActivity) - null se o usuário não trocou a foto
+    static int REQUEST_ESCOLHER_FOTO = 2;
+    private static final int REQUEST_CROP_FOTO = 4;
+    private static final int REQUEST_EDITAR_ENDERECO = 3;
     User user;
     EditText textViewEditPhone, textViewEditPhone2, textViewEditSpouse, textViewEditProfession, textViewEditEmail;
     Button buttonSaveProfile;
     ProgressDialog progressDialog;
-    private static final int PERMISSION_REQUEST_CODE = 200;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,16 +59,8 @@ public class ProfileEditActivity extends AppCompatActivity {
             user = (User) intent.getSerializableExtra("usuario");
         }
 
-        if (!checkPermission()) {
-            openActivity();
-        } else {
-            if (checkPermission()) {
-                requestPermissionAndContinue();
-            } else {
-                openActivity();
-            }
-        }
-
+        TextView textViewVoltar = findViewById(R.id.textViewVoltarEditarPerfil);
+        Button buttonIrParaEndereco = findViewById(R.id.buttonIrParaEndereco);
         imageViewEditProfile = findViewById(R.id.imageViewEditarPerfil);
         textViewEditPhone = findViewById(R.id.textViewEditarTelefone);
         textViewEditPhone2 = findViewById(R.id.textViewEditarTelefone2);
@@ -87,36 +69,71 @@ public class ProfileEditActivity extends AppCompatActivity {
         textViewEditEmail = findViewById(R.id.textViewEditarEmail);
         buttonSaveProfile = findViewById(R.id.buttonGuardarPerfil);
 
+        textViewVoltar.setOnClickListener(v -> onBackPressed());
+        buttonIrParaEndereco.setOnClickListener(v -> {
+            // Trava no primeiro toque - duplo toque abriria a tela de endereço duas vezes
+            // empilhadas (mesmo racional das outras telas de navegação).
+            v.setEnabled(false);
+            startActivityForResult(new Intent(ProfileEditActivity.this, AddressEditActivity.class).putExtra("usuario", user), REQUEST_EDITAR_ENDERECO);
+        });
+
+        // Telefone2 continua só leitura (autoatendimento não altera - ver comentário da classe).
+        // Telefone2/Cônjuge/Profissão agora são editáveis (PessoaFisica/MeusDadosDocumento passou
+        // a aceitar os três campos).
+        textViewEditPhone.addTextChangedListener(CnpjCpfDataMask.phoneInsert(textViewEditPhone));
+        textViewEditPhone2.addTextChangedListener(CnpjCpfDataMask.phoneInsert(textViewEditPhone2));
+
         imageViewEditProfile.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                find = true;
-                startActivityForResult(new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI), RESULT_LOAD_IMAGE);
+                Intent escolherImagem = new Intent(Intent.ACTION_GET_CONTENT);
+                escolherImagem.setType("image/*");
+                startActivityForResult(escolherImagem, REQUEST_ESCOLHER_FOTO);
             }
         });
-        textViewEditPhone.setText(!user.getPhone1().contains("null") ? user.getPhone1() : "");
-        textViewEditPhone2.setText(!user.getPhone2().contains("null") ? user.getPhone2() : "");
-        textViewEditSpouse.setText(!user.getSpouse().contains("null") ? user.getSpouse() : "");
-        textViewEditProfession.setText(!user.getJob().contains("null") ? user.getJob() : "");
-        textViewEditEmail.setText(!user.getEmail().contains("null") ? user.getEmail() : "");
-        Bitmap aux = BitmapFactory.decodeFile(user.getPhoto());
-        imageViewEditProfile.setImageBitmap(aux);
+        textViewEditPhone.setText(user.getPhone1() != null ? user.getPhone1() : "");
+        textViewEditPhone2.setText(user.getPhone2() != null ? user.getPhone2() : "");
+        textViewEditSpouse.setText(user.getSpouse() != null ? user.getSpouse() : "");
+        textViewEditProfession.setText(user.getJob() != null ? user.getJob() : "");
+        textViewEditEmail.setText(user.getEmail() != null ? user.getEmail() : "");
+        Bitmap fotoAtual = user.getPhoto() != null ? BitmapFactory.decodeFile(user.getPhoto()) : null;
+        if (fotoAtual != null) {
+            imageViewEditProfile.setPadding(0, 0, 0, 0);
+            imageViewEditProfile.clearColorFilter();
+            imageViewEditProfile.setImageBitmap(fotoAtual);
+        } else {
+            // Sem foto cadastrada - mesmo ícone de silhueta usado em FragmentProfile/MenuActivity,
+            // em vez de deixar o círculo branco vazio.
+            int padding = (int) (getResources().getDisplayMetrics().density * 16);
+            imageViewEditProfile.setPadding(padding, padding, padding, padding);
+            imageViewEditProfile.setImageResource(R.drawable.perfil);
+            imageViewEditProfile.setColorFilter(ContextCompat.getColor(this, R.color.cadier_teal_light));
+        }
         buttonSaveProfile.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 try {
-                    if(!textViewEditPhone.getText().toString().equals("")){
+                    String telefone1 = CnpjCpfDataMask.unmask(textViewEditPhone.getText().toString());
+                    String email = textViewEditEmail.getText().toString().trim();
 
-                        EditProfileTask editTask = new EditProfileTask();
-                        user.setPhone1(textViewEditPhone.getText().toString());
-                        user.setPhone2(textViewEditPhone2.getText().toString());
-                        user.setSpouse(textViewEditSpouse.getText().toString());
-                        user.setJob(textViewEditProfession.getText().toString());
-                        user.setEmail(textViewEditEmail.getText().toString());
-                        editTask.execute();
-                    } else {
-                        Toast.makeText(getApplicationContext(), "Precisamos de um Telefone 1!", Toast.LENGTH_SHORT).show();
+                    if (telefone1.isEmpty()) {
+                        textViewEditPhone.setError("Informe pelo menos um telefone");
+                        textViewEditPhone.requestFocus();
+                        return;
                     }
+                    if (email.isEmpty() || !Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+                        textViewEditEmail.setError("Informe um e-mail válido");
+                        textViewEditEmail.requestFocus();
+                        return;
+                    }
+
+                    EditProfileTask editTask = new EditProfileTask();
+                    user.setPhone1(telefone1);
+                    user.setPhone2(CnpjCpfDataMask.unmask(textViewEditPhone2.getText().toString()));
+                    user.setEmail(email);
+                    user.setSpouse(textViewEditSpouse.getText().toString().trim());
+                    user.setJob(textViewEditProfession.getText().toString().trim());
+                    editTask.execute();
                 } catch (Exception e){
                     e.printStackTrace();
                 }
@@ -128,179 +145,113 @@ public class ProfileEditActivity extends AppCompatActivity {
     @Override
     public void onActivityResult(int requestCode, int resultCode, final Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == RESULT_LOAD_IMAGE && resultCode == RESULT_OK && data != null) {
-
-            selectedImage = data.getData();
-
-            imageViewEditProfile.setImageURI(selectedImage);
-
-            user.setPhoto(getRealPathFromURI(selectedImage));
+        if (requestCode == REQUEST_ESCOLHER_FOTO && resultCode == RESULT_OK && data != null) {
+            Uri imagemEscolhida = extrairUriEscolhida(data);
+            if (imagemEscolhida == null) return;
+            // Abre o recorte+melhoria compartilhado (mesma tela usada em FragmentDocumentos pro
+            // slot de Foto3x4) em vez de usar a imagem original direto.
+            // O Uri devolvido pelo seletor só vem com permissão de leitura garantida pra esta
+            // Activity - repassar pra FotoCropActivity/uCrop sem isso derruba com
+            // SecurityException assim que tentam ler o conteúdo (a tela "pisca" e volta).
+            grantUriPermission(getPackageName(), imagemEscolhida, Intent.FLAG_GRANT_READ_URI_PERMISSION);
+            Intent intentCrop = new Intent(this, FotoCropActivity.class);
+            intentCrop.putExtra(FotoCropActivity.EXTRA_IMAGEM_URI, imagemEscolhida);
+            intentCrop.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+            startActivityForResult(intentCrop, REQUEST_CROP_FOTO);
+        } else if (requestCode == REQUEST_CROP_FOTO && resultCode == RESULT_OK && data != null) {
+            String caminho = data.getStringExtra(FotoCropActivity.EXTRA_CAMINHO_FOTO_FINAL);
+            if (caminho != null) {
+                arquivoFotoFinal = new File(caminho);
+                Bitmap previa = BitmapFactory.decodeFile(caminho);
+                if (previa != null) imageViewEditProfile.setImageBitmap(previa);
+            }
+        } else if (requestCode == REQUEST_EDITAR_ENDERECO) {
+            findViewById(R.id.buttonIrParaEndereco).setEnabled(true);
+            if (resultCode == RESULT_OK && data != null) {
+                // AddressEditActivity devolve o User com o endereço já salvo - sem isso, ao voltar
+                // pra cá o endereço editado lá sumiria (só existia numa cópia local dela).
+                User usuarioComEnderecoNovo = (User) data.getSerializableExtra("usuario");
+                if (usuarioComEnderecoNovo != null) {
+                    user = usuarioComEnderecoNovo;
+                    // Repassa na hora pra quem abriu essa tela (FragmentProfile/FragmentConfigurations),
+                    // mesmo que o usuário só tenha editado o endereço e volte sem tocar em "Guardar
+                    // Alterações" aqui - senão o endereço novo fica preso só nessa Activity e some.
+                    setResult(RESULT_OK, new Intent().putExtra("usuario", user));
+                }
+            }
         }
     }
 
-    public String getRealPathFromURI(Uri uri) {
-        String[] projection = {MediaStore.Images.Media.DATA};
-        @SuppressWarnings("deprecation")
-        Cursor cursor = getApplicationContext().getContentResolver().query(uri, projection, null, null, null);
-        int column_index = cursor
-                .getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
-        cursor.moveToFirst();
-        return cursor.getString(column_index);
+    /**
+     * Alguns seletores (o Photo Picker do Android moderno, quando permite seleção múltipla e
+     * mostra um botão "Concluído"/"Done") devolvem o Uri escolhido só em getClipData(), deixando
+     * getData() nulo - sem esse fallback, o clique em "Concluído" não fazia nada.
+     */
+    private Uri extrairUriEscolhida(Intent data) {
+        if (data.getData() != null) return data.getData();
+        if (data.getClipData() != null && data.getClipData().getItemCount() > 0) {
+            return data.getClipData().getItemAt(0).getUri();
+        }
+        return null;
     }
 
-    @Override
-    public void onBackPressed() {
-        super.onBackPressed();
-        startActivity(new Intent(ProfileEditActivity.this, MenuActivity.class).putExtra("usuario", user));
-    }
-    public class EditProfileTask extends AsyncTask<String,String,String> {
+    public class EditProfileTask extends AsyncTask<String,String,Boolean> {
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
             progressDialog = ProgressDialog.show(ProfileEditActivity.this, "Alterando Dados", "Aguarde um instante...", false, false);
         }
 
-        private String getMimeType(String path) {
-            String extension = MimeTypeMap.getFileExtensionFromUrl(path);
-
-            return MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension);
-        }
-
         @Override
-        protected String doInBackground(String... strings) {
-            String result = "";
-
+        protected Boolean doInBackground(String... strings) {
+            boolean sucesso = true;
             try {
-                OkHttpClient client = new OkHttpClient.Builder()
-                        .connectTimeout(30, TimeUnit.SECONDS)
-                        .writeTimeout(30, TimeUnit.SECONDS)
-                        .readTimeout(30, TimeUnit.SECONDS)
-                        .build();
+                ConectWebService cW = new ConectWebService();
 
-                RequestBody body;
+                // telefone1/idPessoaJuridica são sobrescritos incondicionalmente por esse endpoint
+                // (null de verdade apaga) - por isso sempre manda o valor atual do usuário neles,
+                // mesmo quando só outro campo está mudando aqui. Telefone2/Cônjuge/Profissão idem,
+                // mas aqui vêm sempre dos campos da tela (não travam mais).
+                JSONObject corpo = new JSONObject();
+                corpo.put("telefone1", user.getPhone1());
+                corpo.put("telefone2", user.getPhone2());
+                corpo.put("idPessoaJuridica", user.getIdPessoaJuridica() == null ? JSONObject.NULL : user.getIdPessoaJuridica());
+                corpo.put("conjuge", user.getSpouse());
+                corpo.put("profissao", user.getJob());
+                int statusDados = cW.sendJsonStatus(ApiConfig.BASE_URL + "PessoaFisica/MeusDadosDocumento", "PATCH", corpo.toString(), user.getToken());
+                sucesso = sucesso && statusDados >= 200 && statusDados < 300;
 
-                if(selectedImage != null) {
-                    File file = new File(getRealPathFromURI(selectedImage));
-                    String content_type = getMimeType(file.getPath());
-                    //Log.e("POST", "com foto");
+                JSONObject corpoEmail = new JSONObject();
+                corpoEmail.put("email", user.getEmail());
+                int statusEmail = cW.sendJsonStatus(ApiConfig.BASE_URL + "PessoaFisica/MeuEmail", "PATCH", corpoEmail.toString(), user.getToken());
+                sucesso = sucesso && statusEmail >= 200 && statusEmail < 300;
 
-                    ConectWebService cW = new ConectWebService();
-
-                    body = new MultipartBody.Builder().setType(MultipartBody.FORM)
-                            .addFormDataPart("url_da_foto", file.getName(), RequestBody.create(MediaType.parse(content_type), file))
-                            .addFormDataPart("telefone", user.getPhone1())
-                            .addFormDataPart("telefone2", user.getPhone2())
-                            .addFormDataPart("conjuge", user.getSpouse())
-                            .addFormDataPart("profissao", user.getJob())
-                            .addFormDataPart("email", user.getEmail())
-                            .addFormDataPart("IdPFisica", String.valueOf(user.getPhysicalId()))
-                            //.addFormDataPart("achou", "sim")
-                            .build();
-                    Request request = new Request.Builder().url("http://cadier.com.br/api/basicUpdateProfileApp").post(body).build();
-                    Response response = client.newCall(request).execute();
-                    result = response.body().string();
-                } else {
-                    //Log.e("POST", "sem foto");
-                    body = new MultipartBody.Builder().setType(MultipartBody.FORM)
-                            .addFormDataPart("telefone", user.getPhone1())
-                            .addFormDataPart("telefone2", user.getPhone2())
-                            .addFormDataPart("conjuge", user.getSpouse())
-                            .addFormDataPart("profissao", user.getJob())
-                            .addFormDataPart("email", user.getEmail())
-                            .addFormDataPart("IdPFisica", String.valueOf(user.getPhysicalId()))
-                            //.addFormDataPart("achou", "nao")
-                            .build();
-                    Request request = new Request.Builder().url("http://cadier.com.br/api/basicUpdateProfileApp").post(body).build();
-                    Response response = client.newCall(request).execute();
-                    result = response.body().string();
+                if (arquivoFotoFinal != null) {
+                    int statusFoto = cW.uploadArquivo(
+                            ApiConfig.BASE_URL + "DocumentoPFisica/" + user.getPhysicalId() + "/" + ID_TIPO_DOCUMENTO_FOTO_3X4,
+                            user.getToken(), "arquivo", arquivoFotoFinal, "image/jpeg");
+                    sucesso = sucesso && statusFoto >= 200 && statusFoto < 300;
+                    if (sucesso) user.setPhoto(arquivoFotoFinal.getAbsolutePath());
                 }
-            /*String result;
-            ConectaWebService cW = new ConectaWebService();
-            result = cW.send(strings[0], "PUT", strings[1]);*/
-                //Log.d("POST", result);
-            } catch (IOException e){
-                e.printStackTrace();
             } catch (Exception e){
                 e.printStackTrace();
+                sucesso = false;
             }
-            return result;
+            return sucesso;
         }
 
         @Override
-        protected void onPostExecute(String result) {
-            super.onPostExecute(result);
+        protected void onPostExecute(Boolean sucesso) {
+            super.onPostExecute(sucesso);
             progressDialog.dismiss();
-            if(result.equalsIgnoreCase("Alterado")) {
+            if(Boolean.TRUE.equals(sucesso)) {
                 Toast.makeText(getApplicationContext(), "Alterado com Sucesso!", Toast.LENGTH_SHORT).show();
+                // Devolve o User atualizado pra quem abriu essa tela (ver comentário em
+                // MenuActivity.updateUser) - senão os dados editados aqui somem ao voltar.
+                setResult(RESULT_OK, new Intent().putExtra("usuario", user));
             } else {
                 Toast.makeText(getApplicationContext(), "Erro na Alteração, verifique sua conexão com a internet!", Toast.LENGTH_SHORT).show();
             }
         }
-    }
-
-    private boolean checkPermission() {
-
-        return ContextCompat.checkSelfPermission(this, WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED
-                && ContextCompat.checkSelfPermission(this, READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED
-                ;
-    }
-
-    private void requestPermissionAndContinue() {
-        if (ContextCompat.checkSelfPermission(this, WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED
-                && ContextCompat.checkSelfPermission(this, READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-
-            if (ActivityCompat.shouldShowRequestPermissionRationale(this, WRITE_EXTERNAL_STORAGE)
-                    && ActivityCompat.shouldShowRequestPermissionRationale(this, READ_EXTERNAL_STORAGE)) {
-                AlertDialog.Builder alertBuilder = new AlertDialog.Builder(this);
-                alertBuilder.setCancelable(true);
-                alertBuilder.setTitle("Permissão para manuseio de arquivo!");
-                alertBuilder.setMessage("Você permite a leitura de imagens pelo aplicativo?");
-                alertBuilder.setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-                    @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
-                    public void onClick(DialogInterface dialog, int which) {
-                        ActivityCompat.requestPermissions(ProfileEditActivity.this, new String[]{WRITE_EXTERNAL_STORAGE
-                                , READ_EXTERNAL_STORAGE}, PERMISSION_REQUEST_CODE);
-                    }
-                });
-                AlertDialog alert = alertBuilder.create();
-                alert.show();
-                //Log.e("", "permission denied, show dialog");
-            } else {
-                ActivityCompat.requestPermissions(ProfileEditActivity.this, new String[]{WRITE_EXTERNAL_STORAGE,
-                        READ_EXTERNAL_STORAGE}, PERMISSION_REQUEST_CODE);
-            }
-        } else {
-            openActivity();
-        }
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-
-        if (requestCode == PERMISSION_REQUEST_CODE) {
-            if (permissions.length > 0 && grantResults.length > 0) {
-
-                boolean flag = true;
-                for (int i = 0; i < grantResults.length; i++) {
-                    if (grantResults[i] != PackageManager.PERMISSION_GRANTED) {
-                        flag = false;
-                    }
-                }
-                if (flag) {
-                    openActivity();
-                } else {
-                    finish();
-                }
-
-            } else {
-                finish();
-            }
-        } else {
-            super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        }
-    }
-
-    private void openActivity() {
-        //add your further process after giving permission or to download images from remote server.
     }
 }

@@ -2,6 +2,7 @@ package app.convencao.cadier.view.adapter;
 
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.drawable.GradientDrawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,14 +10,13 @@ import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 
 import app.convencao.cadier.R;
 import app.convencao.cadier.modelo.ServiceOrder;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.GregorianCalendar;
 
 /**
  * Created by DrGreend on 01/04/2018.
@@ -56,15 +56,21 @@ public class AdapterPrevious extends ArrayAdapter<ServiceOrder>{
         if(serviceOrder != null && holder != null) {
             holder.textViewWish.setText(serviceOrder.getService());
             SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-            holder.textViewDateWish.setText(sdf.format(serviceOrder.getOrderDate()));
-            holder.textViewDateGive.setText(sdf.format(serviceOrder.getDeliveryDate()));
-            holder.textViewObs.setText(serviceOrder.getObs() == null ? "Não há!" : serviceOrder.getObs());
+            holder.textViewDateWish.setText(serviceOrder.getOrderDate() != null ? sdf.format(serviceOrder.getOrderDate()) : "-");
+            holder.textViewDateGive.setText(serviceOrder.getDeliveryDate() != null ? sdf.format(serviceOrder.getDeliveryDate()) : "-");
+            holder.textViewObs.setText(serviceOrder.getService());
 
-            if ((serviceOrder.getDeliveryDate() == null || serviceOrder.getDeliveryDate().before(new GregorianCalendar(2000, Calendar.JANUARY,01).getTime())) || serviceOrder.getRemains() > 0) {
+            GradientDrawable chip = new GradientDrawable();
+            chip.setShape(GradientDrawable.RECTANGLE);
+            chip.setCornerRadius(context.getResources().getDimension(R.dimen.cadier_radius_chip));
+            if (serviceOrder.isPendente()) {
                 holder.textViewStatus.setText("Pendência!");
+                chip.setColor(ContextCompat.getColor(context, R.color.status_warning));
             } else {
                 holder.textViewStatus.setText("Finalizado!");
+                chip.setColor(ContextCompat.getColor(context, R.color.status_success));
             }
+            holder.textViewStatus.setBackground(chip);
         }
         return row;
     }

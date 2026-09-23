@@ -28,7 +28,7 @@ public class FragmentOrders extends Fragment implements TabLayout.OnTabSelectedL
         View view = inflater.inflate(R.layout.fragment_pedidos, container, false);
 
         tabLayout = view.findViewById(R.id.tabLayout);
-        tabLayout.addTab(tabLayout.newTab().setText("Pedidos Agendados"), true);
+        tabLayout.addTab(tabLayout.newTab().setText("Pedidos Pendentes"), true);
         tabLayout.addTab(tabLayout.newTab().setText("Pedidos Anteriores"));
 
         tabLayout.setTabGravity(TabLayout.GRAVITY_FILL);

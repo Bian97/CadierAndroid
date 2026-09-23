@@ -2,11 +2,13 @@
 
     <!-- Base application theme. -->
     <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
-        <!-- Customize your theme here. -->
+        <!-- colorPrimary/colorPrimaryDark/colorAccent são alias das cores da marca CADIER, ver
+             values/colors.xml. -->
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
-
+        <item name="android:windowBackground">@color/cadier_bg</item>
+        <item name="android:textColorPrimary">@color/cadier_text_primary</item>
     </style>
 
     <style name="AppTheme.NoActionBar">
@@ -17,5 +19,73 @@
     <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
 
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+
+    <!--
+      Estilos de texto CADIER - tamanhos maiores que o padrão Material (público majoritariamente
+      idoso, ver memória "cadier-elderly-accessible-typography"), sempre com a cor slate da marca.
+    -->
+    <style name="Cadier.Text.Title" parent="">
+        <item name="android:textSize">@dimen/cadier_text_title</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@color/cadier_text_primary</item>
+    </style>
+
+    <style name="Cadier.Text.Subtitle" parent="">
+        <item name="android:textSize">@dimen/cadier_text_subtitle</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@color/cadier_text_primary</item>
+    </style>
+
+    <style name="Cadier.Text.Body" parent="">
+        <item name="android:textSize">@dimen/cadier_text_body</item>
+        <item name="android:textColor">@color/cadier_text_primary</item>
+    </style>
+
+    <style name="Cadier.Text.Body.Secondary" parent="Cadier.Text.Body">
+        <item name="android:textSize">@dimen/cadier_text_body_secondary</item>
+        <item name="android:textColor">@color/cadier_text_secondary</item>
+    </style>
+
+    <style name="Cadier.Text.Caption" parent="">
+        <item name="android:textSize">@dimen/cadier_text_caption</item>
+        <item name="android:textColor">@color/cadier_text_secondary</item>
+    </style>
+
+    <!-- Botões CADIER - mesmo raio (14dp) e peso de fonte (bold, sem uppercase) do site. -->
+    <style name="Cadier.Button" parent="Widget.AppCompat.Button">
+        <item name="android:background">@drawable/bg_cadier_button_primary</item>
+        <item name="android:textColor">@color/cadier_text_on_dark</item>
+        <item name="android:textSize">@dimen/cadier_text_button</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="android:minHeight">@dimen/cadier_touch_target_min</item>
+        <item name="android:paddingLeft">20dp</item>
+        <item name="android:paddingRight">20dp</item>
+    </style>
+
+    <style name="Cadier.Button.Secondary">
+        <item name="android:background">@drawable/bg_cadier_button_secondary</item>
+    </style>
+
+    <style name="Cadier.Button.WhatsApp">
+        <item name="android:background">@drawable/bg_cadier_button_whatsapp</item>
+        <item name="android:drawableStart">@drawable/ic_whatsapp</item>
+        <item name="android:drawablePadding">8dp</item>
+    </style>
+
+    <!-- Texto do menu lateral (Drawer) maior que o padrão do NavigationView (14sp), mesmo racional
+         de acessibilidade das outras telas. -->
+    <style name="Cadier.Text.NavItem" parent="TextAppearance.AppCompat.Body1">
+        <item name="android:textSize">@dimen/cadier_text_body</item>
+    </style>
+
+    <!-- Linha fina pra separar itens dentro de um card (ex.: linhas da tela de Ajuda/Perfil). -->
+    <style name="Cadier.Divider" parent="">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">1dp</item>
+        <item name="android:layout_marginStart">8dp</item>
+        <item name="android:layout_marginEnd">8dp</item>
+        <item name="android:background">@color/cadier_divider_light</item>
+    </style>
 
 </resources>

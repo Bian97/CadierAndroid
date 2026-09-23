@@ -3,164 +3,198 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="horizontal"
-    android:background="#678FFE">
+    android:orientation="vertical"
+    android:background="@color/cadier_bg">
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="8dp"
-        android:layout_marginTop="11dp"
-        android:orientation="vertical">
+        android:layout_height="?attr/actionBarSize"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:background="@color/cadier_teal">
 
         <TextView
+            android:id="@+id/textViewVoltarEditarEndereco"
+            style="@style/Cadier.Text.Subtitle"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="left"
-            android:layout_marginLeft="8dp"
-            android:text="Rua"
-            android:textStyle="bold" />
-
-        <EditText
-            android:id="@+id/editTextEditStreet"
-            android:layout_width="320dp"
-            android:layout_height="wrap_content"
-            android:layout_gravity="start"
-            android:layout_marginLeft="8dp"
-            android:hint="Sua Rua e seu número"
-            android:textSize="14sp" />
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:weightSum="2"
-            android:orientation="horizontal">
+            android:layout_height="match_parent"
+            android:gravity="center_vertical"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:textColor="@color/cadier_text_on_dark"
+            android:text="‹ Voltar"/>
 
         <TextView
-            android:layout_width="wrap_content"
+            style="@style/Cadier.Text.Subtitle"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:layout_gravity="left"
-            android:layout_marginLeft="8dp"
-            android:text="Bairro"
-            android:textStyle="bold" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:layout_gravity="left"
-                android:layout_marginLeft="8dp"
-                android:text="CEP"
-                android:textStyle="bold" />
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:weightSum="2"
-            android:orientation="horizontal">
-
-        <EditText
-            android:id="@+id/editTextEditDistrict"
-            android:layout_width="140dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:layout_marginLeft="8dp"
-            android:hint="Seu Bairro"
-            android:textSize="14sp" />
-
-        <EditText
-            android:id="@+id/editTextEditCode"
-            android:layout_width="130dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:layout_marginLeft="8dp"
-            android:hint="Seu CEP"
-            android:textSize="14sp" />
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:weightSum="2"
-            android:orientation="horizontal">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="left"
-            android:layout_weight="1.25"
-            android:layout_marginLeft="8dp"
-            android:layout_marginTop="5dp"
-            android:text="Cidade"
-            android:textStyle="bold" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="left"
-            android:layout_weight="0.7"
-            android:layout_marginLeft="8dp"
-            android:layout_marginTop="5dp"
-            android:text="Estado"
-            android:textStyle="bold" />
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:weightSum="2"
-            android:orientation="horizontal">
-
-        <EditText
-            android:id="@+id/editTextEditCity"
-            android:layout_width="170dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1.4"
-            android:layout_marginLeft="8dp"
-            android:hint="Sua Cidade"
-            android:textSize="14sp" />
-
-        <EditText
-            android:id="@+id/editTextEditState"
-            android:layout_width="130dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="0.6"
-            android:layout_marginLeft="8dp"
-            android:hint="Seu Estado"
-            android:textSize="14sp" />
-
-        </LinearLayout>
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="left"
-            android:layout_marginLeft="8dp"
-            android:layout_marginTop="5dp"
-            android:text="País"
-            android:textStyle="bold" />
-
-        <EditText
-            android:id="@+id/editTextEditCountry"
-            android:layout_width="120dp"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="8dp"
-            android:hint="Seu País"
-            android:textSize="14sp" />
-
-        <Button
-            android:id="@+id/buttonSaveAddress"
-            android:layout_width="200dp"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_marginTop="50dp"
-            android:background="@drawable/background_button_login"
-            android:text="Guardar Alterações"
-            android:textSize="13sp" />
+            android:gravity="center_vertical"
+            android:paddingEnd="60dp"
+            android:textColor="@color/cadier_text_on_dark"
+            android:textAlignment="center"
+            android:text="Editar Endereço"/>
     </LinearLayout>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fillViewport="true">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingBottom="16dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="16dp"
+                android:layout_marginBottom="12dp"
+                android:orientation="vertical"
+                android:background="@drawable/bg_cadier_card"
+                android:elevation="3dp"
+                android:padding="16dp">
+
+                <TextView
+                    style="@style/Cadier.Text.Caption"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="CEP *"/>
+
+                <EditText
+                    android:id="@+id/editTextEditCode"
+                    style="@style/Cadier.Text.Body"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="6dp"
+                    android:background="@drawable/bg_cadier_input"
+                    android:padding="10dp"
+                    android:hint="00000-000"
+                    android:inputType="number"
+                    android:maxLength="9"/>
+
+                <TextView
+                    style="@style/Cadier.Text.Body.Secondary"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="6dp"
+                    android:text="Digite o CEP que a Cidade, o Estado e o País são preenchidos sozinhos."/>
+
+                <TextView
+                    style="@style/Cadier.Text.Caption"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:text="Rua"/>
+
+                <EditText
+                    android:id="@+id/editTextEditStreet"
+                    style="@style/Cadier.Text.Body"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="6dp"
+                    android:background="@drawable/bg_cadier_input"
+                    android:padding="10dp"
+                    android:hint="Sua Rua e seu número" />
+
+                <TextView
+                    style="@style/Cadier.Text.Caption"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:text="Bairro"/>
+
+                <EditText
+                    android:id="@+id/editTextEditDistrict"
+                    style="@style/Cadier.Text.Body"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="6dp"
+                    android:background="@drawable/bg_cadier_input"
+                    android:padding="10dp"
+                    android:hint="Seu Bairro" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
+                android:orientation="vertical"
+                android:background="@drawable/bg_cadier_card"
+                android:elevation="3dp"
+                android:padding="16dp">
+
+                <TextView
+                    style="@style/Cadier.Text.Caption"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="10dp"
+                    android:text="Preenchidos automaticamente pelo CEP"/>
+
+                <TextView
+                    style="@style/Cadier.Text.Caption"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Cidade"/>
+
+                <EditText
+                    android:id="@+id/editTextEditCity"
+                    style="@style/Cadier.Text.Body"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="6dp"
+                    android:background="@drawable/bg_cadier_input"
+                    android:padding="10dp"
+                    android:hint="Sua Cidade" />
+
+                <TextView
+                    style="@style/Cadier.Text.Caption"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:text="Estado"/>
+
+                <EditText
+                    android:id="@+id/editTextEditState"
+                    style="@style/Cadier.Text.Body"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="6dp"
+                    android:background="@drawable/bg_cadier_input"
+                    android:padding="10dp"
+                    android:hint="Seu Estado" />
+
+                <TextView
+                    style="@style/Cadier.Text.Caption"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:text="País"/>
+
+                <EditText
+                    android:id="@+id/editTextEditCountry"
+                    style="@style/Cadier.Text.Body"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="6dp"
+                    android:background="@drawable/bg_cadier_input"
+                    android:padding="10dp"
+                    android:hint="Seu País" />
+            </LinearLayout>
+
+            <Button
+                android:id="@+id/buttonSaveAddress"
+                style="@style/Cadier.Button"
+                android:layout_width="match_parent"
+                android:layout_height="56dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
+                android:layout_marginTop="20dp"
+                android:text="Guardar Alterações" />
+
+        </LinearLayout>
+    </ScrollView>
 </LinearLayout>

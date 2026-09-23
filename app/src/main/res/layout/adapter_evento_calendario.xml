@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:layout_marginBottom="8dp"
+    android:background="@drawable/bg_cadier_card"
+    android:elevation="2dp"
+    android:padding="14dp">
+
+    <TextView
+        android:id="@+id/textViewTituloEvento"
+        style="@style/Cadier.Text.Subtitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Título do evento"/>
+
+    <TextView
+        android:id="@+id/textViewCursoEvento"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="6dp"
+        android:textColor="@color/cadier_text_on_dark"
+        android:textStyle="bold"
+        android:textSize="@dimen/cadier_text_caption"
+        android:background="@drawable/bg_cadier_button_secondary"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:paddingTop="3dp"
+        android:paddingBottom="3dp"
+        android:text="Aula: Nome do Curso"
+        android:visibility="gone"/>
+
+    <TextView
+        android:id="@+id/textViewDataEvento"
+        style="@style/Cadier.Text.Body"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:textColor="@color/cadier_teal_dark"
+        android:textStyle="bold"
+        android:text="dd/MM/yyyy HH:mm"/>
+
+    <LinearLayout
+        android:id="@+id/layoutLocalEvento"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="6dp"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:paddingTop="2dp"
+        android:paddingBottom="2dp"
+        android:clickable="true"
+        android:focusable="true"
+        android:foreground="?android:attr/selectableItemBackground">
+
+        <ImageView
+            android:layout_width="18dp"
+            android:layout_height="18dp"
+            android:src="@drawable/endereco"
+            android:tint="@color/cadier_teal"/>
+
+        <TextView
+            android:id="@+id/textViewLocalEvento"
+            style="@style/Cadier.Text.Body.Secondary"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginStart="8dp"
+            android:textColor="@color/cadier_teal"
+            android:textStyle="bold"
+            android:autoLink="none"
+            android:text="Local"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="6dp"
+            android:textColor="@color/cadier_teal"
+            android:textStyle="bold"
+            android:textSize="@dimen/cadier_text_subtitle"
+            android:text="›"/>
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/textViewDescricaoEvento"
+        style="@style/Cadier.Text.Body.Secondary"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:text="Descrição"/>
+
+    <TextView
+        android:id="@+id/textViewLinkEvento"
+        style="@style/Cadier.Button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:gravity="center"
+        android:text="Entrar na reunião"
+        android:visibility="gone"/>
+
+</LinearLayout>

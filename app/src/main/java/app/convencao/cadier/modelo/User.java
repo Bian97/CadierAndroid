@@ -40,6 +40,32 @@ public class User implements Serializable {
     private Date lastVisit;
     private String obs;
     private String photo;
+    // JWT do backend novo (Cadier.API) - recebido no login e reenviado em todas as chamadas
+    // autenticadas subsequentes como header "Authorization: Bearer <token>". Viaja junto com o
+    // resto do User pelo mesmo Intent extra "usuario" que já era usado entre telas.
+    private String token;
+
+    public String getToken() {
+        return token;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
+    }
+
+    // Id da igreja vinculada (PessoaJuridica) - PessoaFisica/MeusDadosDocumento sobrescreve esse
+    // campo incondicionalmente (null de verdade apaga o vínculo), então precisa ser reenviado com
+    // o valor atual sempre que essa rota for chamada por qualquer outro motivo (ex: editar só o
+    // endereço), senão apaga a igreja do filiado sem querer.
+    private Integer idPessoaJuridica;
+
+    public Integer getIdPessoaJuridica() {
+        return idPessoaJuridica;
+    }
+
+    public void setIdPessoaJuridica(Integer idPessoaJuridica) {
+        this.idPessoaJuridica = idPessoaJuridica;
+    }
 
     public StatusEnum getStatus() {
         return status;

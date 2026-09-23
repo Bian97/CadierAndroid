@@ -8,11 +8,14 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.Toast;
 
 import androidx.fragment.app.ListFragment;
 
-import app.convencao.cadier.util.Enums.ServiceKindEnum;
+import app.convencao.cadier.util.ApiConfig;
+import app.convencao.cadier.util.OrdemServicoParser;
+import app.convencao.cadier.util.WhatsApp;
 import app.convencao.cadier.view.adapter.AdapterScheduled;
 import app.convencao.cadier.R;
 import app.convencao.cadier.modelo.ServiceOrder;
@@ -21,14 +24,16 @@ import app.convencao.cadier.util.ConectWebService;
 
 import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.sql.Date;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Created by DrGreend on 24/03/2018.
+ * "Agendados" = pedidos pendentes (ainda não entregues OU com saldo em aberto - ver
+ * ServiceOrder.isPendente()), obtidos filtrando client-side a lista completa de
+ * OrdemServico/PorPessoaFisica/{id} - o antigo endpoint dedicado "pendingOrders" não existe mais
+ * no backend novo.
  */
 
 public class TabScheduled extends ListFragment {
@@ -41,6 +46,10 @@ public class TabScheduled extends ListFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         user = (User) getActivity().getIntent().getSerializableExtra("usuario");
         View view = inflater.inflate(R.layout.tab_agendados, container, false);
+
+        Button buttonFalarSecretaria = view.findViewById(R.id.buttonFalarSecretaria);
+        buttonFalarSecretaria.setOnClickListener(v -> WhatsApp.abrirChatSecretaria(getContext(), "Olá! Tenho uma dúvida sobre meus pedidos na CADIER."));
+
         SearchAgended searchAgended = new SearchAgended();
         Context context = getContext();
         boolean connected;
@@ -67,14 +76,8 @@ public class TabScheduled extends ListFragment {
 
         @Override
         protected String doInBackground(String... strings) {
-            String result = null;
             ConectWebService cW = new ConectWebService();
-
-            Map<String,String> arguments = new HashMap<>();
-            arguments.put("IdPFisica", String.valueOf(user.getPhysicalId()));
-            result = cW.send("http://cadier.com.br/api/pendingOrders", "POST", arguments);
-
-            return result;
+            return cW.get(ApiConfig.BASE_URL + "OrdemServico/PorPessoaFisica/" + user.getPhysicalId(), user.getToken());
         }
 
         @Override
@@ -82,19 +85,20 @@ public class TabScheduled extends ListFragment {
             super.onPostExecute(result);
             ordersList = new ArrayList<>();
             try {
-                if (result != null && !result.equalsIgnoreCase("vazio")) {
+                if (result != null) {
                     JSONArray jsonArray = new JSONArray(result);
                     for(int i = 0; i < jsonArray.length(); i++) {
-                        serviceOrder = new ServiceOrder(jsonArray.getJSONObject(i).getInt("IdOrdem"), jsonArray.getJSONObject(i).getInt("IdPFisica"), jsonArray.getJSONObject(i).getInt("IdAtendente"), jsonArray.getJSONObject(i).getString("Servico"),
-                                jsonArray.getJSONObject(i).getString("Obs"), Date.valueOf(jsonArray.getJSONObject(i).getString("DataPedido")), Date.valueOf(jsonArray.getJSONObject(i).getString("DataFeito")), Date.valueOf(jsonArray.getJSONObject(i).getString("DataEntregue")),
-                                jsonArray.getJSONObject(i).getString("QuemLevou"), Float.parseFloat(jsonArray.getJSONObject(i).getString("Valor")), Float.parseFloat(jsonArray.getJSONObject(i).getString("Pago")), Float.parseFloat(jsonArray.getJSONObject(i).getString("CreditoAnterior")),
-                                Float.parseFloat(jsonArray.getJSONObject(i).getString("Deposito")), ServiceKindEnum.fromInteger(jsonArray.getJSONObject(i).getInt("TipoServico")), Date.valueOf(jsonArray.getJSONObject(i).getString("Mensalidade")));
+                        JSONObject pedido = jsonArray.getJSONObject(i);
+                        serviceOrder = OrdemServicoParser.paraServiceOrder(pedido);
+                        if (!serviceOrder.isPendente()) continue; // só os pendentes (entrega ou pagamento em aberto)
 
                         ordersList.add(serviceOrder);
                     }
+                    if (ordersList.isEmpty()) {
+                        Toast.makeText(getContext(), "Aviso: Você não possui pedidos agendados!", Toast.LENGTH_LONG).show();
+                    }
                     AdapterScheduled adapterScheduled = new AdapterScheduled(getActivity(), R.layout.adapter_agendados, ordersList);
                     setListAdapter(adapterScheduled);
-                    //listviewAnteriores.setAdapter(adapterAnteriores);
                 } else {
                     Toast.makeText(getContext(), "Aviso: Você não possui pedidos agendados!", Toast.LENGTH_LONG).show();
                 }

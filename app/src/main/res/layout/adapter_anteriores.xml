@@ -2,141 +2,113 @@
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:background="#DDE3FD">
+    android:layout_marginBottom="8dp"
+    android:background="@drawable/bg_cadier_card"
+    android:elevation="2dp"
+    android:padding="14dp">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="15dp"
-        android:orientation="vertical">
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="0.5dp"
-            android:layout_marginTop="8dp"
-            android:background="#000000"/>
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="8dp"
-            android:textColor="#012998"
-            android:textStyle="bold"
-            android:text="Pedido"/>
+        android:orientation="horizontal"
+        android:gravity="center_vertical">
 
         <TextView
             android:id="@+id/textViewPedido"
-            android:layout_width="wrap_content"
+            style="@style/Cadier.Text.Subtitle"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="8dp"
-            android:textColor="#0247FE"
-            android:textStyle="bold"
+            android:layout_weight="1"
             android:text="Pedido"/>
 
-        <LinearLayout
-            android:layout_width="match_parent"
+        <TextView
+            android:id="@+id/textViewStatus"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:weightSum="3">
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="8dp"
-                android:layout_weight="1"
-                android:textColor="#012998"
-                android:textStyle="bold"
-                android:text="Data do Pedido"/>
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="8dp"
-                android:textStyle="bold"
-                android:layout_weight="1"
-                android:textColor="#012998"
-                android:text="Data da Entrega"/>
-        </LinearLayout>
+            android:textColor="@color/cadier_text_on_dark"
+            android:textStyle="bold"
+            android:textSize="@dimen/cadier_text_caption"
+            android:background="@color/status_success"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
+            android:paddingTop="3dp"
+            android:paddingBottom="3dp"
+            android:text="Finalizado!"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginTop="10dp">
 
         <LinearLayout
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:weightSum="3">
+            android:layout_weight="1"
+            android:layout_marginEnd="6dp"
+            android:orientation="vertical"
+            android:background="@drawable/bg_cadier_stat_teal"
+            android:padding="8dp">
+
+            <TextView
+                style="@style/Cadier.Text.Caption"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Data do Pedido"/>
 
             <TextView
                 android:id="@+id/textViewDataPedido"
+                style="@style/Cadier.Text.Body"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="8dp"
-                android:layout_weight="1"
+                android:textColor="@color/cadier_teal_dark"
                 android:textStyle="bold"
-                android:textColor="#0247FE"
-                android:text="Data do Pedido"/>
-
-            <TextView
-                android:id="@+id/textViewDataEntrega"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="16dp"
-                android:layout_weight="1"
-                android:textColor="#0247FE"
-                android:textStyle="bold"
-                android:text="Data da Entrega"/>
-
+                android:text="00/00/0000"/>
         </LinearLayout>
 
         <LinearLayout
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:weightSum="2">
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:background="@drawable/bg_cadier_stat_teal"
+            android:padding="8dp">
 
             <TextView
+                style="@style/Cadier.Text.Caption"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="8dp"
-                android:layout_marginTop="8dp"
-                android:textStyle="bold"
-                android:textColor="#012998"
-                android:text="Observações"/>
+                android:text="Data da Entrega"/>
 
             <TextView
+                android:id="@+id/textViewDataEntrega"
+                style="@style/Cadier.Text.Body"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="100dp"
-                android:layout_marginTop="8dp"
-                android:textColor="#012998"
+                android:textColor="@color/cadier_teal_dark"
                 android:textStyle="bold"
-                android:text="Status: "/>
-
-            <TextView
-                android:id="@+id/textViewStatus"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="8dp"
-                android:layout_marginTop="8dp"
-                android:textColor="#0247FE"
-                android:textStyle="bold"
-                android:text="Status"/>
-
+                android:text="00/00/0000"/>
         </LinearLayout>
 
-        <TextView
-            android:id="@+id/textViewObservacoes"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:layout_marginLeft="8dp"
-            android:textColor="#0247FE"
-            android:textStyle="bold"
-            android:text="Observações"/>
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="0.5dp"
-            android:layout_marginTop="8dp"
-            android:background="#000000"/>
-
     </LinearLayout>
+
+    <TextView
+        style="@style/Cadier.Text.Caption"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:text="Serviço"/>
+
+    <TextView
+        android:id="@+id/textViewObservacoes"
+        style="@style/Cadier.Text.Body"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="@color/cadier_teal_dark"
+        android:textStyle="bold"
+        android:text="Serviço"/>
 
 </LinearLayout>

@@ -3,13 +3,18 @@ package app.convencao.cadier.modelo;
 import app.convencao.cadier.util.Enums.ServiceKindEnum;
 
 import java.io.Serializable;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 
 /**
  * Created by DrGreend on 31/03/2018.
  */
 
 public class ServiceOrder implements Serializable {
+    // Pedidos antigos (sistema anterior) às vezes têm dataEntregue preenchida com uma data
+    // placeholder muito antiga em vez de nula - tratamos isso como "ainda não entregue de verdade".
+    private static final Date DATA_ENTREGA_PLACEHOLDER = new GregorianCalendar(2000, Calendar.JANUARY, 1).getTime();
     private int orderId, physicalId, attendantId;
     private String service, obs, whoTook;
     private float servicePrice, payedToday, previousCredit, remains, deposit;
@@ -162,5 +167,14 @@ public class ServiceOrder implements Serializable {
 
     public void setService(String service) {
         this.service = service;
+    }
+
+    /**
+     * Pedido pendente = ainda não entregue OU ainda com saldo em aberto (resta a pagar > 0) -
+     * cobre tanto pendência de entrega quanto de pagamento. Usado pra separar "Agendados"
+     * (pendentes) de "Anteriores" (concluídos) nas telas de pedidos do filiado.
+     */
+    public boolean isPendente() {
+        return deliveryDate == null || deliveryDate.before(DATA_ENTREGA_PLACEHOLDER) || remains > 0;
     }
 }

@@ -2,177 +2,124 @@
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:background="#DDE3FD">
+    android:layout_marginBottom="8dp"
+    android:background="@drawable/bg_cadier_card"
+    android:elevation="2dp"
+    android:padding="14dp">
 
-    <LinearLayout
+    <TextView
+        android:id="@+id/textViewPedidoAgendados"
+        style="@style/Cadier.Text.Subtitle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="15dp"
-        android:orientation="vertical">
+        android:text="Pedido"/>
 
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="0.5dp"
-            android:layout_marginTop="8dp"
-            android:background="#000000"/>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:weightSum="3">
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="2"
-            android:layout_margin="8dp"
-            android:textColor="#012998"
-            android:textStyle="bold"
-            android:text="Pedido"/>
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="23dp"
-                android:layout_weight="1"
-                android:layout_margin="8dp"
-                android:textColor="#012998"
-                android:textStyle="bold"
-                android:text="Valor do Pedido"/>
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:weightSum="2">
-
-            <TextView
-                android:id="@+id/textViewPedidoAgendados"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="8dp"
-                android:layout_weight="1"
-                android:textColor="#0247FE"
-                android:textStyle="bold"
-                android:text="Pedido"/>
-
-            <TextView
-                android:id="@+id/textViewValorAgendados"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginRight="9dp"
-                android:layout_weight="1"
-                android:textColor="#0247FE"
-                android:textStyle="bold"
-                android:textAlignment="center"
-                android:text="Valor do Pedido"
-                android:gravity="center_horizontal" />
-        </LinearLayout>
+    <TextView
+        android:id="@+id/textViewDataAgendados"
+        style="@style/Cadier.Text.Body.Secondary"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:text="Data do Pedido"/>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:weightSum="3">
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="8dp"
-            android:layout_weight="2"
-            android:textColor="#012998"
-            android:textStyle="bold"
-            android:text="Data do Pedido"/>
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="8dp"
-            android:textStyle="bold"
-            android:layout_weight="0.5"
-            android:textColor="#012998"
-            android:text="Valor Pago"/>
-    </LinearLayout>
+        android:layout_marginTop="10dp">
 
         <LinearLayout
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:weightSum="3">
+            android:layout_weight="1"
+            android:layout_marginEnd="6dp"
+            android:orientation="vertical"
+            android:background="@drawable/bg_cadier_stat_teal"
+            android:padding="8dp">
 
             <TextView
-                android:id="@+id/textViewDataAgendados"
+                style="@style/Cadier.Text.Caption"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="8dp"
-                android:layout_weight="2"
-                android:textStyle="bold"
-                android:textColor="#0247FE"
-                android:text="Data do Pedido"/>
-            <TextView
-                android:id="@+id/textViewPagoAgendados"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="23dp"
-                android:layout_weight="1"
-                android:textColor="#0247FE"
-                android:textStyle="bold"
-                android:text="Valor Pago"/>
+                android:text="Valor"/>
 
+            <TextView
+                android:id="@+id/textViewValorAgendados"
+                style="@style/Cadier.Text.Body"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/cadier_teal_dark"
+                android:textStyle="bold"
+                android:text="R$ 00,00"/>
         </LinearLayout>
 
         <LinearLayout
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:weightSum="2">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="8dp"
-            android:layout_marginTop="8dp"
-            android:textStyle="bold"
-            android:textColor="#012998"
-            android:text="Observações"/>
+            android:layout_weight="1"
+            android:layout_marginEnd="6dp"
+            android:orientation="vertical"
+            android:background="@drawable/bg_cadier_stat_teal"
+            android:padding="8dp">
 
             <TextView
+                style="@style/Cadier.Text.Caption"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="100dp"
-                android:layout_marginTop="8dp"
-                android:textColor="#012998"
+                android:text="Pago"/>
+
+            <TextView
+                android:id="@+id/textViewPagoAgendados"
+                style="@style/Cadier.Text.Body"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/cadier_teal_dark"
                 android:textStyle="bold"
-                android:text="Resta: "/>
+                android:text="R$ 00,00"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:background="@drawable/bg_cadier_stat_warning"
+            android:padding="8dp">
+
+            <TextView
+                style="@style/Cadier.Text.Caption"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Resta"/>
 
             <TextView
                 android:id="@+id/textViewRestaAgendados"
+                style="@style/Cadier.Text.Body"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="8dp"
-                android:layout_marginTop="8dp"
-                android:textColor="#0247FE"
+                android:textColor="@color/status_warning"
                 android:textStyle="bold"
-                android:text="R$00,00"/>
-
+                android:text="R$ 00,00"/>
         </LinearLayout>
 
-        <TextView
-            android:id="@+id/textViewObsAgendados"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:layout_marginLeft="8dp"
-            android:textColor="#0247FE"
-            android:textStyle="bold"
-            android:text="Observações"/>
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="0.5dp"
-            android:layout_marginTop="8dp"
-            android:background="#000000"/>
-
     </LinearLayout>
+
+    <TextView
+        style="@style/Cadier.Text.Caption"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:text="Serviço"/>
+
+    <TextView
+        android:id="@+id/textViewObsAgendados"
+        style="@style/Cadier.Text.Body"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="@color/cadier_teal_dark"
+        android:textStyle="bold"
+        android:text="Serviço"/>
 
 </LinearLayout>
