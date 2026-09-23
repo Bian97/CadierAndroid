@@ -19,6 +19,7 @@ import app.convencao.cadier.modelo.User;
 import app.convencao.cadier.util.ApiConfig;
 import app.convencao.cadier.util.CnpjCpfDataMask;
 import app.convencao.cadier.util.ConectWebService;
+import app.convencao.cadier.util.InsetsUtil;
 
 import org.json.JSONObject;
 
@@ -52,6 +53,7 @@ public class AddressEditActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_editarendereco);
+        InsetsUtil.aplicar(this, R.id.barraTopo);
 
         Intent intent = getIntent();
         if(intent != null){

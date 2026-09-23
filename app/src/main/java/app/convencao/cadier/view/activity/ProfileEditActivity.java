@@ -20,6 +20,7 @@ import app.convencao.cadier.modelo.User;
 import app.convencao.cadier.util.ApiConfig;
 import app.convencao.cadier.util.CnpjCpfDataMask;
 import app.convencao.cadier.util.ConectWebService;
+import app.convencao.cadier.util.InsetsUtil;
 
 import org.json.JSONObject;
 
@@ -53,6 +54,7 @@ public class ProfileEditActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_editarperfil);
+        InsetsUtil.aplicar(this, R.id.barraTopo);
 
         Intent intent = getIntent();
         if(intent != null){
@@ -230,8 +232,11 @@ public class ProfileEditActivity extends AppCompatActivity {
                     int statusFoto = cW.uploadArquivo(
                             ApiConfig.BASE_URL + "DocumentoPFisica/" + user.getPhysicalId() + "/" + ID_TIPO_DOCUMENTO_FOTO_3X4,
                             user.getToken(), "arquivo", arquivoFotoFinal, "image/jpeg");
-                    sucesso = sucesso && statusFoto >= 200 && statusFoto < 300;
-                    if (sucesso) user.setPhoto(arquivoFotoFinal.getAbsolutePath());
+                    boolean fotoEnviada = statusFoto >= 200 && statusFoto < 300;
+                    sucesso = sucesso && fotoEnviada;
+                    // Independe de telefone/e-mail terem salvado: se a foto foi pro servidor, o
+                    // app precisa mostrar ela - antes ficava com a foto antiga na sessão.
+                    if (fotoEnviada) user.setPhoto(arquivoFotoFinal.getAbsolutePath());
                 }
             } catch (Exception e){
                 e.printStackTrace();

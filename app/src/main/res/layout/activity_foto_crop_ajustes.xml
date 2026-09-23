@@ -7,6 +7,7 @@
     android:background="@color/cadier_bg">
 
     <LinearLayout
+        android:id="@+id/barraTopo"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
         android:orientation="horizontal"
@@ -78,14 +79,16 @@
                     android:id="@+id/buttonMelhorarFotoAuto"
                     style="@style/Cadier.Button"
                     android:layout_width="match_parent"
-                    android:layout_height="52dp"
-                    android:text="Melhorar a foto automaticamente"/>
+                    android:layout_height="wrap_content"
+                    android:minHeight="52dp"
+                    android:text="Melhorar foto"/>
 
                 <Button
                     android:id="@+id/buttonDesfazerMelhoria"
                     style="@style/Cadier.Button.Secondary"
                     android:layout_width="match_parent"
-                    android:layout_height="52dp"
+                    android:layout_height="wrap_content"
+                    android:minHeight="52dp"
                     android:layout_marginTop="10dp"
                     android:text="Desfazer melhoria"/>
 

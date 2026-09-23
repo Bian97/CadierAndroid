@@ -5,4 +5,12 @@
     <string name="navigation_drawer_close">Close navigation drawer</string>
 
     <string name="action_settings">Settings</string>
+
+    <!-- Textos da tela de recorte (biblioteca uCrop) em português - sobrescrevem os padrões em inglês. -->
+    <string name="ucrop_crop">Recortar</string>
+    <string name="ucrop_menu_crop">Recortar</string>
+    <string name="ucrop_label_edit_photo">Recortar foto</string>
+    <string name="ucrop_label_original">Original</string>
+    <string name="ucrop_rotate">Girar</string>
+    <string name="ucrop_scale">Zoom</string>
 </resources>

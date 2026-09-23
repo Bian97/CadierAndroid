@@ -14,7 +14,7 @@ android {
         applicationId "app.convencao.cadier"
         minSdkVersion 21
         targetSdk 36
-        versionCode 18
+        versionCode 19
         versionName '1.0.10'
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         buildConfigField "String", "API_KEY", "\"${localProperties.getProperty('apiKey', '')}\""

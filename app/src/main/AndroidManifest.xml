@@ -58,7 +58,7 @@
         <activity android:name="app.convencao.cadier.view.activity.FotoCropActivity"/>
         <!-- Activity da lib uCrop (recorte da Foto 3x4) - tema exigido pela própria lib. -->
         <activity
-            android:name="com.yalantis.ucrop.UCropActivity"
+            android:name="app.convencao.cadier.view.activity.FotoUCropActivity"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar"/>
     </application>

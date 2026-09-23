@@ -121,17 +121,20 @@
 
             <TextView
                 style="@style/Cadier.Text.Caption"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center"
+                android:layout_marginStart="32dp"
+                android:layout_marginEnd="32dp"
                 android:layout_marginTop="24dp"
+                android:gravity="center"
                 android:text="Ainda não tem cadastro ou só quer conferir uma reunião?"/>
 
             <Button
                 android:id="@+id/buttonCalendario"
                 style="@style/Cadier.Button.Secondary"
                 android:layout_width="match_parent"
-                android:layout_height="56dp"
+                android:layout_height="wrap_content"
+                android:minHeight="56dp"
                 android:layout_marginLeft="32dp"
                 android:layout_marginRight="32dp"
                 android:layout_marginTop="10dp"

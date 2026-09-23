@@ -23,6 +23,7 @@ import app.convencao.cadier.util.ConectWebService;
 import app.convencao.cadier.util.Enums.StatusDocumentoEnum;
 import app.convencao.cadier.util.Enums.StatusEnum;
 import app.convencao.cadier.util.Enums.TipoDocumentoEnum;
+import app.convencao.cadier.util.InsetsUtil;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
@@ -56,6 +57,7 @@ public class LoginActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+        InsetsUtil.aplicar(this, 0);
 
         login = findViewById(R.id.editTextLogin);
         password = findViewById(R.id.editTextPassword);

@@ -29,6 +29,7 @@ import app.convencao.cadier.util.Enums.StatusDocumentoEnum;
 import app.convencao.cadier.util.Enums.StatusEnum;
 import app.convencao.cadier.util.Enums.TipoDocumentoEnum;
 import app.convencao.cadier.view.activity.FotoCropActivity;
+import app.convencao.cadier.view.activity.MenuActivity;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -317,6 +318,12 @@ public class FragmentDocumentos extends Fragment {
             if (getContext() == null) return;
             if (Boolean.TRUE.equals(sucesso)) {
                 Toast.makeText(getContext(), "Documento enviado com sucesso!", Toast.LENGTH_SHORT).show();
+                if (tipo == TipoDocumentoEnum.Foto3x4 && arquivoPronto != null) {
+                    // Atualiza a foto de perfil já nesta sessão (cabeçalho do menu, Perfil, etc.) -
+                    // sem isso, ela só aparecia depois de sair e entrar de novo no app.
+                    user.setPhoto(arquivoPronto.getAbsolutePath());
+                    ((MenuActivity) getActivity()).updateUser(user);
+                }
                 new CarregarDocumentosTask().execute();
             } else {
                 Toast.makeText(getContext(), "Erro ao enviar o documento, verifique sua conexão com a internet!", Toast.LENGTH_SHORT).show();

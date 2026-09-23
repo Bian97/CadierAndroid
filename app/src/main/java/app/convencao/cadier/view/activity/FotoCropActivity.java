@@ -15,11 +15,13 @@ import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 
 import com.yalantis.ucrop.UCrop;
 
 import app.convencao.cadier.R;
 import app.convencao.cadier.util.ImagemAjusteUtil;
+import app.convencao.cadier.util.InsetsUtil;
 import app.convencao.cadier.util.ImagemAjusteUtil.Ajustes;
 
 import java.io.File;
@@ -77,12 +79,19 @@ public class FotoCropActivity extends AppCompatActivity {
             options.setCompressionQuality(100); // sem perda extra aqui - a compressão final acontece em ImagemAjusteUtil
             options.setFreeStyleCropEnabled(false); // aspecto 3:4 travado, igual ao site
             options.setHideBottomControls(false);
+            options.setToolbarColor(ContextCompat.getColor(this, R.color.cadier_teal));
+            options.setStatusBarColor(ContextCompat.getColor(this, R.color.cadier_teal_dark));
+            options.setToolbarWidgetColor(ContextCompat.getColor(this, R.color.cadier_text_on_dark));
 
-            UCrop.of(imagemOriginal, destinoCrop)
+            // getIntent() + setClass em vez de start(): troca pra FotoUCropActivity, que trata as
+            // barras do sistema do Android 15+ (ver comentário lá).
+            Intent intentCrop = UCrop.of(imagemOriginal, destinoCrop)
                     .withAspectRatio(ASPECT_X, ASPECT_Y)
                     .withMaxResultSize(1500, 2000)
                     .withOptions(options)
-                    .start(this);
+                    .getIntent(this);
+            intentCrop.setClass(this, FotoUCropActivity.class);
+            startActivityForResult(intentCrop, UCrop.REQUEST_CROP);
         } catch (Exception e) {
             // Sem isso, qualquer falha ao montar/lançar o crop (Uri sem permissão, FileProvider mal
             // configurado, etc.) fechava a tela silenciosamente sem dizer o motivo.
@@ -133,6 +142,7 @@ public class FotoCropActivity extends AppCompatActivity {
 
     private void mostrarTelaDeAjustes() {
         setContentView(R.layout.activity_foto_crop_ajustes);
+        InsetsUtil.aplicar(this, R.id.barraTopo);
 
         int larguraPrevia = Math.min(bitmapRecortado.getWidth(), 600);
         int alturaPrevia = Math.round(larguraPrevia * (float) bitmapRecortado.getHeight() / bitmapRecortado.getWidth());

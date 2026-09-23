@@ -17,6 +17,7 @@ import app.convencao.cadier.modelo.OcorrenciaEventoCalendario;
 import app.convencao.cadier.util.ApiConfig;
 import app.convencao.cadier.util.ConectWebService;
 import app.convencao.cadier.util.EventoCalendarioParser;
+import app.convencao.cadier.util.InsetsUtil;
 import app.convencao.cadier.view.adapter.AdapterEventoCalendario;
 
 import org.json.JSONArray;
@@ -46,6 +47,7 @@ public class CalendarioPublicoActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_calendario_publico);
+        InsetsUtil.aplicar(this, R.id.barraTopo);
 
         listViewEventos = findViewById(R.id.listViewEventosPublicos);
         textViewVazio = findViewById(R.id.textViewEventosPublicosVazio);
